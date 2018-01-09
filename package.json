@@ -4,9 +4,16 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "start": "webpack-dev-server"
+    "dev": "npm run server | npm run client",
+    "kill-dev": "pm2 delete brews-client brews-server",
+    "client": "NODE_ENV=development pm2 start webpack-dev-server --name brews-client",
+    "server": "NODE_ENV=development pm2 start server/index.js --watch --name brews-server",
+    "build": "NODE_ENV=production webpack",
+    "start": "NODE_ENV=production pm2 start server/index.js --name brews-prod",
+    "stop": "pm2 delete brews-prod"
   },
   "dependencies": {
+    "express": "^4.16.2",
     "html-webpack-plugin": "^2.26.0",
     "react": "^15.4.2",
     "react-dom": "^15.4.2",
