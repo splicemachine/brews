@@ -5,21 +5,23 @@
   "license": "MIT",
   "scripts": {
     "dev": "npm run server | npm run client",
-    "kill-dev": "pm2 delete brews-client brews-server",
-    "client": "NODE_ENV=development pm2 start webpack-dev-server --name brews-client",
-    "server": "NODE_ENV=development pm2 start server/index.js --watch --name brews-server",
+    "kill": "pm2 delete brews-client brews-server",
+    "client": "NODE_ENV=development pm2 start webpack-dev-server --name brews-client -- --color",
+    "server": "NODE_ENV=development pm2 start server/index.js --watch --name brews-server -- --color",
     "build": "NODE_ENV=production webpack",
     "start": "NODE_ENV=production pm2 start server/index.js --name brews-prod",
     "stop": "pm2 delete brews-prod"
   },
   "dependencies": {
+    "async": "^2.6.0",
+    "chalk": "^2.3.0",
     "express": "^4.16.2",
     "html-webpack-plugin": "^2.26.0",
+    "jdbc": "^0.6.1",
     "react": "^15.4.2",
     "react-dom": "^15.4.2",
     "webpack": "^1.14.0",
-    "webpack-dev-server": "^1.16.2",
-    "@splice-machine/splice-jdbc": "latest"
+    "webpack-dev-server": "^1.16.2"
   },
   "devDependencies": {
     "babel-core": "^6.21.0",

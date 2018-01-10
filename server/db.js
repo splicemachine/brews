@@ -1,91 +1,117 @@
-const jinst = require('@splice-machine/splice-jdbc/lib/jinst');
-const dm = require('@splice-machine/splice-jdbc/lib/drivermanager');
-const Connection = require('@splice-machine/splice-jdbc/lib/connection');
+// noinspection NpmUsedModulesInstalled
+let jdbc = require('jdbc');
+// noinspection NpmUsedModulesInstalled
+let jinst = require('jdbc/lib/jinst');
 
+// noinspection Annotator
 if (!jinst.isJvmCreated()) {
+    // noinspection Annotator
     jinst.addOption("-Xrs");
+    // noinspection Annotator
     jinst.setupClasspath([
-        '/Users/admin/workspace/brews/node_modules/@splice-machine/splice-jdbc/drivers/hsqldb.jar',
-        '/Users/admin/workspace/brews/node_modules/@splice-machine/splice-jdbc/drivers/derby.jar',
-        '/Users/admin/workspace/brews/node_modules/@splice-machine/splice-jdbc/drivers/splice.jar',
-        '/Users/admin/workspace/brews/node_modules/@splice-machine/splice-jdbc/drivers/derbyclient.jar',
-        '/Users/admin/workspace/brews/node_modules/@splice-machine/splice-jdbc/drivers/derbytools.jar'
+        __dirname + '/lib/hsqldb.jar',
+        __dirname + '/lib/derby.jar',
+        __dirname + '/lib/splice.jar',
+        __dirname + '/lib/derbyclient.jar',
+        __dirname + '/lib/derbytools.jar'
     ]);
 }
+
 const config = {
     url: 'jdbc:splice://localhost:1528/splicedb;user=splice;password=admin',
     user: 'user',
     password: 'admin'
 };
 
-let testconn = null;
-
 module.exports = {
-    setUp: function (callback) {
-        if (testconn === null) {
-            dm.getConnection(config.url, config.user, config.password, function (err, conn) {
+    connection: new jdbc(config),
+    setup: (db) => {
+        return new Promise((resolve, reject) => {
+            db.initialize(function (err) {
                 if (err) {
-                    callback(err)
+                    reject(err)
                 } else {
-                    testconn = new Connection(conn);
-                    callback(null);
+                    resolve(db)
                 }
             });
-        } else {
-            callback(null);
-        }
-    },
-    testcreatestatment: function (cb) {
-        testconn.createStatement(function (err, statement) {
-            cb(err, statement)
         });
     },
-    testcreatetable: function (cb) {
-        testconn.createStatement(function (err, statement) {
-            if (err) {
-                cb(err, statement);
+    reserve: (db) => {
+        return new Promise((resolve, reject) => {
+            if (db) {
+                db.reserve((err, connectionObject) => {
+                    if (connectionObject) {
+                        // log.yellow("Using connection: " + connectionObject.uuid);
+                        resolve(connectionObject)
+                    } else {
+                        reject(err)
+                    }
+                })
             } else {
-                var create = "CREATE TABLE blah ";
-                create += "(id int, bi bigint, name varchar(10), date DATE, time TIME, timestamp TIMESTAMP)";
-                statement.executeUpdate(create, function (err, result) {
-                    cb(err, result);
-                });
+                reject(new Error("no database connection provided"))
             }
+        })
+    },
+    prepare: (db) => {
+        return Promise.all([
+            new Promise((resolve, reject) => {
+                db.conn.setAutoCommit(false, (err) => {
+                    if (err) {
+                        reject(err)
+                    } else {
+                        resolve(db)
+                    }
+                });
+            })
+        ]);
+    },
+    execute: (db, stmt) => {
+        return new Promise((resolve, reject) => {
+            db.conn.createStatement(function (err, statement) {
+                if (err) {
+                    reject(err);
+                } else {
+                    statement.executeUpdate(stmt,
+                        function (err, count) {
+                            if (err) {
+                                reject(err);
+                            } else {
+                                resolve(count);
+                            }
+                        });
+                }
+            });
         });
     },
-    testinsert: function (cb) {
-        testconn.createStatement(function (err, statement) {
-            if (err) {
-                cb(err, statement);
-            } else {
-                var insert = "INSERT INTO blah VALUES ";
-                insert += "(1, 9223372036854775807, 'Jason', CURRENT_DATE, CURRENT_TIME, CURRENT_TIMESTAMP)";
-                statement.executeUpdate(insert, function (err, result) {
-                    cb(err, result);
-                });
-            }
-        });
-    },
-    testupdate: function (cb) {
-        testconn.createStatement(function (err, statement) {
-            if (err) {
-                cb(err, statement);
-            } else {
-                statement.executeUpdate("UPDATE blah SET id = 2 WHERE name = 'Jason'", function (err, result) {
-                    cb(err, result);
-                });
-            }
-        });
-    },
-    testselect: function (cb) {
-        testconn.createStatement(function (err, statement) {
-            if (err) {
-                cb(err, statement);
-            } else {
-                statement.executeQuery("SELECT * FROM blah", function (err, resultset) {
-                    cb(err, resultset);
-                });
-            }
-        });
-    },
+    select: (db, stmt) => {
+        return new Promise((resolve, reject) => {
+            db.conn.createStatement(function (err, statement) {
+                if (err) {
+                    reject(err);
+                } else {
+                    // Adjust some statement options before use.  See statement.js for
+                    // a full listing of supported options.
+                    statement.setFetchSize(100, function (err) {
+                        if (err) {
+                            reject(err);
+                        } else {
+                            statement.executeQuery(stmt,
+                                function (err, resultset) {
+                                    if (err) {
+                                        reject(err)
+                                    } else {
+                                        resultset.toObjArray(function (err, results) {
+                                            resolve(results);
+                                        });
+                                    }
+                                });
+                        }
+                    })
+                }
+            })
+        })
+    }
 };
+
+
+
