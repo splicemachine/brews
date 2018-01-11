@@ -98,7 +98,7 @@ module.exports = {
                             statement.executeQuery(stmt,
                                 function (err, resultset) {
                                     if (err) {
-                                        reject(err)
+                                        reject(err) 
                                     } else {
                                         resultset.toObjArray(function (err, results) {
                                             resolve(results);
