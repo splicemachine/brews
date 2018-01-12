@@ -1,13 +1,9 @@
-// noinspection NpmUsedModulesInstalled
+
 let jdbc = require('jdbc');
-// noinspection NpmUsedModulesInstalled
 let jinst = require('jdbc/lib/jinst');
 
-// noinspection Annotator
 if (!jinst.isJvmCreated()) {
-    // noinspection Annotator
     jinst.addOption("-Xrs");
-    // noinspection Annotator
     jinst.setupClasspath([
         __dirname + '/lib/hsqldb.jar',
         __dirname + '/lib/derby.jar',
@@ -98,7 +94,7 @@ module.exports = {
                             statement.executeQuery(stmt,
                                 function (err, resultset) {
                                     if (err) {
-                                        reject(err) 
+                                        reject(err)
                                     } else {
                                         resultset.toObjArray(function (err, results) {
                                             resolve(results);
