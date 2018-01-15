@@ -10,7 +10,7 @@
     "client": "NODE_ENV=development pm2 start webpack-dev-server --name brews-client -- --color",
     "server": "NODE_ENV=development pm2 start server/index.js --watch --name brews-server -- --color",
     "build": "NODE_ENV=production webpack",
-    "start": "NODE_ENV=production pm2-runtime start server/index.js --name brews-prod",
+    "start": "NODE_ENV=production pm2-runtime start server/index.js",
     "stop": "pm2-runtime delete brews-prod"
   },
   "dependencies": {

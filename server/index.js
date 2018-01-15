@@ -1,12 +1,5 @@
 const express = require('express');
 const path = require('path');
-
-
-let SegfaultHandler = require('segfault-handler');
-
-SegfaultHandler.registerHandler("crash.log");
-
-
 const db = require("./db");
 const log = require("./log");
 
@@ -28,78 +21,78 @@ function handle(e) {
     }
 }
 
-// let splice = null;
-//
-// let drop = `DROP TABLE IF EXISTS blah`;
-// let create = `CREATE TABLE blah
-//               (
-//                 id int,
-//                 name varchar(10),
-//                 date DATE,
-//                 time TIME,
-//                 timestamp TIMESTAMP
-//                )`;
-// let insert = `INSERT INTO blah
-//               VALUES (1, 'Jason', CURRENT_DATE,
-//               CURRENT_TIME, CURRENT_TIMESTAMP)`;
-// let update = `UPDATE blah
-//               SET id = 2
-//               WHERE name = 'Jason'`;
-// let select = `SELECT * FROM blah`;
-//
-// db.setup(db.connection)
-//     .then(() => {
-//         log.yellow("==========");
-//         log.green("Setup Resolved");
-//         return db.reserve(db.connection);
-//     }, (reason) => {
-//         return Promise.reject(reason);
-//     })
-//     .then((connectionObject) => {
-//         splice = connectionObject;
-//         log.green("Reserve Resolved");
-//         return db.prepare(splice)
-//     }, (reason) => {
-//         return Promise.reject(reason);
-//     })
-//     .then(() => {
-//         log.green("Prepare Resolved");
-//         return db.execute(splice, drop)
-//     }, (reason) => {
-//         return Promise.reject(reason);
-//     })
-//     .then(() => {
-//         log.green("Drop Resolved");
-//         return db.execute(splice, create)
-//     }, (reason) => {
-//         return Promise.reject(reason);
-//     })
-//     .then(() => {
-//         log.green("Create Resolved");
-//         return db.execute(splice, insert)
-//     }, (reason) => {
-//         return Promise.reject(reason);
-//     })
-//     .then(() => {
-//         log.green("Insert Resolved");
-//         return db.execute(splice, update)
-//     }, (reason) => {
-//         return Promise.reject(reason);
-//     })
-//     .then(() => {
-//         log.green("Update Resolved");
-//         return db.select(splice, select)
-//     }, (reason) => {
-//         return Promise.reject(reason);
-//     })
-//     .then((set) => {
-//         log.green("Select Resolved");
-//         console.log(set);
-//         return set;
-//     }, (reason) => {
-//         return Promise.reject(reason);
-//     })
-//     .catch(handle);
+let splice = null;
+
+let drop = `DROP TABLE IF EXISTS blah`;
+let create = `CREATE TABLE blah
+              (
+                id int,
+                name varchar(10),
+                date DATE,
+                time TIME,
+                timestamp TIMESTAMP
+               )`;
+let insert = `INSERT INTO blah
+              VALUES (1, 'Jason', CURRENT_DATE, 
+              CURRENT_TIME, CURRENT_TIMESTAMP)`;
+let update = `UPDATE blah
+              SET id = 2
+              WHERE name = 'Jason'`;
+let select = `SELECT * FROM blah`;
+
+db.setup(db.connection)
+    .then(() => {
+        log.yellow("==========");
+        log.green("Setup Resolved");
+        return db.reserve(db.connection);
+    }, (reason) => {
+        return Promise.reject(reason);
+    })
+    .then((connectionObject) => {
+        splice = connectionObject;
+        log.green("Reserve Resolved");
+        return db.prepare(splice)
+    }, (reason) => {
+        return Promise.reject(reason);
+    })
+    .then(() => {
+        log.green("Prepare Resolved");
+        return db.execute(splice, drop)
+    }, (reason) => {
+        return Promise.reject(reason);
+    })
+    .then(() => {
+        log.green("Drop Resolved");
+        return db.execute(splice, create)
+    }, (reason) => {
+        return Promise.reject(reason);
+    })
+    .then(() => {
+        log.green("Create Resolved");
+        return db.execute(splice, insert)
+    }, (reason) => {
+        return Promise.reject(reason);
+    })
+    .then(() => {
+        log.green("Insert Resolved");
+        return db.execute(splice, update)
+    }, (reason) => {
+        return Promise.reject(reason);
+    })
+    .then(() => {
+        log.green("Update Resolved");
+        return db.select(splice, select)
+    }, (reason) => {
+        return Promise.reject(reason);
+    })
+    .then((set) => {
+        log.green("Select Resolved");
+        console.log(set);
+        return set;
+    }, (reason) => {
+        return Promise.reject(reason);
+    })
+    .catch(handle);
 
 if (process.env.NODE_ENV === "development") {
     /**
