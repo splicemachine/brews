@@ -1,0 +1,50 @@
+{
+  "id": "/node-splice",
+  "cmd": null,
+  "cpus": 0.1,
+  "mem": 256,
+  "disk": 250,
+  "instances": 1,
+  "acceptedResourceRoles": [
+    "slave_public"
+  ],
+  "container": {
+    "type": "DOCKER",
+    "volumes": [
+      {
+        "containerPath": "/opt",
+        "hostPath": "/mnt/opt",
+        "mode": "RO"
+      }
+    ],
+    "docker": {
+      "image": "splicemachine/node-splice:latest",
+      "network": "HOST",
+      "portMappings": [],
+      "privileged": false,
+      "parameters": [],
+      "forcePullImage": true
+    }
+  },
+  "env": {
+    "TERM": "xterm",
+    "DOCKER_CONFIG": "/etc/mesosphere/docker_credentials"
+  },
+  "healthChecks": [
+    {
+      "gracePeriodSeconds": 120,
+      "intervalSeconds": 60,
+      "timeoutSeconds": 20,
+      "maxConsecutiveFailures": 100,
+      "port": 3000,
+      "path": "/",
+      "protocol": "HTTP",
+      "ignoreHttp1xx": false
+    }
+  ],
+  "portDefinitions": [],
+  "upgradeStrategy": {
+    "minimumHealthCapacity": 0,
+    "maximumOverCapacity": 0
+  }
+}
