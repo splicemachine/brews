@@ -102,7 +102,7 @@ const server = app.listen(app.get("port"), () => {
 
     // setInterval(()=>{
     //     console.log("listen to me")
-    // }, 500)
+    // }, 2000)
 });
 
 function dbCall(res) {

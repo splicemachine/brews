@@ -84,7 +84,7 @@ const server = app.listen(app.get("port"), () => {
     server.keepAliveTimeout = 0;
     // setInterval(()=>{
     //     console.log("listen to me")
-    // }, 500)
+    // }, 2000)
 });
 function dbCall(res) {
     db.setup(db.connection)
