@@ -1,5 +1,6 @@
 import React from 'react';
 import env from '../../config/environment'
+import "../styles/main.css"
 
 export default class App extends React.Component {
 
