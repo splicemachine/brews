@@ -39,7 +39,6 @@
     "babel-preset-react": "^6.16.0",
     "css-loader": "^0.28.8",
     "gulp-clean": "^0.4.0",
-    "gulp-watch": "^5.0.0",
     "style-loader": "^0.19.1"
   },
   "repository": {

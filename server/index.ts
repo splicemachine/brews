@@ -60,7 +60,7 @@ let insert = `INSERT INTO blah
 let update = `UPDATE blah
               SET id = 2
               WHERE name = 'Jason'`;
-let select = `SELECT * FROM blah`;
+let selectStmt = `SELECT * FROM blah`;
 
 
 if (process.env.NODE_ENV === "development") {
@@ -147,7 +147,7 @@ function dbCall(res) {
         })
         .then(() => {
             res.write("Update Resolved\n\n");
-            return db.select(splice, select)
+            return db.select(splice, selectStmt)
         }, (reason) => {
             return Promise.reject(reason);
         })
