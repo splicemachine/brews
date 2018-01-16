@@ -146,15 +146,21 @@ function dbCall(res) {
         }, (reason) => {
             return Promise.reject(reason);
         })
-        .then(() => {
+        .then((set) => {
             res.write("Select Resolved\n");
+
+            set.map((item)=>{
+                for(let prop in item){
+                    res.write(`${prop} : ${item[prop]}\n`)
+                }
+            });
+
             return db.release(splice)
         }, (reason) => {
             return Promise.reject(reason);
         })
         .then((set) => {
             res.write("Released and Closed Connection\n\n");
-            // res.write(set); //First argument must be a string or Buffer
             res.end();
             return set;
         }, (reason) => {
