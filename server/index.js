@@ -60,61 +60,6 @@ let update = `UPDATE blah
 let select = `SELECT * FROM blah`;
 
 
-db.setup(db.connection)
-    .then(() => {
-        log.yellow("==========");
-        log.green("Setup Resolved");
-        return db.reserve(db.connection);
-    }, (reason) => {
-        return Promise.reject(reason);
-    })
-    .then((connectionObject) => {
-        splice = connectionObject;
-        log.green("Reserve Resolved");
-        return db.prepare(splice)
-    }, (reason) => {
-        return Promise.reject(reason);
-    })
-    .then(() => {
-        log.green("Prepare Resolved");
-        return db.execute(splice, drop)
-    }, (reason) => {
-        return Promise.reject(reason);
-    })
-    .then(() => {
-        log.green("Drop Resolved");
-        return db.execute(splice, create)
-    }, (reason) => {
-        return Promise.reject(reason);
-    })
-    .then(() => {
-        log.green("Create Resolved");
-        return db.execute(splice, insert)
-    }, (reason) => {
-        return Promise.reject(reason);
-    })
-    .then(() => {
-        log.green("Insert Resolved");
-        return db.execute(splice, update)
-    }, (reason) => {
-        return Promise.reject(reason);
-    })
-    .then(() => {
-        log.green("Update Resolved");
-        return db.select(splice, select)
-    }, (reason) => {
-        return Promise.reject(reason);
-    })
-    .then((set) => {
-        log.green("Select Resolved");
-        console.log(set);
-        return set;
-    }, (reason) => {
-        return Promise.reject(reason);
-    })
-    .catch(handle);
-
-
 if (process.env.NODE_ENV === "development") {
     /**
      * DEVELOPMENT
@@ -130,26 +75,82 @@ if (process.env.NODE_ENV === "development") {
 
 
 app.get("/api/v1/me", (req, res) => {
-    // res.send("fuck bucket")
-    // log.writer = res.write;
+    dbCall(res);
 
-    // log.writer = res.write;
-    // log.setWriter(res.write);
+
+    /**
 
     let c = 0;
-
-
     let interval = setInterval(() => {
         res.write(c.toString());
         if (c === 10) {
             res.end();
             clearInterval(interval);
         }
-
         ++c
     }, 1000)
+
+    */
 });
 
 const server = app.listen(app.get("port"), () => {
     server.keepAliveTimeout = 0;
 });
+
+function dbCall(res) {
+    db.setup(db.connection)
+        .then(() => {
+            res.write("==========\n\n");
+            res.write("Setup Resolved\n\n");
+            return db.reserve(db.connection);
+        }, (reason) => {
+            return Promise.reject(reason);
+        })
+        .then((connectionObject) => {
+            splice = connectionObject;
+            res.write("Reserve Resolved\n\n");
+            return db.prepare(splice)
+        }, (reason) => {
+            return Promise.reject(reason);
+        })
+        .then(() => {
+            res.write("Prepare Resolved\n\n");
+            return db.execute(splice, drop)
+        }, (reason) => {
+            return Promise.reject(reason);
+        })
+        .then(() => {
+            res.write("Drop Resolved\n\n");
+            return db.execute(splice, create)
+        }, (reason) => {
+            return Promise.reject(reason);
+        })
+        .then(() => {
+            res.write("Create Resolved\n\n");
+            return db.execute(splice, insert)
+        }, (reason) => {
+            return Promise.reject(reason);
+        })
+        .then(() => {
+            res.write("Insert Resolved\n\n");
+            return db.execute(splice, update)
+        }, (reason) => {
+            return Promise.reject(reason);
+        })
+        .then(() => {
+            res.write("Update Resolved\n\n");
+            return db.select(splice, select)
+        }, (reason) => {
+            return Promise.reject(reason);
+        })
+        .then((set) => {
+            res.write("Select Resolved\n\n");
+            // res.write(set); //First argument must be a string or Buffer
+            res.end();
+            return set;
+        }, (reason) => {
+            return Promise.reject(reason);
+        })
+        .catch(handle);
+}
+

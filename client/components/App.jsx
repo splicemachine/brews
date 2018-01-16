@@ -10,6 +10,8 @@ export default class App extends React.Component {
 
     handleClick() {
 
+        let store = document.createElement("p");
+        document.querySelector("body").appendChild(store);
         let myHeaders = new Headers();
         let myInit = {
             method: 'GET',
@@ -21,18 +23,25 @@ export default class App extends React.Component {
         fetch(env() + '/api/v1/me', myInit).then((response) => {
             console.log("Fetch came back");
             const reader = response.body.getReader();
-            let charsReceived = 0;
-            let result = "";
+            // let charsReceived = 0;
+            // let result = "";
 
-            reader.read().then(function processText({ done, value }) {
+            reader.read().then(function processText({done, value}) {
                 if (done) {
-                    console.log("Stream complete", result);
+                    console.log("Stream complete");
                     return;
                 }
 
-                charsReceived += value.length;
-                console.log(value);
-                result += value;
+                // charsReceived += value.length;
+                // console.log(value.map(String.fromCharCode));
+                // result += value;
+                // store.textContent += value.map(String.fromCharCode);
+                // console.log("gooby", String.fromCharCode.apply(null, value));
+                //
+                // store.innerHTML += String.fromCharCode.apply(null, value).replace("\n", "<br>");
+                store.innerHTML += String.fromCharCode.apply(null, value).split("\n").filter((item)=>item.length>0).join("<br>") + ("<br>");
+
+                // store.textContent += value;
                 return reader.read().then(processText);
             });
         });
