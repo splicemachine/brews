@@ -1,5 +1,7 @@
+
 let jdbc = require('jdbc');
 let jinst = require('jdbc/lib/jinst');
+
 if (!jinst.isJvmCreated()) {
     jinst.addOption("-Xrs");
     jinst.setupClasspath([
@@ -10,24 +12,26 @@ if (!jinst.isJvmCreated()) {
         __dirname + '/lib/derbytools.jar'
     ]);
 }
+
 const config = {
     url: 'jdbc:splice://localhost:1527/splicedb;user=splice;password=admin',
     user: 'user',
     password: 'admin'
 };
+
 module.exports = {
     connection: new jdbc(config),
     setup: (db) => {
         return new Promise((resolve, reject) => {
             db.initialize(function (err) {
                 if (err) {
-                    reject(err);
-                }
-                else {
-                    resolve(db);
+                    reject(err)
+                } else {
+                    resolve(db)
                 }
             });
         });
+
     },
     reserve: (db) => {
         return new Promise((resolve, reject) => {
@@ -35,27 +39,24 @@ module.exports = {
                 db.reserve((err, connectionObject) => {
                     if (connectionObject) {
                         // log.yellow("Using connection: " + connectionObject.uuid);
-                        resolve(connectionObject);
+                        resolve(connectionObject)
+                    } else {
+                        reject(err)
                     }
-                    else {
-                        reject(err);
-                    }
-                });
+                })
+            } else {
+                reject(new Error("no database connection provided"))
             }
-            else {
-                reject(new Error("no database connection provided"));
-            }
-        });
+        })
     },
     prepare: (db) => {
         return Promise.all([
             new Promise((resolve, reject) => {
                 db.conn.setAutoCommit(false, (err) => {
                     if (err) {
-                        reject(err);
-                    }
-                    else {
-                        resolve(db);
+                        reject(err)
+                    } else {
+                        resolve(db)
                     }
                 });
             })
@@ -66,16 +67,15 @@ module.exports = {
             db.conn.createStatement(function (err, statement) {
                 if (err) {
                     reject(err);
-                }
-                else {
-                    statement.executeUpdate(stmt, function (err, count) {
-                        if (err) {
-                            reject(err);
-                        }
-                        else {
-                            resolve(count);
-                        }
-                    });
+                } else {
+                    statement.executeUpdate(stmt,
+                        function (err, count) {
+                            if (err) {
+                                reject(err);
+                            } else {
+                                resolve(count);
+                            }
+                        });
                 }
             });
         });
@@ -85,14 +85,13 @@ module.exports = {
             db.conn.commit(function (err, statement) {
                 if (err) {
                     reject(err);
-                }
-                else {
-                    db.conn.close(function (err) {
-                        if (err) {
+                } else {
+                    db.conn.close(function(err){
+                        if(err){
                             reject(err);
                         }
                         resolve();
-                    });
+                    })
                 }
             });
         });
@@ -102,29 +101,30 @@ module.exports = {
             db.conn.createStatement(function (err, statement) {
                 if (err) {
                     reject(err);
-                }
-                else {
+                } else {
                     // Adjust some statement options before use.  See statement.js for
                     // a full listing of supported options.
                     statement.setFetchSize(100, function (err) {
                         if (err) {
                             reject(err);
+                        } else {
+                            statement.executeQuery(stmt,
+                                function (err, resultset) {
+                                    if (err) {
+                                        reject(err)
+                                    } else {
+                                        resultset.toObjArray(function (err, results) {
+                                            resolve(results);
+                                        });
+                                    }
+                                });
                         }
-                        else {
-                            statement.executeQuery(stmt, function (err, resultset) {
-                                if (err) {
-                                    reject(err);
-                                }
-                                else {
-                                    resultset.toObjArray(function (err, results) {
-                                        resolve(results);
-                                    });
-                                }
-                            });
-                        }
-                    });
+                    })
                 }
-            });
-        });
+            })
+        })
     }
 };
+
+
+
