@@ -4,6 +4,7 @@ const db = require("./db");
 const log = require("./log");
 
 const app = express();
+
 const DIST_DIR = path.join(__dirname, "../dist");
 const HTML_FILE = path.join(DIST_DIR, "index.html");
 const DEFAULT_PORT = 3000;
@@ -12,6 +13,24 @@ let db_statement = null;
 
 app.set("port", process.env.PORT || DEFAULT_PORT);
 app.set('json spaces', 2);
+app.use(function (req, res, next) {
+
+    // Website you wish to allow to connect
+    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:8080');
+
+    // Request methods you wish to allow
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+
+    // Request headers you wish to allow
+    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+
+    // Set to true if you need the website to include cookies in the requests sent
+    // to the API (e.g. in case you use sessions)
+    res.setHeader('Access-Control-Allow-Credentials', true);
+
+    // Pass to next layer of middleware
+    next();
+});
 
 function handle(e) {
     if (e.message.includes("java.net.ConnectException")) {
@@ -39,6 +58,7 @@ let update = `UPDATE blah
               SET id = 2
               WHERE name = 'Jason'`;
 let select = `SELECT * FROM blah`;
+
 
 db.setup(db.connection)
     .then(() => {
@@ -94,11 +114,12 @@ db.setup(db.connection)
     })
     .catch(handle);
 
+
 if (process.env.NODE_ENV === "development") {
     /**
      * DEVELOPMENT
      */
-    app.get('/', (req, res) => res.send(db_statement ? db_statement : "Nothing from the db... :("));
+    app.get('/', (req, res) => res.send(db_statement ? db_statement : "Development Mode!"));
 } else {
     /**
      * PRODUCTION
@@ -107,6 +128,28 @@ if (process.env.NODE_ENV === "development") {
     app.get("*", (req, res) => res.sendFile(HTML_FILE));
 }
 
-app.listen(app.get("port"));
+
+app.get("/api/v1/me", (req, res) => {
+    // res.send("fuck bucket")
+    // log.writer = res.write;
+
+    // log.writer = res.write;
+    // log.setWriter(res.write);
+
+    let c = 0;
 
 
+    let interval = setInterval(() => {
+        res.write(c.toString());
+        if (c === 10) {
+            res.end();
+            clearInterval(interval);
+        }
+
+        ++c
+    }, 1000)
+});
+
+const server = app.listen(app.get("port"), () => {
+    server.keepAliveTimeout = 0;
+});

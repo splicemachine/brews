@@ -1,8 +1,7 @@
-
 const chalk = require('chalk');
 
-function select(color){
-    return function(){
+function select(color) {
+    return function () {
         let args = Array.prototype.slice.call(arguments);
         console.log(chalk[color](...args))
     }
