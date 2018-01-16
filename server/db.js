@@ -31,6 +31,7 @@ module.exports = {
                 }
             });
         });
+
     },
     reserve: (db) => {
         return new Promise((resolve, reject) => {
@@ -75,6 +76,22 @@ module.exports = {
                                 resolve(count);
                             }
                         });
+                }
+            });
+        });
+    },
+    release: (db) => {
+        return new Promise((resolve, reject) => {
+            db.conn.commit(function (err, statement) {
+                if (err) {
+                    reject(err);
+                } else {
+                    db.conn.close(function(err){
+                        if(err){
+                            reject(err);
+                        }
+                        resolve();
+                    })
                 }
             });
         });

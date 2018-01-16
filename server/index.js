@@ -33,8 +33,11 @@ app.use(function (req, res, next) {
 });
 
 function handle(e) {
-    if (e.message.includes("java.net.ConnectException")) {
+
+    if (e.message.includes("ConnectException")) {
         console.log("I don't think the database is turned on.")
+    } else if (e.message.includes("SQLNonTransientConnectionException")) {
+        console.log("The database died while we were connnected to it.")
     } else {
         console.log("I don't know what kind of error this is.", e.message)
     }
@@ -143,8 +146,14 @@ function dbCall(res) {
         }, (reason) => {
             return Promise.reject(reason);
         })
+        .then(() => {
+            res.write("Select Resolved\n");
+            return db.release(splice)
+        }, (reason) => {
+            return Promise.reject(reason);
+        })
         .then((set) => {
-            res.write("Select Resolved\n\n");
+            res.write("Released and Closed Connection\n\n");
             // res.write(set); //First argument must be a string or Buffer
             res.end();
             return set;
