@@ -10,8 +10,8 @@ const pm2 = require("pm2");
 
 const tsProject = ts.createProject("tsconfig.json");
 
-gulp.watch("server/**/*.ts", ["clean", "compile", "dev:restart"], () => {
-});
+
+
 
 let log = {
     server: false,
@@ -34,6 +34,9 @@ gulp.task("compile", ["clean"], () => {
 });
 
 gulp.task("watch", ["clean", "compile", "dev:server"], () => {
+    gulp.watch("server/**/*.ts", ["clean", "compile", "dev:restart"], () => {
+    });
+
     process.on("SIGINT", function () {
 
         let kill = new Promise((resolve) => {

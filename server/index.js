@@ -61,30 +61,14 @@ else {
      * PRODUCTION
      */
     app.use(express.static(DIST_DIR));
-    app.get("*", (req, res) => res.sendFile(HTML_FILE));
+    app.get("/", (req, res) => res.sendFile(HTML_FILE));
 }
 app.get("/api/v1/me", (req, res) => {
     dbCall(res);
-    /**
-
-    let c = 0;
-    let interval = setInterval(() => {
-        res.write(c.toString());
-        if (c === 10) {
-            res.end();
-            clearInterval(interval);
-        }
-        ++c
-    }, 1000)
-
-    */
 });
 const server = app.listen(app.get("port"), () => {
     console.log("Server Started");
     server.keepAliveTimeout = 0;
-    // setInterval(()=>{
-    //     console.log("listen to me")
-    // }, 2000)
 });
 function dbCall(res) {
     db.setup(db.connection)
