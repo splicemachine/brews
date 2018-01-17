@@ -1,3 +1,6 @@
 node_modules/
 .idea/
 dist/
+server/db.js
+server/index.js
+server/log.js
