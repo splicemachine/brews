@@ -26,16 +26,18 @@ ADD ./server /app/server
 ADD ./package.json /app
 ADD ./webpack.config.js /app
 ADD ./.babelrc /app
+ADD gulpfile-old.js /app
 
 # Disable package.lock
 # https://codeburst.io/disabling-package-lock-json-6be662f5b97d
 RUN npm config set package-lock false
 RUN npm install --no-optional
 RUN npm install -g pm2
+RUN npm install -g gulp
 #RUN npm install --no-optional --silent
 #RUN npm install -g pm2 --silent
 
-RUN npm run build
+RUN gulp compile
 
 ## Add the patch fix
 #COPY common/stack-fix.c /lib/

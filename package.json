@@ -5,17 +5,13 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "dev": "npm run server | npm run client",
-    "kill": "pm2 delete brews-client brews-server",
-    "build": "NODE_ENV=production webpack && gulp compile",
-    "start": "NODE_ENV=production pm2-runtime start server/index.js",
-    "stop": "pm2-runtime delete brews-prod"
+    "start": "NODE_ENV=production pm2-runtime start server/index.js"
   },
   "dependencies": {
     "async": "^2.6.0",
     "chalk": "^2.3.0",
     "express": "^4.16.2",
-    "gulp": "^3.9.1",
+    "gulp": "^4.0.0",
     "gulp-typescript": "^4.0.0-alpha.1",
     "html-webpack-plugin": "^2.26.0",
     "jdbc": "^0.6.1",
@@ -33,13 +29,14 @@
     "@types/node": "^9.3.0",
     "@types/react": "^16.0.34",
     "@types/undertaker": "^1.1.4",
-    "babel-core": "^6.21.0",
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.0",
     "babel-loader": "^6.2.10",
     "babel-preset-env": "^1.6.1",
     "babel-preset-react": "^6.16.0",
+    "babel-register": "^6.26.0",
     "css-loader": "^0.28.8",
-    "gulp-clean": "^0.4.0",
-    "style-loader": "^0.19.1"
+    "del": "^3.0.0"
   },
   "repository": {
     "type": "git",

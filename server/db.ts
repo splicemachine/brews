@@ -14,7 +14,8 @@ if (!jinst.isJvmCreated()) {
 }
 
 const config = {
-    url: 'jdbc:splice://localhost:1527/splicedb;user=splice;password=admin',
+    // url: 'jdbc:splice://localhost:1527/splicedb;user=splice;password=admin',
+    url: process.env.JDBC_URL,
     user: 'user',
     password: 'admin'
 };

@@ -18,7 +18,7 @@
       }
     ],
     "docker": {
-      "image": "splicemachine/node-splice:latest",
+      "image": "splicemachine/brews:latest",
       "network": "HOST",
       "portMappings": [],
       "privileged": false,
@@ -28,7 +28,8 @@
   },
   "env": {
     "TERM": "xterm",
-    "DOCKER_CONFIG": "/etc/mesosphere/docker_credentials"
+    "DOCKER_CONFIG": "/etc/mesosphere/docker_credentials",
+    "JDBC_URL": "/etc/mesosphere/docker_credentials"
   },
   "healthChecks": [
     {

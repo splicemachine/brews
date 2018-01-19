@@ -46,6 +46,7 @@ function handle(e) {
 let splice = null;
 
 let drop = `DROP TABLE IF EXISTS blah`;
+
 let create = `CREATE TABLE blah
               (
                 id int,
@@ -84,6 +85,9 @@ app.get("/api/v1/me", (req, res) => {
 const server = app.listen(app.get("port"), () => {
     console.log("Server Started");
     server.keepAliveTimeout = 0;
+    // setInterval(()=>{
+    //     console.log("Hey Buddy")
+    // },1000)
 });
 
 function dbCall(res) {
