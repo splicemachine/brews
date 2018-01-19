@@ -1,23 +1,23 @@
 
-let jdbc = require('jdbc');
-let jinst = require('jdbc/lib/jinst');
+let jdbc = require("jdbc");
+let jinst = require("jdbc/lib/jinst");
 
 if (!jinst.isJvmCreated()) {
     jinst.addOption("-Xrs");
     jinst.setupClasspath([
-        __dirname + '/lib/hsqldb.jar',
-        __dirname + '/lib/derby.jar',
-        __dirname + '/lib/splice.jar',
-        __dirname + '/lib/derbyclient.jar',
-        __dirname + '/lib/derbytools.jar'
+        __dirname + "/lib/hsqldb.jar",
+        __dirname + "/lib/derby.jar",
+        __dirname + "/lib/splice.jar",
+        __dirname + "/lib/derbyclient.jar",
+        __dirname + "/lib/derbytools.jar"
     ]);
 }
 
 const config = {
-    // url: 'jdbc:splice://localhost:1527/splicedb;user=splice;password=admin',
+    // url: "jdbc:splice://localhost:1527/splicedb;user=splice;password=admin",
     url: process.env.JDBC_URL,
-    user: 'user',
-    password: 'admin'
+    user: "user",
+    password: "admin"
 };
 
 module.exports = {

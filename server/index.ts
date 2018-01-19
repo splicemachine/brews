@@ -1,5 +1,5 @@
-const express = require('express');
-const path = require('path');
+const express = require("express");
+const path = require("path");
 const db = require("./db");
 const log = require("./log");
 
@@ -12,21 +12,21 @@ const DEFAULT_PORT = 3000;
 let db_statement = null;
 
 app.set("port", process.env.PORT || DEFAULT_PORT);
-app.set('json spaces', 2);
+app.set("json spaces", 2);
 app.use(function (req, res, next) {
 
     // Website you wish to allow to connect
-    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:8080');
+    res.setHeader("Access-Control-Allow-Origin", "http://localhost:8080");
 
     // Request methods you wish to allow
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+    res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, PATCH, DELETE");
 
     // Request headers you wish to allow
-    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+    res.setHeader("Access-Control-Allow-Headers", "X-Requested-With,content-type");
 
     // Set to true if you need the website to include cookies in the requests sent
     // to the API (e.g. in case you use sessions)
-    res.setHeader('Access-Control-Allow-Credentials', true);
+    res.setHeader("Access-Control-Allow-Credentials", true);
 
     // Pass to next layer of middleware
     next();
@@ -37,10 +37,11 @@ function handle(e) {
     if (e.message.includes("ConnectException")) {
         console.log("I don't think the database is turned on.")
     } else if (e.message.includes("SQLNonTransientConnectionException")) {
-        console.log("The database died while we were connnected to it.")
+        console.log("The database died while we were connected to it.")
     } else {
-        console.log("I don't know what kind of error this is.", e.message)
+        console.log("I don't know what kind of error this is.")
     }
+    console.log(e.message)
 }
 
 let splice = null;
@@ -68,7 +69,7 @@ if (process.env.NODE_ENV === "development") {
     /**
      * DEVELOPMENT
      */
-    app.get('/', (req, res) => res.send(db_statement ? db_statement : "Development Mode!"));
+    app.get("/", (req, res) => res.send(db_statement ? db_statement : "Development Mode!"));
 } else {
     /**
      * PRODUCTION

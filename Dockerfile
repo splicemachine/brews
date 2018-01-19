@@ -23,21 +23,22 @@ RUN apt-get update && \
 WORKDIR /app
 ADD ./client /app/client
 ADD ./server /app/server
+ADD ./config /app/config
 ADD ./package.json /app
 ADD ./webpack.config.js /app
 ADD ./.babelrc /app
-ADD gulpfile-old.js /app
+ADD gulpfile.babel.js /app
 
 # Disable package.lock
 # https://codeburst.io/disabling-package-lock-json-6be662f5b97d
 RUN npm config set package-lock false
 RUN npm install --no-optional
 RUN npm install -g pm2
-RUN npm install -g gulp
+RUN npm install -g gulp-cli
 #RUN npm install --no-optional --silent
 #RUN npm install -g pm2 --silent
 
-RUN gulp compile
+RUN npm run build
 
 ## Add the patch fix
 #COPY common/stack-fix.c /lib/

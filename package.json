@@ -5,7 +5,11 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "start": "NODE_ENV=production pm2-runtime start server/index.js"
+    "dev": "npm run server | npm run client",
+    "kill": "pm2 delete brews-client brews-server",
+    "build": "NODE_ENV=production webpack && gulp compile",
+    "start": "NODE_ENV=production pm2-runtime start server/index.js",
+    "stop": "pm2-runtime delete brews-prod"
   },
   "dependencies": {
     "async": "^2.6.0",
@@ -36,7 +40,8 @@
     "babel-preset-react": "^6.16.0",
     "babel-register": "^6.26.0",
     "css-loader": "^0.28.8",
-    "del": "^3.0.0"
+    "del": "^3.0.0",
+    "style-loader": "^0.19.1"
   },
   "repository": {
     "type": "git",
