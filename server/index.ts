@@ -1,15 +1,14 @@
-const express = require("express");
-const path = require("path");
-const db = require("./db");
-const log = require("./log");
+
+import express = require('express');
+import path = require('path');
+import db from "./db"
+import statements from "./sql-statements"
 
 const app = express();
 
 const DIST_DIR = path.join(__dirname, "../dist");
 const HTML_FILE = path.join(DIST_DIR, "index.html");
 const DEFAULT_PORT = 3000;
-
-let db_statement = null;
 
 app.set("port", process.env.PORT || DEFAULT_PORT);
 app.set("json spaces", 2);
@@ -26,30 +25,11 @@ app.use(function (req, res, next) {
 
     // Set to true if you need the website to include cookies in the requests sent
     // to the API (e.g. in case you use sessions)
-    res.setHeader("Access-Control-Allow-Credentials", true);
+    res.setHeader("Access-Control-Allow-Credentials", "true");
 
     // Pass to next layer of middleware
     next();
 });
-
-function writeToStreams(message, ...fns) {
-    fns.forEach((fn) => {
-        fn.call(null, message)
-    })
-}
-
-function handle(response, e) {
-    if (e.message.includes("ConnectException")) {
-        writeToStreams("I don't think the database is turned on.\n", console.log, response.write.bind(response));
-    } else if (e.message.includes("SQLNonTransientConnectionException")) {
-        writeToStreams("The database died while we were connected to it.\n", console.log, response.write.bind(response));
-    } else if (e.message.includes("INVALID ARGUMENTS")) {
-        writeToStreams(`I don't think you set the databases's environment variable. JDBC_URL is ... ${process.env.JDBC_URL?"set":"unset"}\n`, console.log, response.write.bind(response));
-    } else {
-        writeToStreams("I don't know what kind of error this is.\n", console.log, response.write.bind(response));
-    }
-    writeToStreams(`Error:\n ${e.message}`, console.log, response.write.bind(response));
-}
 
 let splice = null;
 
@@ -76,7 +56,7 @@ if (process.env.NODE_ENV === "development") {
     /**
      * DEVELOPMENT
      */
-    app.get("/", (req, res) => res.send(db_statement ? db_statement : "Development Mode!"));
+    app.get("/", (req, res) => res.send("Development Mode!"));
 } else {
     /**
      * PRODUCTION
@@ -146,13 +126,13 @@ function dbCall(res) {
         })
         .then((set) => {
             res.write("Select Resolved\n");
-
-            set.map((item) => {
-                for (let prop in item) {
-                    res.write(`${prop} : ${item[prop]}\n`)
-                }
-            });
-
+            if(set instanceof Array){
+                set.map((item) => {
+                    for (let prop in item) {
+                        res.write(`${prop} : ${item[prop]}\n`)
+                    }
+                });
+            }
             return db.release(splice)
         }, (reason) => {
             return Promise.reject(reason);
@@ -167,3 +147,23 @@ function dbCall(res) {
         .catch(handle.bind(null, res));
 }
 
+
+
+function writeToStreams(message, ...fns) {
+    fns.forEach((fn) => {
+        fn.call(null, message)
+    })
+}
+
+function handle(response, e) {
+    if (e.message.includes("ConnectException")) {
+        writeToStreams("I don't think the database is turned on.\n", console.log, response.write.bind(response));
+    } else if (e.message.includes("SQLNonTransientConnectionException")) {
+        writeToStreams("The database died while we were connected to it.\n", console.log, response.write.bind(response));
+    } else if (e.message.includes("INVALID ARGUMENTS")) {
+        writeToStreams(`I don't think you set the databases's environment variable. JDBC_URL is ... ${process.env.JDBC_URL?"set":"unset"}\n`, console.log, response.write.bind(response));
+    } else {
+        writeToStreams("I don't know what kind of error this is.\n", console.log, response.write.bind(response));
+    }
+    writeToStreams(`Error:\n ${e.message}`, console.log, response.write.bind(response));
+}

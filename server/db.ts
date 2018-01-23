@@ -19,7 +19,7 @@ const config = {
     password: "admin"
 };
 
-module.exports = {
+export default {
     connection: new jdbc(config),
     setup: (db) => {
         return new Promise((resolve, reject) => {
