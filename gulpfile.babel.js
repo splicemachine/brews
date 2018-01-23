@@ -1,20 +1,10 @@
 import gulp from "gulp";
 import ts from "gulp-typescript";
-import pm2 from "pm2";
 import chalk from "chalk";
+// noinspection NpmUsedModulesInstalled
 import del from "del";
-
-const paths = {
-    styles: {
-        src: "src/styles/**/*.less",
-        dest: "assets/styles/"
-    },
-    scripts: {
-        src: "src/scripts/**/*.js",
-        dest: "assets/scripts/"
-    }
-};
-
+// noinspection ES6CheckImport
+import pm2 from "pm2";
 
 let log = {
     server: false,
@@ -26,6 +16,7 @@ const tsProject = ts.createProject("tsconfig.json");
 export const clean = () => del(["server/**/*.js"]);
 
 export function compile() {
+
     let tsResult = gulp.src("server/**/*.ts").pipe(tsProject());
     return tsResult.js.pipe(gulp.dest("server"));
 }
@@ -86,6 +77,7 @@ export function pm2client() {
 
 export const dev = gulp.series(clean, compile, gulp.parallel(pm2client, pm2server));
 
+// noinspection JSUnusedGlobalSymbols
 export function kill() {
     return new Promise((resolve) => {
         pm2.connect(function () {
@@ -103,8 +95,10 @@ export function kill() {
 }
 
 function watcher() {
+    // noinspection JSCheckFunctionSignatures
     gulp.watch("server/**/*.ts", gulp.series(clean, compile, restart), () => {
     });
 }
 
+// noinspection JSUnusedGlobalSymbols
 export const watch = gulp.task("watch", gulp.series(dev, watcher));

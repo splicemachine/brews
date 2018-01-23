@@ -79,8 +79,9 @@ if (process.env.NODE_ENV === "development") {
 }
 
 
-app.get("/api/v1/me", (req, res) => {
+app.get("/api/v1/me", (req, res, next) => {
     dbCall(res);
+    // next();
 });
 
 const server = app.listen(app.get("port"), () => {
@@ -142,6 +143,7 @@ function dbCall(res) {
 
             set.map((item)=>{
                 for(let prop in item){
+                    // noinspection JSUnfilteredForInLoop
                     res.write(`${prop} : ${item[prop]}\n`)
                 }
             });
