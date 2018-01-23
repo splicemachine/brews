@@ -95,11 +95,7 @@ let schemaCreationStatements = [
     )`
 ];
 
-let dataImportStatements = [
-    `call SYSCS_UTIL.IMPORT_DATA('TIMELINE','TRANSFERORDERS',null, 's3a://AKIAJUVPSNCAG6AIO7UQ:Dtz9+Iw6RcBlIw8Y3SFYAPD6TkoGwk6DZEobErky@splice-demo/supplychain/data_0623/train_orders.csv', null, null, 'yyyy-MM-dd HH:mm:ss.S', null, null, -1, '/tmp', true, null);`,
-    `call SYSCS_UTIL.IMPORT_DATA('TIMELINE','TO_DELIVERY_CHG_EVENT', null, 's3a://AKIAJUVPSNCAG6AIO7UQ:Dtz9+Iw6RcBlIw8Y3SFYAPD6TkoGwk6DZEobErky@splice-demo/supplychain/data_0623/train_events.csv', null, null, 'yyyy-MM-dd HH:mm:ss.S', null, null, -1, '/tmp', true, null);`,
-    `call SYSCS_UTIL.IMPORT_DATA('TIMELINE','TIMELINE_INT', null, 's3a://AKIAJUVPSNCAG6AIO7UQ:Dtz9+Iw6RcBlIw8Y3SFYAPD6TkoGwk6DZEobErky@splice-demo/supplychain/data_0623/train_inv.csv', null, null, 'yyyy-MM-dd HH:mm:ss.S', null, null, -1, '/tmp', true, null);`,
-];
+
 
 
 export default {
