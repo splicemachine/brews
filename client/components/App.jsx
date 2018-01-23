@@ -1,6 +1,7 @@
 import React from 'react';
 import env from '../../config/environment'
 import "../styles/main.css"
+import Progress from 'react-progressbar';
 
 export default class App extends React.Component {
 
@@ -41,6 +42,7 @@ export default class App extends React.Component {
                 <h1>Hello Nik.</h1>
                 <div className='button__container'>
                     <button className='button' onClick={this.handleClick}>Click Me</button>
+                    {/*<Progress completed={75} />*/}
                 </div>
             </div>
         );

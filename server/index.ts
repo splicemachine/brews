@@ -148,7 +148,7 @@ function dbCall(res) {
             res.write("Select Resolved\n");
 
             set.map((item) => {
-                for (let prop of item) {
+                for (let prop in item) {
                     res.write(`${prop} : ${item[prop]}\n`)
                 }
             });
