@@ -17,6 +17,7 @@ export const clean = () => del(["server/**/*.js"]);
 
 export function compile() {
 
+    // noinspection JSCheckFunctionSignatures
     let tsResult = gulp.src("server/**/*.ts").pipe(tsProject());
     return tsResult.js.pipe(gulp.dest("server"));
 }
