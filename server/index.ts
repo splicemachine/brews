@@ -32,16 +32,23 @@ app.use(function (req, res, next) {
     next();
 });
 
-function handle(e) {
+function writeToStreams(message, ...fns) {
+    fns.forEach((fn) => {
+        fn.call(null, message)
+    })
+}
 
+function handle(response, e) {
     if (e.message.includes("ConnectException")) {
-        console.log("I don't think the database is turned on.")
+        writeToStreams("I don't think the database is turned on.\n", console.log, response.write.bind(response));
     } else if (e.message.includes("SQLNonTransientConnectionException")) {
-        console.log("The database died while we were connected to it.")
+        writeToStreams("The database died while we were connected to it.\n", console.log, response.write.bind(response));
+    } else if (e.message.includes("INVALID ARGUMENTS")) {
+        writeToStreams(`I don't think you set the databases's environment variable. JDBC_URL is ... ${process.env.JDBC_URL?"set":"unset"}\n`, console.log, response.write.bind(response));
     } else {
-        console.log("I don't know what kind of error this is.")
+        writeToStreams("I don't know what kind of error this is.\n", console.log, response.write.bind(response));
     }
-    console.log(e.message)
+    writeToStreams(`Error:\n ${e.message}`, console.log, response.write.bind(response));
 }
 
 let splice = null;
@@ -79,9 +86,8 @@ if (process.env.NODE_ENV === "development") {
 }
 
 
-app.get("/api/v1/me", (req, res, next) => {
+app.get("/api/v1/me", (req, res) => {
     dbCall(res);
-    // next();
 });
 
 const server = app.listen(app.get("port"), () => {
@@ -141,9 +147,8 @@ function dbCall(res) {
         .then((set) => {
             res.write("Select Resolved\n");
 
-            set.map((item)=>{
-                for(let prop in item){
-                    // noinspection JSUnfilteredForInLoop
+            set.map((item) => {
+                for (let prop of item) {
                     res.write(`${prop} : ${item[prop]}\n`)
                 }
             });
@@ -159,6 +164,6 @@ function dbCall(res) {
         }, (reason) => {
             return Promise.reject(reason);
         })
-        .catch(handle);
+        .catch(handle.bind(null, res));
 }
 
