@@ -1,7 +1,7 @@
 /**
  * DO NOT AUTOFORMAT THIS FILE
  */
-import env from "./environment"
+import env from "../../environment"
 
 let schemaCreationStatements = [
     `create schema TIMELINE`,

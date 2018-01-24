@@ -22,7 +22,7 @@ export default class App extends React.Component {
             cache: 'default'
         };
 
-        fetch(env.server() + '/api/v1/me', myInit).then((response) => {
+        fetch(env.server() + '/api/v1/example', myInit).then((response) => {
             console.log("Fetch came back");
             const reader = response.body.getReader();
             reader.read().then(function processText({done, value}) {
