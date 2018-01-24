@@ -42,8 +42,7 @@ export function pm2server() {
                 script: "server/index.js",
                 color: true,
                 env: {
-                    "NODE_ENV": "development",
-                    "JDBC_URL":"jdbc:splice://localhost:1527/splicedb;user=splice;password=admin"
+                    "NODE_ENV": "development"
                 }
             }, function () {
                 if (!log.server) {
@@ -105,4 +104,4 @@ function watcher() {
 // noinspection JSUnusedGlobalSymbols
 // export const watch = gulp.task("watch", gulp.series(dev, watcher));
 
-gulp.task("default",  gulp.series(dev, watcher));
+gulp.task("default", gulp.series(dev, watcher));

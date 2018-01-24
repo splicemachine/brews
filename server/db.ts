@@ -1,3 +1,4 @@
+import env from "./environment"
 
 let jdbc = require("jdbc");
 let jinst = require("jdbc/lib/jinst");
@@ -14,7 +15,7 @@ if (!jinst.isJvmCreated()) {
 }
 
 const config = {
-    url: process.env.JDBC_URL, // url: "jdbc:splice://localhost:1527/splicedb;user=splice;password=admin",
+    url: env.JDBC_URL,
     user: "user",
     password: "admin"
 };
@@ -86,8 +87,8 @@ export default {
                 if (err) {
                     reject(err);
                 } else {
-                    db.conn.close(function(err){
-                        if(err){
+                    db.conn.close(function (err) {
+                        if (err) {
                             reject(err);
                         }
                         resolve();

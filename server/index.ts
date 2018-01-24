@@ -1,4 +1,3 @@
-
 import express = require('express');
 import path = require('path');
 import db from "./db"
@@ -126,7 +125,7 @@ function dbCall(res) {
         })
         .then((set) => {
             res.write("Select Resolved\n");
-            if(set instanceof Array){
+            if (set instanceof Array) {
                 set.map((item) => {
                     for (let prop in item) {
                         res.write(`${prop} : ${item[prop]}\n`)
@@ -148,7 +147,6 @@ function dbCall(res) {
 }
 
 
-
 function writeToStreams(message, ...fns) {
     fns.forEach((fn) => {
         fn.call(null, message)
@@ -161,7 +159,7 @@ function handle(response, e) {
     } else if (e.message.includes("SQLNonTransientConnectionException")) {
         writeToStreams("The database died while we were connected to it.\n", console.log, response.write.bind(response));
     } else if (e.message.includes("INVALID ARGUMENTS")) {
-        writeToStreams(`I don't think you set the databases's environment variable. JDBC_URL is ... ${process.env.JDBC_URL?"set":"unset"}\n`, console.log, response.write.bind(response));
+        writeToStreams(`I don't think you set the databases's environment variable. JDBC_URL is ... ${process.env.JDBC_URL ? "set" : "unset"}\n`, console.log, response.write.bind(response));
     } else {
         writeToStreams("I don't know what kind of error this is.\n", console.log, response.write.bind(response));
     }
