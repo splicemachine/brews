@@ -20,12 +20,12 @@ module.exports = {
             assets: false,
             chunks: false,
             modules: false,
-            reasons: false,
+            reasons: true,
             children: false,
             source: false,
-            errors: false,
-            errorDetails: false,
-            warnings: false,
+            errors: true,
+            errorDetails: true,
+            warnings: true,
             publicPath: false
         }
     },

@@ -50,6 +50,7 @@ if (process.env.NODE_ENV === "development") {
 
 /**
  * Import and configure the example route.
+ * There's no way this one works anymore lol.
  */
 // import example from "./database-operations/example/example";
 // app.get("/api/v1/example", (req, res) => {

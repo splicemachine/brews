@@ -1,13 +1,18 @@
-import React from 'react';
-import env from '../../server/environment'
+import React, {Component} from "react";
+import env from "../../server/environment"
 import "../styles/main.css"
-import Progress from 'react-progressbar';
+import Progress from "react-progressbar";
+import Output from "./Output.jsx";
 
-export default class App extends React.Component {
+export default class App extends Component {
 
-    constructor() {
-        super();
-        this.handleClick = this.handleClick.bind(this)
+    constructor(props) {
+        super(props);
+        this.handleClick = this.handleClick.bind(this);
+        this.containerClasses = ``;
+        this.buttonContainerClasses = `button__container pure-u-1 pure-u-lg-1-2`;
+        // this.progressBarClasses = `pure-u-1 pure-u-lg-1-4`;
+        this.outputClasses = `pure-u-1 pure-u-lg-1-2`;
     }
 
     handleClick() {
@@ -16,13 +21,13 @@ export default class App extends React.Component {
         document.querySelector("body").appendChild(store);
         let myHeaders = new Headers();
         let myInit = {
-            method: 'GET',
+            method: "GET",
             headers: myHeaders,
-            mode: 'cors',
-            cache: 'default'
+            mode: "cors",
+            cache: "default"
         };
 
-        fetch(env.server() + '/api/v1/example', myInit).then((response) => {
+        fetch(env.server() + "/api/v1/atp", myInit).then((response) => {
             console.log("Fetch came back");
             const reader = response.body.getReader();
             reader.read().then(function processText({done, value}) {
@@ -38,11 +43,14 @@ export default class App extends React.Component {
 
     render() {
         return (
-            <div style={{textAlign: 'center'}}>
-                <h1>Hello Nik.</h1>
-                <div className='button__container'>
-                    <button className='button' onClick={this.handleClick}>Click Me</button>
-                    {/*<Progress completed={75} />*/}
+            <div>
+                <h1>Available to Promise</h1>
+                <div className={this.containerClasses}>
+                    <div className={this.buttonContainerClasses}>
+                        <Progress completed={1}/>
+                        <button className="button" onClick={this.handleClick}>Click Me</button>
+                    </div>
+                    <Output gooby="nothing" className={this.outputClasses}/>
                 </div>
             </div>
         );
