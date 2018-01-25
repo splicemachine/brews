@@ -10,7 +10,7 @@ import env from "../../environment";
  * prior to running the code I want.
  * @type {string[]}
  */
-let spliceMachineSpecific = [
+let errorInvariant = [
     `drop table IF EXISTS TIMELINE.TRANSFERORDERS`,
     `drop table IF EXISTS TIMELINE.TO_DELIVERY_CHG_EVENT`,
     `drop table IF EXISTS TIMELINE.TIMELINE_INT`,
@@ -129,8 +129,8 @@ let dataImportStatements = [
 
 export default {
     create: schemaCreationStatements,
-    import: dataImportStatements,
-    errorInvariant: spliceMachineSpecific
+    insert: dataImportStatements,
+    errorInvariant: errorInvariant
 }
 
 
