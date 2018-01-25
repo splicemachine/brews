@@ -1,11 +1,10 @@
 FROM openjdk:8-jdk
 
-MAINTAINER Filiosoft, LLC <Team@Filiosoft.com>
+MAINTAINER Nikhil Nygaard <nikhil.nygaard@gmail.com>
 
 ENV NODE_VERSION 8
 RUN apt-get update
 RUN apt-get install -y build-essential
-#RUN apt-get install -y build-essential
 
 RUN apt-get update && \
     apt-get install --no-install-recommends -y apt-transport-https  && \
@@ -28,6 +27,7 @@ ADD ./package.json /app
 ADD ./webpack.config.js /app
 ADD ./.babelrc /app
 ADD gulpfile.babel.js /app
+ADD tsconfig.json /app
 
 # Disable package.lock
 # https://codeburst.io/disabling-package-lock-json-6be662f5b97d
@@ -35,27 +35,9 @@ RUN npm config set package-lock false
 RUN npm install --no-optional
 RUN npm install -g pm2
 RUN npm install -g gulp-cli
-#RUN npm install --no-optional --silent
-#RUN npm install -g pm2 --silent
 
+# https://github.com/gulpjs/gulp-cli/issues/142
+# Ignore red messages from gulp because they log.error a requirement chain...
 RUN npm run build
 
-## Add the patch fix
-#COPY common/stack-fix.c /lib/
-#
-## Prepare the libraries packages
-#RUN set -ex \
-#    && apk add --no-cache  --virtual .build-deps build-base \
-#    && gcc  -shared -fPIC /lib/stack-fix.c -o /lib/stack-fix.so \
-#    && apk del .build-deps
-#
-## export the environment variable of LD_PRELOAD
-#ENV LD_PRELOAD /lib/stack-fix.so
-
 CMD ["npm", "start"]
-
-# Attach terminal to this running container
-# docker exec -i -t [container] /bin/bash
-
-
-
