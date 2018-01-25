@@ -1,7 +1,7 @@
 import statements from "./sql-statements";
 import express = require("express");
 import Database from "../../db";
-import handle from "../../helpers";
+import {handle, writeToStreams} from "../../helpers";
 
 let rejected = (reason)=>Promise.reject(reason);
 
@@ -11,7 +11,7 @@ export default function (res: express.Response) {
 
     db._forced_transaction(statements.errorInvariant)
         .then(() => {
-            console.log("Forced Cleanup Completed");
+            writeToStreams("Forced Cleanup Completed", console.log, res.write.bind(res));
             return db.transaction(statements.create);
         }, rejected)
         .then(() => {

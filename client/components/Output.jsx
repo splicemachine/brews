@@ -13,7 +13,7 @@ export default class Output extends Component {
         const {className} = this.props;
         return (
             <code className={className || "fucking-nothing"}>
-                {this.props.gooby}
+                {this.props.text}
             </code>
         )
     }

@@ -11,14 +11,14 @@ export default class App extends Component {
         this.handleClick = this.handleClick.bind(this);
         this.containerClasses = ``;
         this.buttonContainerClasses = `button__container pure-u-1 pure-u-lg-1-2`;
-        // this.progressBarClasses = `pure-u-1 pure-u-lg-1-4`;
         this.outputClasses = `pure-u-1 pure-u-lg-1-2`;
+        this.textStream = "gooby";
     }
 
     handleClick() {
 
-        let store = document.createElement("p");
-        document.querySelector("body").appendChild(store);
+        // let store = document.createElement("p");
+        // document.querySelector("body").appendChild(store);
         let myHeaders = new Headers();
         let myInit = {
             method: "GET",
@@ -27,15 +27,21 @@ export default class App extends Component {
             cache: "default"
         };
 
+
+
+        let textStream = this.textStream;
+
         fetch(env.server() + "/api/v1/atp", myInit).then((response) => {
             console.log("Fetch came back");
             const reader = response.body.getReader();
+
+
             reader.read().then(function processText({done, value}) {
                 if (done) {
                     console.log("Stream complete");
                     return;
                 }
-                store.innerHTML += String.fromCharCode.apply(null, value).split("\n").filter((item) => item.length > 0).join("<br>") + ("<br>");
+                textStream += String.fromCharCode.apply(null, value).split("\n").filter((item) => item.length > 0).join("<br>") + ("<br>");
                 return reader.read().then(processText);
             });
         });
@@ -50,7 +56,7 @@ export default class App extends Component {
                         <Progress completed={1}/>
                         <button className="button" onClick={this.handleClick}>Click Me</button>
                     </div>
-                    <Output gooby="nothing" className={this.outputClasses}/>
+                    <Output text={this.textStream} className={this.outputClasses}/>
                 </div>
             </div>
         );
