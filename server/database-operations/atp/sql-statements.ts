@@ -1,6 +1,26 @@
 /**
  * DO NOT AUTOFORMAT THIS FILE
  */
+import env from "../../environment";
+
+/**
+ * These statements exist because Splice Machine does not have fully
+ * idempotent operations. Things like IF NOT EXISTS do not exits.
+ * I must run these statements without regard to errors to clean the database
+ * prior to running the code I want.
+ * @type {string[]}
+ */
+let spliceMachineSpecific = [
+    `drop table IF EXISTS TIMELINE.TRANSFERORDERS`,
+    `drop table IF EXISTS TIMELINE.TO_DELIVERY_CHG_EVENT`,
+    `drop table IF EXISTS TIMELINE.TIMELINE_INT`,
+    `drop table IF EXISTS TIMELINE.STOCKOUTS`,
+    `drop table IF EXISTS TIMELINE.RESULT_DATES`,
+    `drop table IF EXISTS TIMELINE.RESULT_DATE`,
+    `drop table IF EXISTS TIMELINE.QUICK_CHECK_LINES`,
+
+    `drop schema TIMELINE restrict`,
+];
 
 let schemaCreationStatements = [
     `create schema TIMELINE`,
@@ -95,12 +115,22 @@ let schemaCreationStatements = [
     )`
 ];
 
-
+/**
+ * Replace credentials with public
+ * @type {string[]}
+ * splice-demo-user
+ */
+let dataImportStatements = [
+    `call SYSCS_UTIL.IMPORT_DATA('TIMELINE','TRANSFERORDERS',null, 's3a://${env.ATP_S3_USER}:${env.ATP_S3_SECRET}@splice-demo/supplychain/data_0623/train_orders.csv', null, null, 'yyyy-MM-dd HH:mm:ss.S', null, null, -1, '/tmp', true, null);`,
+    `call SYSCS_UTIL.IMPORT_DATA('TIMELINE','TO_DELIVERY_CHG_EVENT', null, 's3a://${env.ATP_S3_USER}:${env.ATP_S3_SECRET}@splice-demo/supplychain/data_0623/train_events.csv', null, null, 'yyyy-MM-dd HH:mm:ss.S', null, null, -1, '/tmp', true, null);`,
+    `call SYSCS_UTIL.IMPORT_DATA('TIMELINE','TIMELINE_INT', null, 's3a://${env.ATP_S3_USER}:${env.ATP_S3_SECRET}@splice-demo/supplychain/data_0623/train_inv.csv', null, null, 'yyyy-MM-dd HH:mm:ss.S', null, null, -1, '/tmp', true, null);`,
+];
 
 
 export default {
     create: schemaCreationStatements,
-    import: dataImportStatements
+    import: dataImportStatements,
+    errorInvariant: spliceMachineSpecific
 }
 
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import env from '../../config/environment'
+import env from '../../server/environment'
 import "../styles/main.css"
 import Progress from 'react-progressbar';
 
@@ -22,7 +22,7 @@ export default class App extends React.Component {
             cache: 'default'
         };
 
-        fetch(env() + '/api/v1/me', myInit).then((response) => {
+        fetch(env.server() + '/api/v1/example', myInit).then((response) => {
             console.log("Fetch came back");
             const reader = response.body.getReader();
             reader.read().then(function processText({done, value}) {
@@ -30,7 +30,7 @@ export default class App extends React.Component {
                     console.log("Stream complete");
                     return;
                 }
-                store.innerHTML += String.fromCharCode.apply(null, value).split("\n").filter((item)=>item.length>0).join("<br>") + ("<br>");
+                store.innerHTML += String.fromCharCode.apply(null, value).split("\n").filter((item) => item.length > 0).join("<br>") + ("<br>");
                 return reader.read().then(processText);
             });
         });

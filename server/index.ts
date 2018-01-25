@@ -1,14 +1,10 @@
-
 import express = require('express');
 import path = require('path');
-import db from "./db"
-import statements from "./sql-statements"
-
-const app = express();
-
 const DIST_DIR = path.join(__dirname, "../dist");
 const HTML_FILE = path.join(DIST_DIR, "index.html");
 const DEFAULT_PORT = 3000;
+
+const app = express();
 
 app.set("port", process.env.PORT || DEFAULT_PORT);
 app.set("json spaces", 2);
@@ -31,27 +27,14 @@ app.use(function (req, res, next) {
     next();
 });
 
-let splice = null;
+const server = app.listen(app.get("port"), () => {
+    console.log("Server Started");
+    server.keepAliveTimeout = 0;
+});
 
-let drop = `DROP TABLE IF EXISTS blah`;
-
-let create = `CREATE TABLE blah
-              (
-                id int,
-                name varchar(10),
-                date DATE,
-                time TIME,
-                timestamp TIMESTAMP
-               )`;
-let insert = `INSERT INTO blah
-              VALUES (1, 'Jason', CURRENT_DATE, 
-              CURRENT_TIME, CURRENT_TIMESTAMP)`;
-let update = `UPDATE blah
-              SET id = 2
-              WHERE name = 'Jason'`;
-let selectStmt = `SELECT * FROM blah`;
-
-
+/**
+ * Production switcher
+ */
 if (process.env.NODE_ENV === "development") {
     /**
      * DEVELOPMENT
@@ -65,105 +48,27 @@ if (process.env.NODE_ENV === "development") {
     app.get("/", (req, res) => res.sendFile(HTML_FILE));
 }
 
+/**
+ * Import and configure the example route.
+ */
+// import example from "./database-operations/example/example";
+// app.get("/api/v1/example", (req, res) => {
+//     example(res);
+// });
 
-app.get("/api/v1/me", (req, res) => {
-    dbCall(res);
+/**
+ * Import and configure the ATP route.
+ */
+import atp from "./database-operations/atp/atp";
+app.get("/api/v1/atp", (req, res) => {
+    atp(res);
 });
 
-const server = app.listen(app.get("port"), () => {
-    console.log("Server Started");
-    server.keepAliveTimeout = 0;
-    // setInterval(()=>{
-    //     console.log("Hey Buddy")
-    // },1000)
-});
-
-function dbCall(res) {
-    db.setup(db.connection)
-        .then(() => {
-            res.write("==========\n\n");
-            res.write("Setup Resolved\n\n");
-            return db.reserve(db.connection);
-        }, (reason) => {
-            return Promise.reject(reason);
-        })
-        .then((connectionObject) => {
-            splice = connectionObject;
-            res.write("Reserve Resolved\n\n");
-            return db.prepare(splice)
-        }, (reason) => {
-            return Promise.reject(reason);
-        })
-        .then(() => {
-            res.write("Prepare Resolved\n\n");
-            return db.execute(splice, drop)
-        }, (reason) => {
-            return Promise.reject(reason);
-        })
-        .then(() => {
-            res.write("Drop Resolved\n\n");
-            return db.execute(splice, create)
-        }, (reason) => {
-            return Promise.reject(reason);
-        })
-        .then(() => {
-            res.write("Create Resolved\n\n");
-            return db.execute(splice, insert)
-        }, (reason) => {
-            return Promise.reject(reason);
-        })
-        .then(() => {
-            res.write("Insert Resolved\n\n");
-            return db.execute(splice, update)
-        }, (reason) => {
-            return Promise.reject(reason);
-        })
-        .then(() => {
-            res.write("Update Resolved\n\n");
-            return db.select(splice, selectStmt)
-        }, (reason) => {
-            return Promise.reject(reason);
-        })
-        .then((set) => {
-            res.write("Select Resolved\n");
-            if(set instanceof Array){
-                set.map((item) => {
-                    for (let prop in item) {
-                        res.write(`${prop} : ${item[prop]}\n`)
-                    }
-                });
-            }
-            return db.release(splice)
-        }, (reason) => {
-            return Promise.reject(reason);
-        })
-        .then((set) => {
-            res.write("Released and Closed Connection\n\n");
-            res.end();
-            return set;
-        }, (reason) => {
-            return Promise.reject(reason);
-        })
-        .catch(handle.bind(null, res));
-}
 
 
 
-function writeToStreams(message, ...fns) {
-    fns.forEach((fn) => {
-        fn.call(null, message)
-    })
-}
 
-function handle(response, e) {
-    if (e.message.includes("ConnectException")) {
-        writeToStreams("I don't think the database is turned on.\n", console.log, response.write.bind(response));
-    } else if (e.message.includes("SQLNonTransientConnectionException")) {
-        writeToStreams("The database died while we were connected to it.\n", console.log, response.write.bind(response));
-    } else if (e.message.includes("INVALID ARGUMENTS")) {
-        writeToStreams(`I don't think you set the databases's environment variable. JDBC_URL is ... ${process.env.JDBC_URL?"set":"unset"}\n`, console.log, response.write.bind(response));
-    } else {
-        writeToStreams("I don't know what kind of error this is.\n", console.log, response.write.bind(response));
-    }
-    writeToStreams(`Error:\n ${e.message}`, console.log, response.write.bind(response));
-}
+
+
+
+

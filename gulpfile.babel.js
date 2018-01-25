@@ -34,6 +34,10 @@ const restart = () => {
     });
 };
 
+/**
+ * Moment docs
+ * https://momentjs.com/docs/#/displaying/
+ */
 export function pm2server() {
     return new Promise((resolve) => {
         pm2.connect(function () {
@@ -42,13 +46,12 @@ export function pm2server() {
                 script: "server/index.js",
                 color: true,
                 env: {
-                    "NODE_ENV": "development",
-                    "JDBC_URL":"jdbc:splice://localhost:1527/splicedb;user=splice;password=admin"
+                    "NODE_ENV": "development"
                 }
             }, function () {
                 if (!log.server) {
                     log.server = true;
-                    pm2.streamLogs("server", 0, false, "LLLL");
+                    pm2.streamLogs("server", 0, false, "dddd, MMMM Do YYYY, h:mm:ss a x");
                 }
                 resolve()
             });
@@ -69,7 +72,7 @@ export function pm2client() {
             }, function () {
                 if (!log.client) {
                     log.client = true;
-                    pm2.streamLogs("client", 0, false, "LLLL");
+                    pm2.streamLogs("client", 0, false, "dddd, MMMM Do YYYY, h:mm:ss a x");
                 }
                 resolve()
             });
@@ -105,4 +108,4 @@ function watcher() {
 // noinspection JSUnusedGlobalSymbols
 // export const watch = gulp.task("watch", gulp.series(dev, watcher));
 
-gulp.task("default",  gulp.series(dev, watcher));
+gulp.task("default", gulp.series(dev, watcher));

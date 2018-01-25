@@ -1,3 +1,4 @@
+import env from "./environment"
 
 let jdbc = require("jdbc");
 let jinst = require("jdbc/lib/jinst");
@@ -14,117 +15,103 @@ if (!jinst.isJvmCreated()) {
 }
 
 const config = {
-    url: process.env.JDBC_URL, // url: "jdbc:splice://localhost:1527/splicedb;user=splice;password=admin",
+    url: env.JDBC_URL,
     user: "user",
     password: "admin"
 };
 
-export default {
-    connection: new jdbc(config),
-    setup: (db) => {
-        return new Promise((resolve, reject) => {
-            db.initialize(function (err) {
-                if (err) {
-                    reject(err)
-                } else {
-                    resolve(db)
-                }
-            });
-        });
+/**
+ * Do this once forever?
+ * Looks like this is called at import time only. That's great for now.
+ */
+console.log("Making a new DB connection");
+let database = new jdbc(config);
+let connection = null;
 
-    },
-    reserve: (db) => {
-        return new Promise((resolve, reject) => {
-            if (db) {
-                db.reserve((err, connectionObject) => {
-                    if (connectionObject) {
-                        // log.yellow("Using connection: " + connectionObject.uuid);
-                        resolve(connectionObject)
+database.initialize((err) => {
+    if (err) {
+        throw new Error(err)
+    } else {
+        database.reserve((err, c) => {
+            if (err) {
+                throw new Error(err)
+            } else {
+                c.conn.setAutoCommit(false, (err) => {
+                    if (err) {
+                        throw new Error(err)
                     } else {
-                        reject(err)
+                        connection = c.conn;
                     }
                 })
-            } else {
-                reject(new Error("no database connection provided"))
             }
         })
-    },
-    prepare: (db) => {
-        return Promise.all([
-            new Promise((resolve, reject) => {
-                db.conn.setAutoCommit(false, (err) => {
+    }
+});
+
+export default class {
+
+    private database: any;
+    private connection: any;
+
+    constructor() {
+        console.log("Serving Singleton Connection");
+        this.database = database;
+        this.connection = connection;
+    }
+
+    public transaction(statement) {
+        if (typeof statement === "string") {
+            return new Promise((resolve, reject) => {
+                this.connection.createStatement((err, s) => {
                     if (err) {
-                        reject(err)
+                        reject(err);
                     } else {
-                        resolve(db)
-                    }
-                });
-            })
-        ]);
-    },
-    execute: (db, stmt) => {
-        return new Promise((resolve, reject) => {
-            db.conn.createStatement(function (err, statement) {
-                if (err) {
-                    reject(err);
-                } else {
-                    statement.executeUpdate(stmt,
-                        function (err, count) {
+                        s.execute(statement, (err) => {
                             if (err) {
                                 reject(err);
                             } else {
-                                resolve(count);
-                            }
-                        });
-                }
-            });
-        });
-    },
-    release: (db) => {
-        return new Promise((resolve, reject) => {
-            db.conn.commit(function (err, statement) {
-                if (err) {
-                    reject(err);
-                } else {
-                    db.conn.close(function(err){
-                        if(err){
-                            reject(err);
-                        }
-                        resolve();
-                    })
-                }
-            });
-        });
-    },
-    select: (db, stmt) => {
-        return new Promise((resolve, reject) => {
-            db.conn.createStatement(function (err, statement) {
-                if (err) {
-                    reject(err);
-                } else {
-                    // Adjust some statement options before use.  See statement.js for
-                    // a full listing of supported options.
-                    statement.setFetchSize(100, function (err) {
-                        if (err) {
-                            reject(err);
-                        } else {
-                            statement.executeQuery(stmt,
-                                function (err, resultset) {
+                                this.connection.commit((err) => {
                                     if (err) {
-                                        reject(err)
+                                        reject(err);
                                     } else {
-                                        resultset.toObjArray(function (err, results) {
-                                            resolve(results);
-                                        });
+                                        resolve();
                                     }
                                 });
-                        }
-                    })
-                }
+                            }
+                        });
+                    }
+                });
             })
-        })
+        }
+        else {
+            return serializePromiseFactoryArray(statement.map(s => () => this.transaction(s)));
+        }
     }
-};
 
+    public _forced_transaction(statement) {
+        if (typeof statement === "string") {
+            return new Promise((resolve) => {
+                this.connection.createStatement((e, s) => {
+                    s.execute(statement, () => {
+                        this.connection.commit(() => {
+                            resolve();
+                        });
+                    });
+                });
+            })
+        }
+        else {
+            return serializePromiseFactoryArray(statement.map(s => () => this.transaction(s)));
+        }
+    }
+}
 
-
+/**
+ * https://hackernoon.com/functional-javascript-resolving-promises-sequentially-7aac18c4431e
+ * @param arr is an Array of functions that return promises.
+ * They need to be functions because invocation causes the sequential evaluation of promises.
+ */
+const serializePromiseFactoryArray = arr =>
+    arr.reduce((acc, ele) =>
+            acc.then(result => ele().then(Array.prototype.concat.bind(result))),
+        Promise.resolve([]));
