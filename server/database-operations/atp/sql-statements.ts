@@ -1,7 +1,24 @@
 /**
  * DO NOT AUTOFORMAT THIS FILE
  */
-import env from "../../environment"
+import env from "../../environment";
+
+/**
+ * These statements exist because Splice Machine does not have fully
+ * idempotent operations. Things like IF NOT EXISTS do not exits.
+ * I must run these statements without regard to errors to clean the database
+ * prior to running the code I want.
+ * @type {string[]}
+ */
+let spliceMachineSpecific = [
+    `drop table IF EXISTS TIMELINE.TRANSFERORDERS`,
+    `drop table IF EXISTS TIMELINE.TO_DELIVERY_CHG_EVENT`,
+    `drop table IF EXISTS TIMELINE.TIMELINE_INT`,
+    `drop table IF EXISTS TIMELINE.STOCKOUTS`,
+    `drop table IF EXISTS TIMELINE.RESULT_DATE`,
+
+    `drop schema TIMELINE restrict`,
+];
 
 let schemaCreationStatements = [
     `create schema TIMELINE`,
@@ -110,7 +127,8 @@ let dataImportStatements = [
 
 export default {
     create: schemaCreationStatements,
-    import: dataImportStatements
+    import: dataImportStatements,
+    errorInvariant: spliceMachineSpecific
 }
 
 

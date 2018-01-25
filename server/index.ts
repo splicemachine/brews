@@ -51,9 +51,17 @@ if (process.env.NODE_ENV === "development") {
 /**
  * Import and configure the example route.
  */
-import example from "./database-operations/example/example";
-app.get("/api/v1/example", (req, res) => {
-    example(res);
+// import example from "./database-operations/example/example";
+// app.get("/api/v1/example", (req, res) => {
+//     example(res);
+// });
+
+/**
+ * Import and configure the ATP route.
+ */
+import atp from "./database-operations/atp/atp";
+app.get("/api/v1/atp", (req, res) => {
+    atp(res);
 });
 
 

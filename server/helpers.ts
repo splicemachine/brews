@@ -27,4 +27,5 @@ export default function handle(response: express.Response, e: Error) {
         writeToStreams("I don't know what kind of error this is.\n", console.log, response.write.bind(response));
     }
     writeToStreams(`Error:\n ${e.message}`, console.log, response.write.bind(response));
+    response.end();
 }
