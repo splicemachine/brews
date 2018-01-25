@@ -61,6 +61,7 @@ export default class {
 
     public transaction(statement) {
         if (typeof statement === "string") {
+            console.log("Graceful Transaction", statement.substring(0,30) + `...`);
             return new Promise((resolve, reject) => {
                 this.connection.createStatement((err, s) => {
                     if (err) {
@@ -90,6 +91,7 @@ export default class {
 
     public _forced_transaction(statement) {
         if (typeof statement === "string") {
+            console.log("FORCING TRANSACTION", statement.substring(0,30) + `...`);
             return new Promise((resolve) => {
                 this.connection.createStatement((e, s) => {
                     s.execute(statement, () => {
@@ -101,7 +103,7 @@ export default class {
             })
         }
         else {
-            return serializePromiseFactoryArray(statement.map(s => () => this.transaction(s)));
+            return serializePromiseFactoryArray(statement.map(s => () => this._forced_transaction(s)));
         }
     }
 }

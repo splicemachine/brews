@@ -11,11 +11,15 @@ export default function (res: express.Response) {
 
     db._forced_transaction(statements.errorInvariant)
         .then(() => {
-            console.log("Executing Normal");
+            console.log("Forced Cleanup Completed");
             return db.transaction(statements.create);
         }, rejected)
-        .then((result) => {
-            console.log("Execute Success", result);
+        .then(() => {
+            console.log("Create Statements Completed");
+            return db.transaction(statements.insert)
+        }, rejected)
+        .then(() => {
+            console.log("Import Statements Completed");
             res.end();
         }, rejected)
         .catch(handle.bind(null, res));
