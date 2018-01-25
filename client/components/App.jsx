@@ -8,55 +8,64 @@ export default class App extends Component {
 
     constructor(props) {
         super(props);
-        this.handleClick = this.handleClick.bind(this);
-        this.containerClasses = ``;
-        this.buttonContainerClasses = `button__container pure-u-1 pure-u-lg-1-2`;
-        this.outputClasses = `pure-u-1 pure-u-lg-1-2`;
-        this.textStream = "gooby";
-    }
+        this.generateClickHandler = this.generateClickHandler.bind(this);
+        this.containerClasses = `pure-g`;
+        this.buttonContainerClasses = `button__container pure-u-1 pure-u-md-1-4`;
+        this.outputClasses = `pure-u-1 pure-u-md-3-4`;
+        // this.waiting = "Not Waiting.";
 
-    handleClick() {
+        this.state = {
+            log: [],
+            waiting: "Not Waiting."
+        };
 
-        // let store = document.createElement("p");
-        // document.querySelector("body").appendChild(store);
-        let myHeaders = new Headers();
-        let myInit = {
+        this.getInit = {
             method: "GET",
-            headers: myHeaders,
+            headers: new Headers(),
             mode: "cors",
             cache: "default"
         };
+    }
 
+    generateClickHandler(route){
+        if(typeof route === "string"){
+            return ()=>{
+                fetch(env.server() + route, this.getInit).then((response) => {
+                    console.log("Fetch came back");
+                    const reader = response.body.getReader();
+                    reader.read().then(this.processText(this.state.log, reader))
+                });
+            }
+        }
+    }
 
-
-        let textStream = this.textStream;
-
-        fetch(env.server() + "/api/v1/atp", myInit).then((response) => {
-            console.log("Fetch came back");
-            const reader = response.body.getReader();
-
-
-            reader.read().then(function processText({done, value}) {
-                if (done) {
-                    console.log("Stream complete");
-                    return;
-                }
-                textStream += String.fromCharCode.apply(null, value).split("\n").filter((item) => item.length > 0).join("<br>") + ("<br>");
-                return reader.read().then(processText);
-            });
-        });
+    processText(stream, reader) {
+        return ({done, value}) => {
+            if (done) {
+                this.state.waiting = "Not Waiting.";
+                this.setState(this.state);
+                console.log("Stream complete");
+                return;
+            }
+            this.state.waiting = "Waiting...";
+            let additionalText = String.fromCharCode.apply(null, value);
+            stream.push(additionalText);
+            this.setState(this.state);
+            return reader.read().then(this.processText(stream, reader))
+        }
     }
 
     render() {
         return (
             <div>
-                <h1>Available to Promise</h1>
+                <h1>Available to Promise: {this.state.waiting}</h1>
                 <div className={this.containerClasses}>
                     <div className={this.buttonContainerClasses}>
                         <Progress completed={1}/>
-                        <button className="button" onClick={this.handleClick}>Click Me</button>
+                        <button className="button" onClick={this.generateClickHandler("/api/v1/prepare")}>Prepare Tables and Import Data</button>
+                        <button className="button" onClick={this.generateClickHandler("/api/v1/get-thingy")}>Get Thingy</button>
                     </div>
-                    <Output text={this.textStream} className={this.outputClasses}/>
+                    <Output log={this.state.log} className={this.outputClasses}/>
                 </div>
             </div>
         );

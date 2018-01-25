@@ -5,21 +5,30 @@ import {handle, writeToStreams} from "../../helpers";
 
 let rejected = (reason)=>Promise.reject(reason);
 
+
+
+
 export default function (res: express.Response) {
 
     let db = new Database();
 
-    db._forced_transaction(statements.errorInvariant)
+    let writer = (text)=>{
+        writeToStreams(text, res.write.bind(res))
+    };
+
+    db._forced_transaction(statements.errorInvariant, writer)
         .then(() => {
-            writeToStreams("Forced Cleanup Completed", console.log, res.write.bind(res));
-            return db.transaction(statements.create);
+            // writer("******* Forced Cleanup Completed *******");
+            // res.flushHeaders();
+            // res.flush();
+            return db.transaction(statements.create, writer);
         }, rejected)
         .then(() => {
-            console.log("Create Statements Completed");
-            return db.transaction(statements.insert)
+            // writer("******* Create Statements Completed *******");
+            return db.transaction(statements.insert, writer)
         }, rejected)
         .then(() => {
-            console.log("Import Statements Completed");
+            // writer("******* Import Statements Completed *******");
             res.end();
         }, rejected)
         .catch(handle.bind(null, res));

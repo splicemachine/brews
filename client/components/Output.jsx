@@ -11,12 +11,40 @@ export default class Output extends Component {
 
     render() {
         const {className} = this.props;
+        const listStyle = {
+            display: "inherit"
+        };
         return (
-            <code className={className || "fucking-nothing"}>
-                {this.props.text}
-            </code>
+
+            <div className={className || "fucking-nothing"}>
+                <ul>
+                    {
+                        this.props.log.map((entry, idx) => {
+                            return <li style={listStyle} key={idx}><code>{entry}</code></li>
+                        })
+                    }
+                </ul>
+            </div>
+
         )
     }
 }
 
 
+/*
+            <div className={className || "fucking-nothing"}>
+                <ul>
+                    {
+                        this.props.log.map((entry, idx)=>{
+                            return <li key={idx}><code>{entry}</code></li>
+                        })
+                    }
+                </ul>
+            </div>
+
+
+            <code className={className || "fucking-nothing"}>
+                {this.props.log}
+            </code>
+
+*/
