@@ -34,6 +34,10 @@ const restart = () => {
     });
 };
 
+/**
+ * Moment docs
+ * https://momentjs.com/docs/#/displaying/
+ */
 export function pm2server() {
     return new Promise((resolve) => {
         pm2.connect(function () {
@@ -47,7 +51,7 @@ export function pm2server() {
             }, function () {
                 if (!log.server) {
                     log.server = true;
-                    pm2.streamLogs("server", 0, false, "LLLL");
+                    pm2.streamLogs("server", 0, false, "dddd, MMMM Do YYYY, h:mm:ss a x");
                 }
                 resolve()
             });
@@ -68,7 +72,7 @@ export function pm2client() {
             }, function () {
                 if (!log.client) {
                     log.client = true;
-                    pm2.streamLogs("client", 0, false, "LLLL");
+                    pm2.streamLogs("client", 0, false, "dddd, MMMM Do YYYY, h:mm:ss a x");
                 }
                 resolve()
             });

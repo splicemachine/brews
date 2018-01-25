@@ -15,7 +15,9 @@ let spliceMachineSpecific = [
     `drop table IF EXISTS TIMELINE.TO_DELIVERY_CHG_EVENT`,
     `drop table IF EXISTS TIMELINE.TIMELINE_INT`,
     `drop table IF EXISTS TIMELINE.STOCKOUTS`,
+    `drop table IF EXISTS TIMELINE.RESULT_DATES`,
     `drop table IF EXISTS TIMELINE.RESULT_DATE`,
+    `drop table IF EXISTS TIMELINE.QUICK_CHECK_LINES`,
 
     `drop schema TIMELINE restrict`,
 ];

@@ -9,14 +9,10 @@ export default function (res: express.Response) {
 
     let db = new Database();
 
-    db.prime()
-        .then(() => {
-            console.log("Executing Cleanup");
-            return db.executeHard(statements.errorInvariant)
-        }, rejected)
+    db._forced_transaction(statements.errorInvariant)
         .then(() => {
             console.log("Executing Normal");
-            return db.execute(statements.create)
+            return db.transaction(statements.create);
         }, rejected)
         .then((result) => {
             console.log("Execute Success", result);
@@ -26,3 +22,4 @@ export default function (res: express.Response) {
 
 
 }
+
