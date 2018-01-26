@@ -19,8 +19,9 @@ let errorInvariant = [
     `drop table IF EXISTS TIMELINE.RESULT_DATE`,
     `drop table IF EXISTS TIMELINE.QUICK_CHECK_LINES`,
 
-    `drop schema TIMELINE restrict`,
-];
+    `drop schema TIMELINE restrict`
+];//8
+
 
 let schemaCreationStatements = [
     `create schema TIMELINE`,
@@ -113,7 +114,7 @@ let schemaCreationStatements = [
         inv_id int,
         qty int
     )`
-];
+];//17
 
 /**
  * Replace credentials with public
@@ -124,7 +125,7 @@ let dataImportStatements = [
     `call SYSCS_UTIL.IMPORT_DATA('TIMELINE','TRANSFERORDERS',null, 's3a://${env.ATP_S3_USER}:${env.ATP_S3_SECRET}@splice-demo/supplychain/data_0623/train_orders.csv', null, null, 'yyyy-MM-dd HH:mm:ss.S', null, null, -1, '/tmp', true, null)`,
     `call SYSCS_UTIL.IMPORT_DATA('TIMELINE','TO_DELIVERY_CHG_EVENT', null, 's3a://${env.ATP_S3_USER}:${env.ATP_S3_SECRET}@splice-demo/supplychain/data_0623/train_events.csv', null, null, 'yyyy-MM-dd HH:mm:ss.S', null, null, -1, '/tmp', true, null)`,
     `call SYSCS_UTIL.IMPORT_DATA('TIMELINE','TIMELINE_INT', null, 's3a://${env.ATP_S3_USER}:${env.ATP_S3_SECRET}@splice-demo/supplychain/data_0623/train_inv.csv', null, null, 'yyyy-MM-dd HH:mm:ss.S', null, null, -1, '/tmp', true, null)`,
-];
+];//3
 
 
 export default {

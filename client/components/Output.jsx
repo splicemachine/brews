@@ -12,11 +12,19 @@ export default class Output extends Component {
     render() {
         const {className} = this.props;
         const listStyle = {
-            display: "inherit"
+            display: "inherit",
+            color: "#16aa16",
+            backgroundColor: "#161616",
         };
+        const containerStyle = {
+            backgroundColor: "#161616",
+            height: "30em",
+            overflowY: "auto",
+        };
+
         return (
 
-            <div className={className || "fucking-nothing"}>
+            <div className={className || "fucking-nothing"} style={containerStyle} id={"OUTPUT"}>
                 <ul>
                     {
                         this.props.log.map((entry, idx) => {
@@ -29,22 +37,3 @@ export default class Output extends Component {
         )
     }
 }
-
-
-/*
-            <div className={className || "fucking-nothing"}>
-                <ul>
-                    {
-                        this.props.log.map((entry, idx)=>{
-                            return <li key={idx}><code>{entry}</code></li>
-                        })
-                    }
-                </ul>
-            </div>
-
-
-            <code className={className || "fucking-nothing"}>
-                {this.props.log}
-            </code>
-
-*/

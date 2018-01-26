@@ -12,11 +12,14 @@ export default class App extends Component {
         this.containerClasses = `pure-g`;
         this.buttonContainerClasses = `button__container pure-u-1 pure-u-md-1-4`;
         this.outputClasses = `pure-u-1 pure-u-md-3-4`;
+
         // this.waiting = "Not Waiting.";
 
         this.state = {
             log: [],
-            waiting: "Not Waiting."
+            waiting: "Not Waiting.",
+            completed: 0,
+            total: 0,
         };
 
         this.getInit = {
@@ -25,11 +28,19 @@ export default class App extends Component {
             mode: "cors",
             cache: "default"
         };
+
+        fetch(env.server() + "/api/v1/size", this.getInit).then((response) => {
+            return response.json()
+        }).then((data)=>{
+            console.log(data);
+            this.state.total = data;
+            this.setState(this.state);
+        })
     }
 
-    generateClickHandler(route){
-        if(typeof route === "string"){
-            return ()=>{
+    generateClickHandler(route) {
+        if (typeof route === "string") {
+            return () => {
                 fetch(env.server() + route, this.getInit).then((response) => {
                     console.log("Fetch came back");
                     const reader = response.body.getReader();
@@ -47,6 +58,7 @@ export default class App extends Component {
                 console.log("Stream complete");
                 return;
             }
+            this.state.completed++;
             this.state.waiting = "Waiting...";
             let additionalText = String.fromCharCode.apply(null, value);
             stream.push(additionalText);
@@ -56,14 +68,23 @@ export default class App extends Component {
     }
 
     render() {
+        const buttonContainerStyle = {
+            margin: "1em"
+        };
         return (
             <div>
                 <h1>Available to Promise: {this.state.waiting}</h1>
                 <div className={this.containerClasses}>
                     <div className={this.buttonContainerClasses}>
-                        <Progress completed={1}/>
-                        <button className="button" onClick={this.generateClickHandler("/api/v1/prepare")}>Prepare Tables and Import Data</button>
-                        <button className="button" onClick={this.generateClickHandler("/api/v1/get-thingy")}>Get Thingy</button>
+                        <Progress completed={(this.state.completed/this.state.total)*100}/>
+                        <div style={buttonContainerStyle}>
+                            <button className="button" onClick={this.generateClickHandler("/api/v1/prepare")}>Prepare
+                                Tables and Import Data
+                            </button>
+                        </div>
+                        {/*<div style={buttonContainerStyle}>*/}
+                        {/*<button className="button" onClick={this.generateClickHandler("/api/v1/size")}>Get Size</button>*/}
+                        {/*</div>*/}
                     </div>
                     <Output log={this.state.log} className={this.outputClasses}/>
                 </div>

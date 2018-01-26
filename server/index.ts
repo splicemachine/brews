@@ -60,14 +60,9 @@ if (process.env.NODE_ENV === "development") {
 /**
  * Import and configure the ATP route.
  */
-import atp from "./database-operations/atp/atp";
-app.get("/api/v1/prepare", (req, res) => {
-    atp(res);
-});
-app.get("/api/v1/get-thingy", (req, res) => {
-    res.write("OH YEAH");
-    res.end();
-});
+import {size, prepare} from "./database-operations/atp/atp";
+app.get("/api/v1/prepare", prepare);
+app.get("/api/v1/size", size);
 
 
 
