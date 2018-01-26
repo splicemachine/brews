@@ -1,5 +1,6 @@
 import express = require('express');
 import path = require('path');
+
 const DIST_DIR = path.join(__dirname, "../dist");
 const HTML_FILE = path.join(DIST_DIR, "index.html");
 const DEFAULT_PORT = 3000;
@@ -61,6 +62,7 @@ if (process.env.NODE_ENV === "development") {
  * Import and configure the ATP route.
  */
 import {size, prepare} from "./database-operations/atp/atp";
+
 app.get("/api/v1/prepare", prepare);
 app.get("/api/v1/size", size);
 

@@ -31,7 +31,7 @@ export default class App extends Component {
 
         fetch(env.server() + "/api/v1/size", this.getInit).then((response) => {
             return response.json()
-        }).then((data)=>{
+        }).then((data) => {
             console.log(data);
             this.state.total = data;
             this.setState(this.state);
@@ -76,10 +76,10 @@ export default class App extends Component {
                 <h1>Available to Promise: {this.state.waiting}</h1>
                 <div className={this.containerClasses}>
                     <div className={this.buttonContainerClasses}>
-                        <Progress completed={(this.state.completed/this.state.total)*100}/>
+                        <Progress completed={(this.state.completed / this.state.total) * 100}/>
                         <div style={buttonContainerStyle}>
-                            <button className="button" onClick={this.generateClickHandler("/api/v1/prepare")}>Prepare
-                                Tables and Import Data
+                            <button className="button" onClick={this.generateClickHandler("/api/v1/prepare")}>
+                                Prepare and Import
                             </button>
                         </div>
                         {/*<div style={buttonContainerStyle}>*/}

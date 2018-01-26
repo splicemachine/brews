@@ -3,11 +3,11 @@ import express = require("express");
 import Database from "../../db";
 import {handle, writeToStreams} from "../../helpers";
 
-let rejected = (reason)=>Promise.reject(reason);
+let rejected = (reason) => Promise.reject(reason);
 
 
-export function size(req: express.Request, res: express.Response){
-    res.send(String(Object.keys(statements).reduce((acc, stmt)=>acc+statements[stmt].length,0)));
+export function size(req: express.Request, res: express.Response) {
+    res.send(String(Object.keys(statements).reduce((acc, stmt) => acc + statements[stmt].length, 0)));
     // res.end();
 }
 
@@ -15,7 +15,7 @@ export function prepare(req: express.Request, res: express.Response) {
 
     let db = new Database();
 
-    let writer = (text)=>{
+    let writer = (text) => {
         writeToStreams(text, res.write.bind(res))
     };
 
