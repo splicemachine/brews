@@ -120,12 +120,26 @@ let schemaCreationStatements = [
  * Replace credentials with public
  * @type {string[]}
  * splice-demo-user
+ *
+ * call SYSCS_UTIL.IMPORT_DATA('TIMELINE','TRANSFERORDERS',null, 's3a://AKIAJWRKNM6STEY6QWRA:n6k+agcYz23wyyzC42okfmM8FV1jQQqkOyMR6FMo@splice-demo/supplychain/data_0623/train_orders.csv', null, null, 'yyyy-MM-dd HH:mm:ss.S', null, null, -1, '/tmp', true, null)
  */
 let dataImportStatements = [
     `call SYSCS_UTIL.IMPORT_DATA('TIMELINE','TRANSFERORDERS',null, 's3a://${env.ATP_S3_USER}:${env.ATP_S3_SECRET}@splice-demo/supplychain/data_0623/train_orders.csv', null, null, 'yyyy-MM-dd HH:mm:ss.S', null, null, -1, '/tmp', true, null)`,
     `call SYSCS_UTIL.IMPORT_DATA('TIMELINE','TO_DELIVERY_CHG_EVENT', null, 's3a://${env.ATP_S3_USER}:${env.ATP_S3_SECRET}@splice-demo/supplychain/data_0623/train_events.csv', null, null, 'yyyy-MM-dd HH:mm:ss.S', null, null, -1, '/tmp', true, null)`,
     `call SYSCS_UTIL.IMPORT_DATA('TIMELINE','TIMELINE_INT', null, 's3a://${env.ATP_S3_USER}:${env.ATP_S3_SECRET}@splice-demo/supplychain/data_0623/train_inv.csv', null, null, 'yyyy-MM-dd HH:mm:ss.S', null, null, -1, '/tmp', true, null)`,
 ];//3
+
+
+let transferOrders = [
+    `select * from timeline.transferorders where shipfrom in (1,2,3) and shipto in (1,2,3) and destinationinventory = 100`
+];
+
+let trackingInventoryAsTimelines = [
+    `select * from timeline.timeline_int
+     where TIMELINE_ID = \${inv=200}
+     and st >= date('2016-09-15')
+     order by TIMELINE.TIMELINE_INT.ST;`
+];
 
 
 export default {

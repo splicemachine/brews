@@ -8,7 +8,7 @@ if (!jinst.isJvmCreated()) {
     jinst.setupClasspath([
         __dirname + "/lib/hsqldb.jar",
         __dirname + "/lib/derby.jar",
-        __dirname + "/lib/splice.jar",
+        __dirname + "/lib/db-client-2.7.0.1805-SNAPSHOT.jar",
         __dirname + "/lib/derbyclient.jar",
         __dirname + "/lib/derbytools.jar"
     ]);
@@ -24,29 +24,11 @@ const config = {
  * Do this once forever?
  * Looks like this is called at import time only. That's great for now.
  */
-console.log("Making a new DB connection");
-let database = new jdbc(config);
-let connection = null;
+// console.log("Making a new DB connection");
+// let database = new jdbc(config);
+// let connection = null;
 
-database.initialize((err) => {
-    if (err) {
-        throw new Error(err)
-    } else {
-        database.reserve((err, c) => {
-            if (err) {
-                throw new Error(err)
-            } else {
-                c.conn.setAutoCommit(false, (err) => {
-                    if (err) {
-                        throw new Error(err)
-                    } else {
-                        connection = c.conn;
-                    }
-                })
-            }
-        })
-    }
-});
+
 
 export default class {
 
@@ -54,9 +36,38 @@ export default class {
     private connection: any;
 
     constructor() {
-        console.log("Serving Singleton Connection");
-        this.database = database;
-        this.connection = connection;
+        // console.log("Serving Singleton Connection");
+        this.database = new jdbc(config);
+        this.connection = null;
+    }
+
+    public initialize() {
+        console.log("Making a new DB connection");
+        return new Promise((resolve, reject) => {
+            this.database.initialize((err) => {
+                if (err) {
+                    // throw new Error(err)
+                    reject(err);
+                } else {
+                    this.database.reserve((err, c) => {
+                        if (err) {
+                            // throw new Error(err)
+                            reject(err);
+                        } else {
+                            c.conn.setAutoCommit(false, (err) => {
+                                if (err) {
+                                    // throw new Error(err)
+                                    reject(err);
+                                } else {
+                                    this.connection = c.conn;
+                                    resolve();
+                                }
+                            })
+                        }
+                    })
+                }
+            });
+        })
     }
 
     public transaction(statement, logger) {
@@ -64,6 +75,36 @@ export default class {
             logger(statement);
             return new Promise((resolve, reject) => {
                 this.connection.createStatement((err, s) => {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        s.execute(statement, (err) => {
+                            if (err) {
+                                reject(err);
+                            } else {
+                                this.connection.commit((err) => {
+                                    if (err) {
+                                        reject(err);
+                                    } else {
+                                        resolve();
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
+            })
+        }
+        else {
+            return serializePromiseFactoryArray(statement.map(s => () => this.transaction(s, logger)));
+        }
+    }
+
+    public storedProcedure(statement, logger) {
+        if (typeof statement === "string") {
+            logger(statement);
+            return new Promise((resolve, reject) => {
+                this.connection.prepareCall((err, s) => {
                     if (err) {
                         reject(err);
                     } else {

@@ -6,7 +6,9 @@ import express = require('express');
  * @param {() => any} fns: It is assumed that all other parameters are functions to be called.
  */
 export function writeToStreams(message: string, ...fns: Array<() => any>) {
+
     fns.forEach((fn) => {
+        console.log("calling", fn.name);
         fn.call(null, message)
     })
 }
@@ -17,6 +19,7 @@ export function writeToStreams(message: string, ...fns: Array<() => any>) {
  * @param {Error} e
  */
 export function handle(response: express.Response, e: Error) {
+    console.log("Inside handle");
     if (e.message.includes("ConnectException")) {
         writeToStreams("I don't think the database is turned on.\n", console.log, response.write.bind(response));
     } else if (e.message.includes("SQLNonTransientConnectionException")) {

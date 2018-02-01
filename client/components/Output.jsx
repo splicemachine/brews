@@ -18,7 +18,7 @@ export default class Output extends Component {
         };
         const containerStyle = {
             backgroundColor: "#161616",
-            height: "30em",
+            height: "70em",
             overflowY: "auto",
         };
 

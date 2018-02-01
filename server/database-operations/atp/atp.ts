@@ -13,28 +13,34 @@ export function size(req: express.Request, res: express.Response) {
 
 export function prepare(req: express.Request, res: express.Response) {
 
-    let db = new Database();
-
+    let db = null;
     let writer = (text) => {
-        writeToStreams(text, res.write.bind(res))
+        writeToStreams(text, res.write.bind(res), console.log)
     };
 
-    db._forced_transaction(statements.errorInvariant, writer)
+    // try {
+
+    db = new Database();
+    db.initialize()
         .then(() => {
-            // writer("******* Forced Cleanup Completed *******");
-            // res.flushHeaders();
-            // res.flush();
+            console.log("initialize came back");
+            return db._forced_transaction(statements.errorInvariant, writer);
+        })
+        .then(() => {
             return db.transaction(statements.create, writer);
         }, rejected)
         .then(() => {
-            // writer("******* Create Statements Completed *******");
-            return db.transaction(statements.insert, writer)
+            return db.storedProcedure(statements.insert, writer)
         }, rejected)
         .then(() => {
-            // writer("******* Import Statements Completed *******");
             res.end();
         }, rejected)
         .catch(handle.bind(null, res));
+
+    // } catch (e) {
+    //     console.log("Caught exception");
+    //     handle.bind(null, res, e);
+    // }
 
 
 }
