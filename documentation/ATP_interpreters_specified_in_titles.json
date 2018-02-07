@@ -1,0 +1,1009 @@
+﻿{
+	"paragraphs": [
+		{
+			"text":
+				"%md\n# Available to Promise (ATP)\n\nThis notebook demonstrates Available to Promise (ATP). ATP is different than \"on-hand\" inventory because not everything that is on hand is \"available\" to promise for a new order - that inventory may already be committed to future orders.\n\nThere are two forms of ATP calculation.  This notebook will demonstrate both:\n\na. How much of an Item is available to promise on a given date?\nb. Given a group of items and quantities, and a target date, how soon can all items collectively be available to promise?  In other words, what date can I promise to my customer - assuming all items need to ship together?\n\nWe calculate this using our \"timeline\" model of all known purchases, orders, shipments, etc for each item. With this we can project into the future and ensure we are not stealing inventory from an existing order.  More on the timeline below.\n\n## Running the Tutorial\nTo run this, execute the following:\n\n### Setup\n1. Run \"JDBC Setup\" Paragraph\n2. Run \"Timeline Code\" Paragraph\n3. If you have not loaded the transfer orders yet, run \"Create Schema\", then \"Create Tables\", then \"Load Transfer Order Data\"\n\n### Run ATP\n1. ATP on Date: run \"Inventory on Date\" and \"ATP on Date\" to see how these differ.  Use for example 2016-10-15 as the date, and 600 as the Item number.  Use 2017-05-01 as the Time Horizon.\n2. Multi-Line ATP - run \"Multi-Line ATP - Quick Promise\" to see how a single ATP date is computed for multiple lines.  Use the following inputs:\n  Target Date: 2016-10-15\n  Item: 100   Qty: 400\n  Item: 200   Qty: 400\n  Item: 600   Qty: 4000\n\nUse \"Add\" to enter each Item.  ATP will be calculated after each Add.  Use \"Clear Lines\" to remove all Items and start over.\n",
+			"dateUpdated": "2018-02-07T19:10:41+0000",
+			"config": {
+				"tableHide": true,
+				"editorSetting": {
+					"language": "markdown",
+					"editOnDblClick": true
+				},
+				"colWidth": 12,
+				"editorMode": "ace/mode/markdown",
+				"editorHide": true,
+				"results": {},
+				"enabled": true,
+				"title": true
+			},
+			"settings": { "params": {}, "forms": {} },
+			"results": {
+				"code": "SUCCESS",
+				"msg": [
+					{
+						"type": "HTML",
+						"data":
+							"<div class=\"markdown-body\">\n<h1>Available to Promise (ATP)</h1>\n<p>This notebook demonstrates Available to Promise (ATP). ATP is different than &ldquo;on-hand&rdquo; inventory because not everything that is on hand is &ldquo;available&rdquo; to promise for a new order - that inventory may already be committed to future orders.</p>\n<p>There are two forms of ATP calculation. This notebook will demonstrate both:</p>\n<p>a. How much of an Item is available to promise on a given date?<br/>b. Given a group of items and quantities, and a target date, how soon can all items collectively be available to promise? In other words, what date can I promise to my customer - assuming all items need to ship together?</p>\n<p>We calculate this using our &ldquo;timeline&rdquo; model of all known purchases, orders, shipments, etc for each item. With this we can project into the future and ensure we are not stealing inventory from an existing order. More on the timeline below.</p>\n<h2>Running the Tutorial</h2>\n<p>To run this, execute the following:</p>\n<h3>Setup</h3>\n<ol>\n  <li>Run &ldquo;JDBC Setup&rdquo; Paragraph</li>\n  <li>Run &ldquo;Timeline Code&rdquo; Paragraph</li>\n  <li>If you have not loaded the transfer orders yet, run &ldquo;Create Schema&rdquo;, then &ldquo;Create Tables&rdquo;, then &ldquo;Load Transfer Order Data&rdquo;</li>\n</ol>\n<h3>Run ATP</h3>\n<ol>\n  <li>ATP on Date: run &ldquo;Inventory on Date&rdquo; and &ldquo;ATP on Date&rdquo; to see how these differ. Use for example 2016-10-15 as the date, and 600 as the Item number. Use 2017-05-01 as the Time Horizon.</li>\n  <li>Multi-Line ATP - run &ldquo;Multi-Line ATP - Quick Promise&rdquo; to see how a single ATP date is computed for multiple lines. Use the following inputs:<br/> Target Date: 2016-10-15<br/> Item: 100 Qty: 400<br/> Item: 200 Qty: 400<br/> Item: 600 Qty: 4000</li>\n</ol>\n<p>Use &ldquo;Add&rdquo; to enter each Item. ATP will be calculated after each Add. Use &ldquo;Clear Lines&rdquo; to remove all Items and start over.</p>\n</div>"
+					}
+				]
+			},
+			"apps": [],
+			"jobName": "paragraph_1517870435896_1828005253",
+			"id": "20171024-132747_2028511245",
+			"dateCreated": "2018-02-05T22:40:35+0000",
+			"status": "READY",
+			"errorMessage": "",
+			"progressUpdateIntervalMs": 500,
+			"focus": true,
+			"$$hashKey": "object:376",
+			"title": "ATP Demo (md)"
+		},
+		{
+			"title": "JDBC Setup (spark)",
+			"text":
+				"%spark\n  println(\"Please copy and paste your JDBC URL. You can find it at the bottom right of your cluster dashboard\")\n  val defaultJDBCURL = z.input(\"JDBCurl\",\"\"\"jdbc:splice://{FRAMEWORKNAME}-proxy.marathon.mesos:1527/splicedb;user=splice;password=admin;useSpark=true\"\"\").toString\n  val localJDBCURL = \"\"\"jdbc:splice://localhost:1527/splicedb;user=splice;password=admin\"\"\"\n",
+			"dateUpdated": "2018-02-07T19:10:38+0000",
+			"config": {
+				"tableHide": true,
+				"editorSetting": {
+					"language": "scala",
+					"editOnDblClick": false
+				},
+				"colWidth": 12,
+				"editorMode": "ace/mode/scala",
+				"editorHide": true,
+				"title": true,
+				"results": {},
+				"enabled": true
+			},
+			"settings": {
+				"params": {
+					"JDBCurl":
+						"jdbc:splice://localhost:1527/splicedb;user=splice;password=admin"
+				},
+				"forms": {
+					"JDBCurl": {
+						"name": "JDBCurl",
+						"displayName": "JDBCurl",
+						"type": "input",
+						"defaultValue":
+							"jdbc:splice://{FRAMEWORKNAME}-proxy.marathon.mesos:1527/splicedb;user=splice;password=admin;useSpark=true",
+						"hidden": false,
+						"$$hashKey": "object:3593"
+					}
+				}
+			},
+			"results": {
+				"code": "SUCCESS",
+				"msg": [
+					{
+						"type": "TEXT",
+						"data":
+							"Please copy and paste your JDBC URL. You can find it at the bottom right of your cluster dashboard\n\ndefaultJDBCURL: String = jdbc:splice://localhost:1527/splicedb;user=splice;password=admin\n\nlocalJDBCURL: String = jdbc:splice://localhost:1527/splicedb;user=splice;password=admin\n"
+					}
+				]
+			},
+			"apps": [],
+			"jobName": "paragraph_1517870435903_1826851006",
+			"id": "20170622-063514_1166002275",
+			"dateCreated": "2018-02-05T22:40:35+0000",
+			"status": "READY",
+			"errorMessage": "",
+			"progressUpdateIntervalMs": 500,
+			"$$hashKey": "object:377"
+		},
+		{
+			"title": "Timeline  Code (spark)",
+			"text":
+				"%spark\nimport java.sql.{Connection,Timestamp}\nimport java.util.Date\nimport com.splicemachine.si.api.txn.WriteConflict\nimport org.apache.spark.sql.execution.datasources.jdbc.{JDBCOptions, JdbcUtils}\nimport com.splicemachine.spark.splicemachine._\n    \n  val table = \"TimeLine_Int\"\n  val schema = \"TimeLine\"\n  val internalTN = schema + \".\" + table\n  val startOfTimeStr = \"1678-01-01 00:00:00\"\n  val endOfTimeStr = \"2261-12-31 00:00:00\"\n  val startOfTime = java.sql.Timestamp.valueOf(startOfTimeStr)\n  val endOfTime = java.sql.Timestamp.valueOf(endOfTimeStr)\n  val MAX_RETRIES: Integer = 2\n\n  val SQL_ID = 1\n  val SQL_ST = 2\n  val SQL_ET = 3\n  val SQL_VAL = 4\n  val DF_ID = 0\n  val DF_ST = 1\n  val DF_ET = 2\n  val DF_VAL = 3\n  \n  val columnsWithPrimaryKey: String  = \"(Timeline_Id bigint, \" + \"ST timestamp, \" + \"ET timestamp, \" + \"Val bigint, \" + \"primary key (Timeline_ID, ST)\" +\")\"\n  val columnsWithoutPrimaryKey = \"(\" + \"Timeline_Id bigint, \" + \"ST timestamp, \" + \"ET timestamp, \" + \"Val bigint \" + \")\"\n  val primaryKeys = Seq(\"Timeline_ID, ST\")\n  val columnsInsertString = \"(\" + \"Timeline_Id, \" + \"ST, \" + \"ET, \" + \"Val\" + \") \"\n  val columnsSelectString = \"Timeline_Id, \" + \"ST, \" + \"ET, \" + \"Value\"\n  val columnsInsertStringValues = \"values (?,?,?,?)\"\n\n\n  /* (t1<=ST and t2>ST) or (t1>ST and t1<ET)  (t1 t2 t1 t1 )*/\n  val overlapCondition = \"where Timeline_Id = ? and ((ST >=? and ST <?) or ((ST < ?) and (ET > >?)))\"\n\n\n  val internalOptions = Map(\n    org.apache.spark.sql.execution.datasources.jdbc.JDBCOptions.JDBC_TABLE_NAME -> internalTN,\n    org.apache.spark.sql.execution.datasources.jdbc.JDBCOptions.JDBC_URL -> defaultJDBCURL\n  )\n\n  val internalJDBCOptions = new org.apache.spark.sql.execution.datasources.jdbc.JDBCOptions(internalOptions)\n  val splicemachineContext =  new com.splicemachine.spark.splicemachine.SplicemachineContext(defaultJDBCURL)\n\n\n\n  /**\n    *\n    * createTimeline (table)\n    *\n    * @param table table name of timeline\n    * @return\n    */\n  def createTimeline(table: String, columnsWithPrimaryKey: String , internalJDBCOptions: JDBCOptions = internalJDBCOptions ): Unit = {\n    val conn = JdbcUtils.createConnectionFactory(internalJDBCOptions)()\n    if (splicemachineContext.tableExists(table)){\n      conn.createStatement().execute(\"drop table \" + table)\n    }\n    conn.createStatement().execute(\"create table \" + table + columnsWithPrimaryKey)\n  }\n  \n  \n  \n  /**\n    *\n    * initialize (id startOfTime endOfTime value)\n    *\n    * @param table table name of timeline\n    * @param id id of timeline\n    * @param value initial value of timeline\n    * @return\n    */\n def initialize(table: String, id: Integer, value: Integer, columnsInsertString : String = columnsInsertString ,columnsInsertStringValues :String = columnsInsertStringValues  , internalJDBCOptions :JDBCOptions = internalJDBCOptions ): Unit = {\n    val conn = JdbcUtils.createConnectionFactory(internalJDBCOptions)()\n    val start: Timestamp = startOfTime\n    val end: Timestamp = endOfTime\n    try {\n      var ps = conn.prepareStatement(\"delete from \" + table + \" where timeline_id = \" + id)\n      ps.execute()\n      ps = conn.prepareStatement(\"insert into \" + table + columnsInsertString + columnsInsertStringValues)\n      ps.setInt(SQL_ID, id)\n      ps.setTimestamp(SQL_ST, start)\n      ps.setTimestamp(SQL_ET, end)\n      ps.setInt(SQL_VAL, value)\n      ps.execute()\n    } finally {\n      conn.close()\n    }\n  }\n\n  val CHANGE_AT_ST = 0\n  val CHANGE_AT_ET = 1\n  val CHANGE_BETWEEN_ST_ET =2\n  \n\n  /**\n    * splitMiddle - The new delta interval is subsumed by one interval.\n    *\n    *  ST------------ET\n    *      t1---t2         ==>   ST---t1 t1----t2 t2----ET\n    *\n    * Change the original interval to end at the start of the new delta interval\n    * Create a new record for the delta and apply the delta value\n    * Create a new record for the interval from the delta to the end of the original interval\n    *\n    * @param id - the id of the timeline to update\n    * @param t1 - the start of new delta\n    * @param t2 - the end of the new delta\n    * @param delta - an integer increment to the timeline\n    * @param persistence - CHANGE_AT_ST persists delta from t1 onwards\n    *                      CHANGE_AT_ET persists delta from t2 onwards\n    *                      CHANGE_BETWEEN_ST_ET persists delta during [t1 t2]\n    *\n    */\n    \n                \n  def splitMiddle(id: Integer,\n                  t1: java.sql.Timestamp, t2: java.sql.Timestamp,\n                  delta: Long,\n                  persistence: Int,\n                  internalTN : String =internalTN ,\n                  internalOptions : Map[String,String] = internalOptions): Unit = {\n    val df = sqlContext.read.options(internalOptions).splicemachine.where(s\"TIMELINE_ID = $id AND ST < to_utc_timestamp('$t1','GMT') AND ET > to_utc_timestamp('$t2','GMT')\")\n    if (df.count() > 0) {\n\n      /* Save old values */\n      var oldVal = df.first().getLong(DF_VAL)\n      var oldET = df.first().getTimestamp(DF_ET)\n\n      /* Update containing interval to be the begin split */\n      val updatedDF = df\n        .filter(s\"TIMELINE_ID = $id AND ST < to_utc_timestamp('$t1','GMT') AND ET > to_utc_timestamp('$t2','GMT')\")\n        .select(\"TIMELINE_ID\", \"ST\", \"ET\", \"VAL\")\n      .withColumn(\"ET\", lit(t1))\n      splicemachineContext.update(updatedDF, internalTN)\n\n      /* calculate persistence */\n      val firstValue: Long = persistence match {\n        case CHANGE_AT_ST          => oldVal + delta\n        case CHANGE_AT_ET          => oldVal\n        case CHANGE_BETWEEN_ST_ET  => oldVal + delta\n        case _                     => 0\n      }\n\n      /* Insert the two new splits */\n      /* Note - the second new split will have delta added\n\t\tin the persistAfter method\n       */\n      val newDF = sqlContext.createDataFrame(Seq(\n        (id, t1, t2, firstValue),\n        (id, t2, oldET, oldVal)))\n        .toDF(\"TIMELINE_ID\", \"ST\", \"ET\", \"VAL\")\n      splicemachineContext.insert(newDF, internalTN)\n    }\n  }\n\n\n  /***\n    * \tsplitAtEnd - Delta overlaps beginning of interval.\n    *\n    *         ST------ET\n    *      t1---t2         ==>  ST---t2 t2----ET\n    *\n    * Change the interval to end at the end of the delta then add a split from end of delta to the end of interval\n    *\n    * @param id - the id of the timeline to update\n    * @param t1 - the start of new delta\n    * @param t2 - the end of the new delta\n    * @param delta - an integer increment to the timeline\n    * @param persistence - CHANGE_AT_ST persists delta from t1 onwards\n    *                      CHANGE_AT_ET persists delta from t2 onwards\n    *                      CHANGE_BETWEEN_ST_ET persists delta during [t1 t2]\n    */\n    \n     \n  def splitAtEnd(id: Integer,\n                 t1: java.sql.Timestamp, t2: java.sql.Timestamp,\n                 delta: Long,\n                 persistence: Int,\n                  internalTN : String =internalTN ,\n                  internalOptions : Map[String,String] = internalOptions): Unit = {\n    val df = sqlContext.read.options(internalOptions).splicemachine\n      .where(s\"\"\"TIMELINE_ID = $id AND ST >= to_utc_timestamp('$t1','GMT') AND ET > to_utc_timestamp('$t2','GMT') AND ST < to_utc_timestamp('$t2','GMT')\"\"\")\n\n    if (df.count() > 0) {\n\n      /* Save old values */\n      var oldVal = df.first().getLong(DF_VAL)\n      var oldST = df.first().getTimestamp(DF_ST)\n      var oldET = df.first().getTimestamp(DF_ET)\n      /* Update overlapping interval to be the begin split */\n\n      /* calculate persistence */\n      /* Note - the second new split will have delta added\n          in the persistAfter method if required\n */\n      val firstValue: Long = persistence match {\n        case CHANGE_AT_ST          => oldVal + delta\n        case CHANGE_AT_ET          => oldVal\n        case CHANGE_BETWEEN_ST_ET  => oldVal + delta\n        case _                     => 0\n      }\n\n      val updatedDF = df\n\t    .filter(s\"TIMELINE_ID = $id AND ST >= to_utc_timestamp('$t1','GMT') AND ET > to_utc_timestamp('$t2','GMT') AND ST < to_utc_timestamp('$t2','GMT')\")\n        .select(\"TIMELINE_ID\", \"ST\", \"ET\", \"VAL\")\n      .withColumn(\"ET\", lit(t2))\n      .withColumn(\"VAL\", lit(firstValue))\n      splicemachineContext.update(updatedDF, internalTN)\n\n      /* Insert a new split after the delta */\n      val newDF = sqlContext.createDataFrame(Seq((id, t2, oldET, oldVal))).toDF(\"TIMELINE_ID\", \"ST\", \"ET\", \"VAL\")\n      splicemachineContext.insert(newDF, internalTN)\n    }\n  }\n\n  /**\n    * \tsplitAtStart - Delta overlaps end of interval.\n    *\n    *         ST-----ET\n    *            t1------t2         ==>    ST---t1 t1---ET\n    *\n    * Change the interval to end at the start of the delta then add a split from beginning of delta to the end of interval\n    *\n    * @param id - the id of the timeline to update\n    * @param t1 - the start of new delta\n    * @param t2 - the end of the new delta\n    * @param delta - an integer increment to the timeline\n    * @param persistence - CHANGE_AT_ST persists delta from t1 onwards\n    *                      CHANGE_AT_ET persists delta from t2 onwards\n    *                      CHANGE_BETWEEN_ST_ET persists delta during [t1 t2]\n    */\n   \n  def splitAtStart(id: Integer,\n                   t1: java.sql.Timestamp, t2: java.sql.Timestamp,\n                   delta: Long, persistence: Int,\n                  internalTN : String =internalTN ,\n                  internalOptions : Map[String,String] = internalOptions): Unit = {\n    val df = sqlContext.read.options(internalOptions).splicemachine.where(s\"TIMELINE_ID = $id AND ST < to_utc_timestamp('$t1','GMT') AND \" +\n                s\"ET < to_utc_timestamp('$t2','GMT') AND ET > to_utc_timestamp('$t1','GMT')\")\n    if (df.count() > 0) {\n\n      /* Save old values */\n      var oldVal = df.first().getLong(DF_VAL)\n      var oldST = df.first().getTimestamp(DF_ST)\n      var oldET = df.first().getTimestamp(DF_ET)\n\n      /* calculate persistence */\n      val newValue: Long = persistence match {\n        case CHANGE_AT_ST          => oldVal + delta\n        case CHANGE_AT_ET          => oldVal\n        case CHANGE_BETWEEN_ST_ET  => oldVal\n        case _                     => 0\n      }\n      /* Update overlapping interval to be the begin split */\n      val updatedDF = df\n        .filter(s\"TIMELINE_ID = $id AND ST < to_utc_timestamp('$t1','GMT') AND ET < to_utc_timestamp('$t2','GMT') AND ET > to_utc_timestamp('$t1','GMT')\")\n        .select(\"TIMELINE_ID\", \"ST\", \"ET\", \"VAL\")\n      .withColumn(\"ET\", lit(t1))\n      .withColumn(\"VAL\", lit(newValue))\n      splicemachineContext.update(updatedDF, internalTN)\n      \n      /* Insert a new split */\n      val newDF = sqlContext.createDataFrame(Seq(\n        (id, t1, oldET, oldVal)\n      )).toDF(\"TIMELINE_ID\", \"ST\", \"ET\", \"VAL\")\n      splicemachineContext.insert(newDF, internalTN)\n    }\n }\n                   \n    \n  /***\n    *   changeNoSplit - Handles all intervals contained by delta\n    *\n    *           ST-----ET\n    *     t1---------------t2\n    *\n    *  No splits required since always initialized with infinite time, just need values changed\n    *\n    * @param id - the id of the timeline to update\n    * @param t1 - the start of new delta\n    * @param t2 - the end of the new delta\n    * @param delta - an integer increment to the timeline\n    * @param persistence - CHANGE_AT_ST persists delta from t1 onwards\n    *                      CHANGE_AT_ET persists delta from t2 onwards\n    *                      CHANGE_BETWEEN_ST_ET persists delta during [t1 t2]\n    */\n  def changeNoSplit(id: Integer,\n                    t1: java.sql.Timestamp, t2: java.sql.Timestamp,\n                    delta: Long,\n                    persistence: Int,\n                  internalTN : String =internalTN ,\n                  internalOptions : Map[String,String] = internalOptions): Unit = {\n           \n    val df = sqlContext.read.options(internalOptions).splicemachine\n      .where(s\"TIMELINE_ID = $id AND ST >= to_utc_timestamp('$t1','GMT') AND ET <= to_utc_timestamp('$t2','GMT')\")\n\n    /* Calculate persistence */\n    val increment: Long = persistence match {\n      case CHANGE_AT_ST          => delta\n      case CHANGE_AT_ET          => 0\n      case CHANGE_BETWEEN_ST_ET  => delta\n      case _                     => 0\n    }\n    val updatedDF = df\n      .filter(s\"TIMELINE_ID = $id AND ST >= to_utc_timestamp('$t1','GMT') AND ET <= to_utc_timestamp('$t2','GMT')\")\n      .select(\"TIMELINE_ID\", \"ST\", \"ET\", \"VAL\")\n      .withColumn(\"VAL\", col(\"VAL\") + increment)\n\n    splicemachineContext.update(updatedDF, internalTN)\n  }\n\n  /***\n    *   persistAfter - changes the values for all intervals after delta\n    *\n    *     t1---------------t2  ST-----ET\n    *\n    *  No splits required since always initialized with infinite time, just need values changed\n    *\n    * @param id - the id of the timeline to update\n    * @param t1 - the start of new delta\n    * @param t2 - the end of the new delta\n    * @param delta - an integer increment to the timeline\n    * @param persistence - CHANGE_AT_ST persists delta from t1 onwards\n    *                      CHANGE_AT_ET persists delta from t2 onwards\n    *                      CHANGE_BETWEEN_ST_ET persists delta during [t1 t2]\n    */\n  def persistAfter(id: Integer,\n                   t1: java.sql.Timestamp, t2: java.sql.Timestamp,\n                   delta: Long,\n                   persistence: Int,\n                  internalTN : String =internalTN ,\n                  internalOptions : Map[String,String] = internalOptions): Unit = {\n\n    /* Persist delta after new splits if necesary */\n    if (persistence != CHANGE_BETWEEN_ST_ET) {\n      val persistDF = sqlContext.read.options(internalOptions).splicemachine\n        .filter(s\"TIMELINE_ID = $id AND ST >= to_utc_timestamp('$t2','GMT')\")\n        .select(\"TIMELINE_ID\", \"ST\", \"ET\", \"VAL\")\n      .withColumn(\"VAL\", col(\"VAL\") + delta)\n      splicemachineContext.update(persistDF, internalTN)\n    }\n  }\n\n  /** *\n    * update - increases/decreases the value for the interval\n    * from the start, end or during the interval\n    *\n    * @param table       - the name of the timeline table\n    * @param id          - the id of the timeline to update\n    * @param t1          - the start of new delta\n    * @param t2          - the end of the new delta\n    * @param delta       - an integer increment to the timeline\n    * @param persistence - CHANGE_AT_ST persists delta from t1 onwards\n    *                    CHANGE_AT_ET persists delta from t2 onwards\n    *                    CHANGE_BETWEEN_ST_ET persists delta during [t1 t2]\n    */\n\n  def update(table: String,\n             id: Integer,\n             t1: Timestamp, t2: Timestamp,\n             delta: Long,\n             persistence: Int): Unit = {\n                \n\n   val intOptions = Map(\n    org.apache.spark.sql.execution.datasources.jdbc.JDBCOptions.JDBC_TABLE_NAME -> table,\n    org.apache.spark.sql.execution.datasources.jdbc.JDBCOptions.JDBC_URL -> defaultJDBCURL\n  )\n    changeNoSplit(id, t1, t2, delta, persistence, table,intOptions )\n    splitAtStart(id, t1, t2, delta, persistence, table,intOptions)\n    splitMiddle(id, t1, t2, delta, persistence, table,intOptions)\n    splitAtEnd(id, t1, t2, delta, persistence, table,intOptions)\n    persistAfter(id, t1, t2, delta, persistence, table,intOptions)\n  }\n\n\n\n\n\n\n",
+			"dateUpdated": "2018-02-07T19:10:28+0000",
+			"config": {
+				"tableHide": true,
+				"editorSetting": {
+					"language": "scala",
+					"editOnDblClick": false
+				},
+				"colWidth": 12,
+				"editorMode": "ace/mode/scala",
+				"editorHide": true,
+				"title": true,
+				"results": {},
+				"enabled": true
+			},
+			"settings": { "params": {}, "forms": {} },
+			"results": {
+				"code": "SUCCESS",
+				"msg": [
+					{
+						"type": "TEXT",
+						"data":
+							"\nimport java.sql.{Connection, Timestamp}\n\nimport java.util.Date\n\nimport com.splicemachine.si.api.txn.WriteConflict\n\nimport org.apache.spark.sql.execution.datasources.jdbc.{JDBCOptions, JdbcUtils}\n\nimport com.splicemachine.spark.splicemachine._\n\ntable: String = TimeLine_Int\n\nschema: String = TimeLine\n\ninternalTN: String = TimeLine.TimeLine_Int\n\nstartOfTimeStr: String = 1678-01-01 00:00:00\n\nendOfTimeStr: String = 2261-12-31 00:00:00\n\nstartOfTime: java.sql.Timestamp = 1678-01-01 00:00:00.0\n\nendOfTime: java.sql.Timestamp = 2261-12-31 00:00:00.0\n\nMAX_RETRIES: Integer = 2\n\nSQL_ID: Int = 1\n\nSQL_ST: Int = 2\n\nSQL_ET: Int = 3\n\nSQL_VAL: Int = 4\n\nDF_ID: Int = 0\n\nDF_ST: Int = 1\n\nDF_ET: Int = 2\n\nDF_VAL: Int = 3\n\ncolumnsWithPrimaryKey: String = (Timeline_Id bigint, ST timestamp, ET timestamp, Val bigint, primary key (Timeline_ID, ST))\n\ncolumnsWithoutPrimaryKey: String = (Timeline_Id bigint, ST timestamp, ET timestamp, Val bigint )\n\nprimaryKeys: Seq[String] = List(Timeline_ID, ST)\n\ncolumnsInsertString: String = \"(Timeline_Id, ST, ET, Val) \"\n\ncolumnsSelectString: String = Timeline_Id, ST, ET, Value\n\n\n\n\n\ncolumnsInsertStringValues: String = values (?,?,?,?)\noverlapCondition: String = where Timeline_Id = ? and ((ST >=? and ST <?) or ((ST < ?) and (ET > >?)))\ninternalOptions: scala.collection.immutable.Map[String,String] = Map(dbtable -> TimeLine.TimeLine_Int, url -> jdbc:splice://localhost:1527/splicedb;user=splice;password=admin)\ninternalJDBCOptions: org.apache.spark.sql.execution.datasources.jdbc.JDBCOptions = org.apache.spark.sql.execution.datasources.jdbc.JDBCOptions@ecd4e37\nsplicemachineContext: com.splicemachine.spark.splicemachine.SplicemachineContext = com.splicemachine.spark.splicemachine.SplicemachineContext@5a53c8f7\n\ncreateTimeline: (table: String, columnsWithPrimaryKey: String, internalJDBCOptions: org.apache.spark.sql.execution.datasources.jdbc.JDBCOptions)Unit\n\ninitialize: (table: String, id: Integer, value: Integer, columnsInsertString: String, columnsInsertStringValues: String, internalJDBCOptions: org.apache.spark.sql.execution.datasources.jdbc.JDBCOptions)Unit\n\nCHANGE_AT_ST: Int = 0\n\nCHANGE_AT_ET: Int = 1\n\nCHANGE_BETWEEN_ST_ET: Int = 2\n\nsplitMiddle: (id: Integer, t1: java.sql.Timestamp, t2: java.sql.Timestamp, delta: Long, persistence: Int, internalTN: String, internalOptions: Map[String,String])Unit\n\nsplitAtEnd: (id: Integer, t1: java.sql.Timestamp, t2: java.sql.Timestamp, delta: Long, persistence: Int, internalTN: String, internalOptions: Map[String,String])Unit\n\nsplitAtStart: (id: Integer, t1: java.sql.Timestamp, t2: java.sql.Timestamp, delta: Long, persistence: Int, internalTN: String, internalOptions: Map[String,String])Unit\n\nchangeNoSplit: (id: Integer, t1: java.sql.Timestamp, t2: java.sql.Timestamp, delta: Long, persistence: Int, internalTN: String, internalOptions: Map[String,String])Unit\n\npersistAfter: (id: Integer, t1: java.sql.Timestamp, t2: java.sql.Timestamp, delta: Long, persistence: Int, internalTN: String, internalOptions: Map[String,String])Unit\n\nupdate: (table: String, id: Integer, t1: java.sql.Timestamp, t2: java.sql.Timestamp, delta: Long, persistence: Int)Unit\n"
+					}
+				]
+			},
+			"apps": [],
+			"jobName": "paragraph_1517870435904_1812615297",
+			"id": "20170622-231413_1135446195",
+			"dateCreated": "2018-02-05T22:40:35+0000",
+			"status": "READY",
+			"errorMessage": "",
+			"progressUpdateIntervalMs": 500,
+			"$$hashKey": "object:378"
+		},
+		{
+			"text":
+				"%md\nHere you can copy and paste these data ingestion calls.\n\nThe data was generated by a supply-chain simulator http://localhost:8080/#/notebook/2CKG62TQU.\n\nThe simulator ticks through time randomly inserting Transfer Orders and also randomly inserts changes to Transfer Orders delivery dates. \n\nThe generator randomly selects features for the transfer orders. \n\nThe files below reflect the state of the database after the simulation runs.\n\nThe orders and change orders are independent files that can be loaded separately.\n\nThe simulation runs are cumulative meaning demo has the inventory timelines for the test data and the train data. \n\nSo to use the demo data. Load train and test for orders and change orders and the load the demo inventory timeline file.\n",
+			"dateUpdated": "2018-02-07T19:09:21+0000",
+			"config": {
+				"tableHide": true,
+				"editorSetting": {
+					"language": "markdown",
+					"editOnDblClick": true
+				},
+				"colWidth": 12,
+				"editorMode": "ace/mode/markdown",
+				"editorHide": true,
+				"results": {},
+				"enabled": false,
+				"title": true
+			},
+			"settings": { "params": {}, "forms": {} },
+			"results": {
+				"code": "SUCCESS",
+				"msg": [
+					{
+						"type": "HTML",
+						"data":
+							"<div class=\"markdown-body\">\n<h3>Ingest Advanced Shipping Notices - Transfer Orders</h3>\n<p>Here you can copy and paste these data ingestion calls.</p>\n<p>The data was generated by a supply-chain simulator <a href=\"http://localhost:8080/#/notebook/2CKG62TQU\">http://localhost:8080/#/notebook/2CKG62TQU</a>.</p>\n<p>The simulator ticks through time randomly inserting Transfer Orders and also randomly inserts changes to Transfer Orders delivery dates. </p>\n<p>The generator randomly selects features for the transfer orders. </p>\n<p>The files below reflect the state of the database after the simulation runs.</p>\n<p>The orders and change orders are independent files that can be loaded separately.</p>\n<p>The simulation runs are cumulative meaning demo has the inventory timelines for the test data and the train data. </p>\n<p>So to use the demo data. Load train and test for orders and change orders and the load the demo inventory timeline file.</p>\n</div>"
+					}
+				]
+			},
+			"apps": [],
+			"jobName": "paragraph_1517870435905_1812230548",
+			"id": "20170621-044326_1460127976",
+			"dateCreated": "2018-02-05T22:40:35+0000",
+			"status": "READY",
+			"errorMessage": "",
+			"progressUpdateIntervalMs": 500,
+			"$$hashKey": "object:379",
+			"title": "Ingest Advanced Shipping Notices - Transfer Orders (md)"
+		},
+		{
+			"title": "Create Schema (splicemachine)",
+			"text": "%splicemachine\ncreate schema TIMELINE;\n",
+			"dateUpdated": "2018-02-07T19:10:59+0000",
+			"config": {
+				"tableHide": true,
+				"editorSetting": { "language": "sql", "editOnDblClick": false },
+				"colWidth": 12,
+				"editorMode": "ace/mode/sql",
+				"editorHide": true,
+				"title": true,
+				"results": {},
+				"enabled": true
+			},
+			"settings": { "params": {}, "forms": {} },
+			"results": {
+				"code": "SUCCESS",
+				"msg": [
+					{
+						"type": "TEXT",
+						"data": "Query executed successfully. Affected rows : 0"
+					}
+				]
+			},
+			"apps": [],
+			"jobName": "paragraph_1517870435905_1812230548",
+			"id": "20170703-142111_1098530498",
+			"dateCreated": "2018-02-05T22:40:35+0000",
+			"status": "READY",
+			"errorMessage": "",
+			"progressUpdateIntervalMs": 500,
+			"$$hashKey": "object:380"
+		},
+		{
+			"title": "Create Tables (splicemachine)",
+			"text":
+				"%splicemachine\n\ndrop table IF EXISTS  TIMELINE.TRANSFERORDERS;\ndrop table IF EXISTS  TIMELINE.TO_DELIVERY_CHG_EVENT;\ndrop table IF EXISTS  TIMELINE.TIMELINE_INT;\ndrop table IF EXISTS TIMELINE.STOCKOUTS;\n\ncreate table TIMELINE.TRANSFERORDERS(\n    TO_ID   BIGINT,\n    PO_ID   BIGINT,\n    SHIPFROM BIGINT,\n    SHIPTO  BIGINT,\n    SHIPDATE TIMESTAMP,\n    DELIVERYDATE TIMESTAMP,\n    MODDELIVERYDATE TIMESTAMP,\n    SOURCEINVENTORY BIGINT,\n    DESTINATIONINVENTORY BIGINT,\n    QTY BIGINT,\n    SUPPLIER BIGINT,\n    ASN VARCHAR(100),\n    CONTAINER VARCHAR(100),\n    TRANSPORTMODE SMALLINT,\n    CARRIER BIGINT,\n    FROMWEATHER SMALLINT,\n    TOWEATHER SMALLINT,\n    LATITUDE  DOUBLE,\n    LONGITUDE DOUBLE,\n    primary key (TO_ID)\n    );\n\ncreate index TIMELINE.TOSTIDX on TRANSFERORDERS (\n    ShipDate,\n    TO_Id\n );\n \n create index TIMELINE.TOETIDX on TRANSFERORDERS (\n    Deliverydate,\n    TO_Id\n );\n\ncreate table TIMELINE.TO_DELIVERY_CHG_EVENT(\n    TO_event_Id bigint,\n    TO_Id bigint ,\n    ShipFrom bigint,\n    ShipTo bigint,\n    OrgDeliveryDate timestamp,\n    newDeliveryDate timestamp,\n    Supplier varchar(100) ,\n    TransportMode smallint ,\n    Carrier bigint ,\n    Fromweather smallint,\n    ToWeather smallint,\n    primary key (TO_event_Id)\n    );\n    \ncreate table TIMELINE.TIMELINE_INT(\n    Timeline_Id BIGINT,\n    ST          TIMESTAMP,\n    ET          TIMESTAMP,\n    VAL         BIGINT,\n    primary key (Timeline_Id, ST)\n    );\n    \ncreate table TIMELINE.STOCKOUTS(\n    TO_ID   BIGINT,\n    Timeline_Id BIGINT,\n    ST          TIMESTAMP,\n    primary key (TO_ID,ST)\n    );\n    \n\ndrop table if exists timeline.result_date;\ncreate table timeline.result_date (\n  combined_atp date\n);\n\ndrop table if exists timeline.result_dates;\ncreate table timeline.result_dates (\n  inv_id int,\n  atp_on_target_date int,\n  atp_date date\n);\n\ndrop table if exists timeline.quick_check_lines;\ncreate table timeline.quick_check_lines (\n  inv_id int,\n  qty int\n);\n\n    \n",
+			"dateUpdated": "2018-02-07T19:11:11+0000",
+			"config": {
+				"tableHide": true,
+				"editorSetting": { "language": "sql", "editOnDblClick": false },
+				"colWidth": 6,
+				"editorMode": "ace/mode/sql",
+				"editorHide": true,
+				"title": true,
+				"results": {},
+				"enabled": true
+			},
+			"settings": { "params": {}, "forms": {} },
+			"results": {
+				"code": "SUCCESS",
+				"msg": [
+					{
+						"type": "TEXT",
+						"data": "Query executed successfully. Affected rows : 0"
+					},
+					{
+						"type": "TEXT",
+						"data": "Query executed successfully. Affected rows : 0"
+					},
+					{
+						"type": "TEXT",
+						"data": "Query executed successfully. Affected rows : 0"
+					},
+					{
+						"type": "TEXT",
+						"data": "Query executed successfully. Affected rows : 0"
+					},
+					{
+						"type": "TEXT",
+						"data": "Query executed successfully. Affected rows : 0"
+					},
+					{
+						"type": "TEXT",
+						"data": "Query executed successfully. Affected rows : 0"
+					},
+					{
+						"type": "TEXT",
+						"data": "Query executed successfully. Affected rows : 0"
+					},
+					{
+						"type": "TEXT",
+						"data": "Query executed successfully. Affected rows : 0"
+					},
+					{
+						"type": "TEXT",
+						"data": "Query executed successfully. Affected rows : 0"
+					},
+					{
+						"type": "TEXT",
+						"data": "Query executed successfully. Affected rows : 0"
+					},
+					{
+						"type": "TEXT",
+						"data": "Query executed successfully. Affected rows : 0"
+					},
+					{
+						"type": "TEXT",
+						"data": "Query executed successfully. Affected rows : 0"
+					},
+					{
+						"type": "TEXT",
+						"data": "Query executed successfully. Affected rows : 0"
+					},
+					{
+						"type": "TEXT",
+						"data": "Query executed successfully. Affected rows : 0"
+					},
+					{
+						"type": "TEXT",
+						"data": "Query executed successfully. Affected rows : 0"
+					},
+					{
+						"type": "TEXT",
+						"data": "Query executed successfully. Affected rows : 0"
+					}
+				]
+			},
+			"apps": [],
+			"jobName": "paragraph_1517870435906_1813384795",
+			"id": "20170622-222153_977899468",
+			"dateCreated": "2018-02-05T22:40:35+0000",
+			"status": "READY",
+			"errorMessage": "",
+			"progressUpdateIntervalMs": 500,
+			"$$hashKey": "object:381"
+		},
+		{
+			"title": "Load Transfer Order Data (splicemachine)",
+			"text":
+				"%splicemachine\n\ncall SYSCS_UTIL.IMPORT_DATA('TIMELINE','TRANSFERORDERS',null, 's3a://AKIAJUVPSNCAG6AIO7UQ:Dtz9+Iw6RcBlIw8Y3SFYAPD6TkoGwk6DZEobErky@splice-demo/supplychain/data_0623/train_orders.csv', null, null, 'yyyy-MM-dd HH:mm:ss.S', null, null, -1, '/tmp', true, null);\n\ncall SYSCS_UTIL.IMPORT_DATA('TIMELINE','TO_DELIVERY_CHG_EVENT', null, 's3a://AKIAJUVPSNCAG6AIO7UQ:Dtz9+Iw6RcBlIw8Y3SFYAPD6TkoGwk6DZEobErky@splice-demo/supplychain/data_0623/train_events.csv', null, null, 'yyyy-MM-dd HH:mm:ss.S', null, null, -1, '/tmp', true, null);\n\ncall SYSCS_UTIL.IMPORT_DATA('TIMELINE','TIMELINE_INT', null, 's3a://AKIAJUVPSNCAG6AIO7UQ:Dtz9+Iw6RcBlIw8Y3SFYAPD6TkoGwk6DZEobErky@splice-demo/supplychain/data_0623/train_inv.csv', null, null, 'yyyy-MM-dd HH:mm:ss.S', null, null, -1, '/tmp', true, null);\n\n",
+			"dateUpdated": "2018-02-07T19:11:22+0000",
+			"config": {
+				"tableHide": true,
+				"editorSetting": { "language": "sql", "editOnDblClick": false },
+				"colWidth": 6,
+				"editorMode": "ace/mode/sql",
+				"editorHide": true,
+				"title": true,
+				"results": {},
+				"enabled": true
+			},
+			"settings": { "params": {}, "forms": {} },
+			"results": {
+				"code": "SUCCESS",
+				"msg": [
+					{
+						"type": "TABLE",
+						"data":
+							"rowsImported\tfailedRows\tfiles\tdataSize\tfailedLog\n455\t0\t1\t68855\tNONE\n"
+					},
+					{
+						"type": "TABLE",
+						"data":
+							"rowsImported\tfailedRows\tfiles\tdataSize\tfailedLog\n349\t0\t1\t26401\tNONE\n"
+					},
+					{
+						"type": "TABLE",
+						"data":
+							"rowsImported\tfailedRows\tfiles\tdataSize\tfailedLog\n1688\t0\t1\t90009\tNONE\n"
+					}
+				]
+			},
+			"apps": [],
+			"jobName": "paragraph_1517870435907_1813000046",
+			"id": "20170623-174025_718327456",
+			"dateCreated": "2018-02-05T22:40:35+0000",
+			"status": "READY",
+			"errorMessage": "",
+			"progressUpdateIntervalMs": 500,
+			"$$hashKey": "object:382"
+		},
+		{
+			"title": "Transfer Orders (splicemachine)",
+			"text":
+				"%splicemachine\nselect * from timeline.transferorders where shipfrom in (1,2,3) and shipto in (1,2,3) and destinationinventory = 100\n\n",
+			"dateUpdated": "2018-02-07T19:11:50+0000",
+			"config": {
+				"tableHide": true,
+				"editorSetting": { "language": "sql", "editOnDblClick": false },
+				"colWidth": 12,
+				"editorMode": "ace/mode/sql",
+				"editorHide": true,
+				"title": true,
+				"results": {
+					"0": {
+						"graph": {
+							"mode": "table",
+							"height": 300,
+							"optionOpen": false
+						},
+						"helium": {}
+					}
+				},
+				"enabled": true
+			},
+			"settings": { "params": { "inv": "304" }, "forms": {} },
+			"results": {
+				"code": "SUCCESS",
+				"msg": [
+					{
+						"type": "TABLE",
+						"data":
+							"TO_ID\tPO_ID\tSHIPFROM\tSHIPTO\tSHIPDATE\tDELIVERYDATE\tMODDELIVERYDATE\tSOURCEINVENTORY\tDESTINATIONINVENTORY\tQTY\tSUPPLIER\tASN\tCONTAINER\tTRANSPORTMODE\tCARRIER\tFROMWEATHER\tTOWEATHER\tLATITUDE\tLONGITUDE\n168\t150520516\t3\t3\t2016-05-09 00:00:00.0\t2016-05-10 00:00:00.0\t2016-05-10 00:00:00.0\t1000\t100\t775\t11000\t861372904\t540328701\t0\t2\t2\t3\t29.7604267\t29.7604267\n296\t257617302\t2\t1\t2016-08-05 00:00:00.0\t2016-08-11 00:00:00.0\t2016-08-11 00:00:00.0\t800\t100\t776\t11000\t649203047\t747956192\t2\t3\t3\t1\t41.8781136\t41.8781136\n372\t371308886\t2\t3\t2016-09-29 00:00:00.0\t2016-10-04 00:00:00.0\t2016-10-04 00:00:00.0\t600\t100\t217\t12000\t322706472\t711260614\t2\t4\t1\t3\t41.8781136\t41.8781136\n382\t762898246\t2\t2\t2016-10-09 00:00:00.0\t2016-10-16 00:00:00.0\t2016-10-16 00:00:00.0\t300\t100\t208\t11000\t520642485\t10558539\t0\t1\t3\t3\t41.8781136\t41.8781136\n391\t742108223\t3\t3\t2016-10-14 00:00:00.0\t2016-10-21 00:00:00.0\t2016-10-21 00:00:00.0\t400\t100\t455\t13000\t78064225\t15142346\t0\t3\t3\t1\t29.7604267\t29.7604267\n396\t287527658\t3\t2\t2016-10-14 00:00:00.0\t2016-10-19 00:00:00.0\t2016-10-19 00:00:00.0\t1000\t100\t955\t13000\t497267093\t703635288\t0\t1\t3\t0\t29.7604267\t29.7604267\n"
+					}
+				]
+			},
+			"apps": [],
+			"jobName": "paragraph_1517870435907_1813000046",
+			"id": "20170623-175231_773807313",
+			"dateCreated": "2018-02-05T22:40:35+0000",
+			"status": "READY",
+			"errorMessage": "",
+			"progressUpdateIntervalMs": 500,
+			"$$hashKey": "object:383"
+		},
+		{
+			"text":
+				"%md\n### Timelines\n\nTimelines are a relational representation of temporal data for AI applications \n\nTimelines record historical, present and future values.\n\nA timeline table contains a collection of timelines, each with a unique id.\nEvery row represents: `TIMELINE_ID = VAL @ [ST ET]` meaning the variable denoted by the id has the value over that time interval\n\nTimelines require indexed row-based storage and an OLTP compute engine to quickly look up values associated at times.\n\nTimelines require ACID properties because they serve concurrent users changing timelines plus all the timeline updates require atomic changes to timelines.\n\nFor example, you have to make sure that when you move an order that the decrement to the source inventory changes atomically with the change to the destination inventory.\n\nUse Item = 600 below to see a sample timeline in graphical format.  Move your mouse over the graph to see times and values.",
+			"dateUpdated": "2018-02-07T19:12:05+0000",
+			"config": {
+				"editorSetting": {
+					"language": "markdown",
+					"editOnDblClick": true
+				},
+				"colWidth": 12,
+				"editorMode": "ace/mode/markdown",
+				"editorHide": true,
+				"results": {},
+				"enabled": true,
+				"tableHide": true,
+				"title": true
+			},
+			"settings": { "params": {}, "forms": {} },
+			"results": {
+				"code": "SUCCESS",
+				"msg": [
+					{
+						"type": "HTML",
+						"data":
+							"<div class=\"markdown-body\">\n<h3>Timelines</h3>\n<p>Timelines are a relational representation of temporal data for AI applications </p>\n<p>Timelines record historical, present and future values.</p>\n<p>A timeline table contains a collection of timelines, each with a unique id.<br/>Every row represents: <code>TIMELINE_ID = VAL @ [ST ET]</code> meaning the variable denoted by the id has the value over that time interval</p>\n<p>Timelines require indexed row-based storage and an OLTP compute engine to quickly look up values associated at times.</p>\n<p>Timelines require ACID properties because they serve concurrent users changing timelines plus all the timeline updates require atomic changes to timelines.</p>\n<p>For example, you have to make sure that when you move an order that the decrement to the source inventory changes atomically with the change to the destination inventory.</p>\n<p>Use Item = 600 below to see a sample timeline. Move your mouse over the graph to see times and values.</p>\n</div>"
+					}
+				]
+			},
+			"apps": [],
+			"jobName": "paragraph_1517870435908_1811076301",
+			"id": "20171027-044824_1988753696",
+			"dateCreated": "2018-02-05T22:40:35+0000",
+			"status": "READY",
+			"errorMessage": "",
+			"progressUpdateIntervalMs": 500,
+			"$$hashKey": "object:384",
+			"title": "Timelines (md)"
+		},
+		{
+			"title": "Tracking Inventory As Timelines (splicemachine)",
+			"text":
+				"%splicemachine\nselect * from timeline.timeline_int\nwhere TIMELINE_ID = ${inv=200}\nand st >= date('2016-09-15')\norder by TIMELINE.TIMELINE_INT.ST;",
+			"dateUpdated": "2018-02-07T19:12:26+0000",
+			"config": {
+				"tableHide": true,
+				"editorSetting": { "language": "sql", "editOnDblClick": false },
+				"colWidth": 12,
+				"editorMode": "ace/mode/sql",
+				"editorHide": true,
+				"title": true,
+				"results": {
+					"0": {
+						"graph": {
+							"mode": "multiBarChart",
+							"height": 300,
+							"optionOpen": false,
+							"setting": {
+								"multiBarChart": { "stacked": false }
+							},
+							"commonSetting": {},
+							"keys": [
+								{ "name": "ST", "index": 1, "aggr": "sum" }
+							],
+							"groups": [],
+							"values": [
+								{ "name": "VAL", "index": 3, "aggr": "sum" }
+							]
+						},
+						"helium": {}
+					}
+				},
+				"enabled": true
+			},
+			"settings": {
+				"params": { "inv": "200" },
+				"forms": {
+					"inv": {
+						"name": "inv",
+						"defaultValue": "200",
+						"hidden": false,
+						"$$hashKey": "object:3862"
+					}
+				}
+			},
+			"results": {
+				"code": "SUCCESS",
+				"msg": [
+					{
+						"type": "TABLE",
+						"data":
+							"TIMELINE_ID\tST\tET\tVAL\n200\t2016-09-19 00:00:00.0\t2016-09-20 00:00:00.0\t82\n200\t2016-09-20 00:00:00.0\t2016-09-21 00:00:00.0\t82\n200\t2016-09-21 00:00:00.0\t2016-09-23 00:00:00.0\t627\n200\t2016-09-23 00:00:00.0\t2016-09-24 00:00:00.0\t1312\n200\t2016-09-24 00:00:00.0\t2016-09-29 00:00:00.0\t1145\n200\t2016-09-29 00:00:00.0\t2016-09-30 00:00:00.0\t1183\n200\t2016-09-30 00:00:00.0\t2016-10-01 00:00:00.0\t1145\n200\t2016-10-01 00:00:00.0\t2016-10-04 00:00:00.0\t1145\n200\t2016-10-04 00:00:00.0\t2016-10-05 00:00:00.0\t1145\n200\t2016-10-05 00:00:00.0\t2016-10-06 00:00:00.0\t1145\n200\t2016-10-06 00:00:00.0\t2016-10-07 00:00:00.0\t1145\n200\t2016-10-07 00:00:00.0\t2016-10-08 00:00:00.0\t1712\n200\t2016-10-08 00:00:00.0\t2016-10-10 00:00:00.0\t2153\n200\t2016-10-10 00:00:00.0\t2016-10-13 00:00:00.0\t2153\n200\t2016-10-13 00:00:00.0\t2016-10-14 00:00:00.0\t2153\n200\t2016-10-14 00:00:00.0\t2016-10-18 00:00:00.0\t2048\n200\t2016-10-18 00:00:00.0\t2016-10-19 00:00:00.0\t2048\n200\t2016-10-19 00:00:00.0\t2016-10-22 00:00:00.0\t1857\n200\t2016-10-22 00:00:00.0\t2016-10-24 00:00:00.0\t1857\n200\t2016-10-24 00:00:00.0\t2016-10-28 00:00:00.0\t1857\n200\t2016-10-28 00:00:00.0\t2016-10-29 00:00:00.0\t1857\n200\t2016-10-29 00:00:00.0\t2016-10-30 00:00:00.0\t1201\n200\t2016-10-30 00:00:00.0\t2016-10-31 00:00:00.0\t1201\n200\t2016-10-31 00:00:00.0\t2016-11-01 00:00:00.0\t1201\n200\t2016-11-01 00:00:00.0\t2016-11-03 00:00:00.0\t885\n200\t2016-11-03 00:00:00.0\t2016-11-06 00:00:00.0\t1201\n200\t2016-11-06 00:00:00.0\t2016-11-08 00:00:00.0\t1269\n200\t2016-11-08 00:00:00.0\t2016-11-09 00:00:00.0\t589\n200\t2016-11-09 00:00:00.0\t2016-11-10 00:00:00.0\t995\n200\t2016-11-10 00:00:00.0\t2016-11-13 00:00:00.0\t666\n200\t2016-11-13 00:00:00.0\t2016-11-14 00:00:00.0\t995\n200\t2016-11-14 00:00:00.0\t2016-11-15 00:00:00.0\t1140\n200\t2016-11-15 00:00:00.0\t2016-11-18 00:00:00.0\t1140\n200\t2016-11-18 00:00:00.0\t2016-11-19 00:00:00.0\t329\n200\t2016-11-19 00:00:00.0\t2016-11-20 00:00:00.0\t959\n200\t2016-11-20 00:00:00.0\t2016-11-22 00:00:00.0\t959\n200\t2016-11-22 00:00:00.0\t2016-11-26 00:00:00.0\t1624\n200\t2016-11-26 00:00:00.0\t2016-11-28 00:00:00.0\t2439\n200\t2016-11-28 00:00:00.0\t2016-12-03 00:00:00.0\t2439\n200\t2016-12-03 00:00:00.0\t2016-12-05 00:00:00.0\t1942\n200\t2016-12-05 00:00:00.0\t2016-12-13 00:00:00.0\t1942\n200\t2016-12-13 00:00:00.0\t2016-12-15 00:00:00.0\t1668\n200\t2016-12-15 00:00:00.0\t2016-12-20 00:00:00.0\t1668\n200\t2016-12-20 00:00:00.0\t2261-12-31 00:00:00.0\t2578\n"
+					}
+				]
+			},
+			"apps": [],
+			"jobName": "paragraph_1517870435908_1811076301",
+			"id": "20170621-052218_96471785",
+			"dateCreated": "2018-02-05T22:40:35+0000",
+			"status": "READY",
+			"errorMessage": "",
+			"progressUpdateIntervalMs": 500,
+			"$$hashKey": "object:385"
+		},
+		{
+			"text":
+				"%md\n## ATP on Date\n\nThe first type of ATP is ATP on Date - how much is available to promise on a given date?  \n\nRun \"Inventory on Date\" and \"ATP on Date\" to see how these differ:  Use for example 2016-12-15 as the date, and 600 as the Item number.  Use 2017-05-01 as the Time Horizon.\n \nUsing ITEM 600, we can see from the above graph (and confirm in the calculations below) that actual on-hand is 1900.  But you can see in the graph above that later on the inventory goes down, so some of that 1900 is committed - it is not all available to promise.  \n\nThe ATP on Date calculation shows us that we DO have 1190 available to promise without impacting other orders.\n\nThe ATP on calculation can also come with a TimeHorizon indicating that by that time - even if orders are not present - inventory can be easily replenished.  The ATP on Date calculation will not look past this date.\n",
+			"dateUpdated": "2018-02-07T19:12:44+0000",
+			"config": {
+				"tableHide": true,
+				"editorSetting": {
+					"language": "markdown",
+					"editOnDblClick": true
+				},
+				"colWidth": 12,
+				"editorMode": "ace/mode/markdown",
+				"editorHide": true,
+				"results": {},
+				"enabled": true,
+				"title": true
+			},
+			"settings": { "params": {}, "forms": {} },
+			"results": {
+				"code": "SUCCESS",
+				"msg": [
+					{
+						"type": "HTML",
+						"data":
+							"<div class=\"markdown-body\">\n<h2>ATP on Date</h2>\n<p>The first type of ATP is ATP on Date - how much is available to promise on a given date? Using ITEM 600 for example, we can see from the above graph (and confirm in the calculations below) that actual on-hand is 1900. But you can see in the graph above that later on the inventory goes down, so some of that 1900 is committed - it is not all available to promise. </p>\n<p>The ATP on Date calculation shows us that we DO have 1190 available to promise without impacting other orders.</p>\n<p>The ATP on calculation can also come with a TimeHorizon indicating that by that time - even if orders are not present - inventory can be easily replenished. The ATP on Date calculation will not look past this date.</p>\n</div>"
+					}
+				]
+			},
+			"apps": [],
+			"jobName": "paragraph_1517870435909_1810691553",
+			"id": "20171026-161128_362539111",
+			"dateCreated": "2018-02-05T22:40:35+0000",
+			"status": "READY",
+			"errorMessage": "",
+			"progressUpdateIntervalMs": 500,
+			"$$hashKey": "object:386",
+			"title": "ATP on Date (md)"
+		},
+		{
+			"title": "Inventory on Date (splicemachine)",
+			"text":
+				"%splicemachine\nselect val as Inventory from timeline.timeline_int where timeline_id = ${Inv=100}\nAND ST <= TIMESTAMP('${Time=2017-01-01 00:00:00.0}')  \nAND ET > TIMESTAMP('${Time=2017-01-01 00:00:00.0}')",
+			"dateUpdated": "2018-02-07T19:12:57+0000",
+			"config": {
+				"editorSetting": { "language": "sql", "editOnDblClick": false },
+				"colWidth": 6,
+				"editorMode": "ace/mode/sql",
+				"editorHide": true,
+				"title": true,
+				"results": {},
+				"enabled": true,
+				"tableHide": true
+			},
+			"settings": {
+				"params": { "Inv": "200", "Time": "2016-10-15 00:00:00.0" },
+				"forms": {
+					"Inv": {
+						"name": "Inv",
+						"defaultValue": "100",
+						"hidden": false,
+						"$$hashKey": "object:3931"
+					},
+					"Time": {
+						"name": "Time",
+						"defaultValue": "2017-01-01 00:00:00.0",
+						"hidden": false,
+						"$$hashKey": "object:3932"
+					}
+				}
+			},
+			"results": {
+				"code": "SUCCESS",
+				"msg": [{ "type": "TABLE", "data": "INVENTORY\n2048\n" }]
+			},
+			"apps": [],
+			"jobName": "paragraph_1517870435910_1811845799",
+			"id": "20171026-153537_959770350",
+			"dateCreated": "2018-02-05T22:40:35+0000",
+			"status": "READY",
+			"errorMessage": "",
+			"progressUpdateIntervalMs": 500,
+			"$$hashKey": "object:387"
+		},
+		{
+			"title": "ATP on Date (splicemachine)",
+			"text":
+				"%splicemachine\nselect case when min(val) < 0 then 0 else min(val) end AS Available from timeline.timeline_int\nwhere timeline_id = ${Inv=100} \nAND ST >= TIMESTAMP('${TimeATP=2017-01-01 00:00:00.0}')  \nAND ET < TIMESTAMP('${TimeHorizon=2017-05-05 00:00:00.0}')",
+			"dateUpdated": "2018-02-07T19:13:06+0000",
+			"config": {
+				"editorSetting": { "language": "sql", "editOnDblClick": false },
+				"colWidth": 6,
+				"editorMode": "ace/mode/sql",
+				"editorHide": true,
+				"title": true,
+				"results": {},
+				"enabled": true,
+				"tableHide": true
+			},
+			"settings": {
+				"params": {
+					"Inv": "200",
+					"TimeHorizon": "2017-05-05 00:00:00.0",
+					"Time": "2017-01-01 00:00:00.0",
+					"TimeATP": "2016-10-15 00:00:00.0"
+				},
+				"forms": {
+					"Inv": {
+						"name": "Inv",
+						"defaultValue": "100",
+						"hidden": false,
+						"$$hashKey": "object:3987"
+					},
+					"TimeHorizon": {
+						"name": "TimeHorizon",
+						"defaultValue": "2017-05-05 00:00:00.0",
+						"hidden": false,
+						"$$hashKey": "object:3989"
+					},
+					"TimeATP": {
+						"name": "TimeATP",
+						"defaultValue": "2017-01-01 00:00:00.0",
+						"hidden": false,
+						"$$hashKey": "object:3988"
+					}
+				}
+			},
+			"results": {
+				"code": "SUCCESS",
+				"msg": [{ "type": "TABLE", "data": "AVAILABLE\n329\n" }]
+			},
+			"apps": [],
+			"jobName": "paragraph_1517870435910_1811845799",
+			"id": "20171026-153617_679027547",
+			"dateCreated": "2018-02-05T22:40:35+0000",
+			"status": "READY",
+			"errorMessage": "",
+			"progressUpdateIntervalMs": 500,
+			"$$hashKey": "object:388"
+		},
+		{
+			"text":
+				"%md\n## Multi-Line ATP\nBelow we show a very quick multi-line ATP analysis: pick a target date, and add items for your order and the quantities needed of each.  On what date can all quantities for all items be available to promise?\n\nThe Order ATP results below shows the ATP for the order.  The ATP for each Item is also broken out in Line Item ATP.\n\nTo see how a single ATP date is computed for multiple lines,  Use the following inputs when running the \"Multi-Line ATP - Quick Promise\" paragraph:\n\n  Target Date: 2016-10-15\n  Item: 100   Qty: 400\n  Item: 200   Qty: 400\n  Item: 600   Qty: 4000\n\nUse \"Add\" to enter each Item.  ATP will be calculated after each Add.  Use \"Clear Lines\" to remove all Items and start over.  See how adding each Item influences the Order's ATP date, and each Item's individual ATP calculation.\n",
+			"dateUpdated": "2018-02-07T19:13:27+0000",
+			"config": {
+				"tableHide": true,
+				"editorSetting": {
+					"language": "markdown",
+					"editOnDblClick": true
+				},
+				"colWidth": 12,
+				"editorMode": "ace/mode/markdown",
+				"editorHide": true,
+				"results": {},
+				"enabled": true,
+				"title": true
+			},
+			"settings": { "params": {}, "forms": {} },
+			"results": {
+				"code": "SUCCESS",
+				"msg": [
+					{
+						"type": "HTML",
+						"data":
+							"<div class=\"markdown-body\">\n<h2>Multi-Line ATP</h2>\n<p>Below we show a very quick multi-line ATP analysis: pick a target date, and add items for your order and the quantities needed of each. On what date can all quantities for all items be available to promise?</p>\n<p>The Order ATP results below shows the ATP for the order. The ATP for each Item is also broken out in Line Item ATP.</p>\n<p>To see how a single ATP date is computed for multiple lines, Use the following inputs when running the &ldquo;Multi-Line ATP - Quick Promise&rdquo; paragraph:</p>\n<p>Target Date: 2016-10-15<br/> Item: 100 Qty: 400<br/> Item: 200 Qty: 400<br/> Item: 600 Qty: 4000</p>\n<p>Use &ldquo;Add&rdquo; to enter each Item. ATP will be calculated after each Add. Use &ldquo;Clear Lines&rdquo; to remove all Items and start over. See how adding each Item influences the Order&rsquo;s ATP date, and each Item&rsquo;s individual ATP calculation.</p>\n</div>"
+					}
+				]
+			},
+			"apps": [],
+			"jobName": "paragraph_1517870435911_1811461050",
+			"id": "20171026-161527_1978435742",
+			"dateCreated": "2018-02-05T22:40:35+0000",
+			"status": "READY",
+			"errorMessage": "",
+			"progressUpdateIntervalMs": 500,
+			"$$hashKey": "object:389",
+			"title": "Multi-Line ATP (md)"
+		},
+		{
+			"title": "Multi-Line ATP - Quick Promise (angular)",
+			"text":
+				"%angular\n\n<form class=\"form-inline\">\n  <div class=\"form-group\">\n    <label for=\"targetDate\"> Target Date: </label>\n    <input type=\"text\" class=\"form-control\" id=\"targetDate\" placeholder=\"Target Date ...\" ng-model=\"targetDate\"></input>\n    </p>\n    <label for=\"itemId\"> Item: </label>\n    <input type=\"text\" class=\"form-control\" id=\"itemId\" placeholder= Item id ...\" ng-model=\"itemId\"></input>\n    <label for=\"quantity\">Quantity: </label>\n    <input type=\"text\" class=\"form-control\" id=\"quantity\" placeholder= Quantity ...\" ng-model=\"quantity\"></input>\n    <button type=\"submit\" class=\"btn btn-primary\" ng-click=\"z.angularBind('itemId',itemId,'20171013-083816_1871485243');z.angularBind('quantity',quantity,'20171013-083816_1871485243'); z.angularBind('targetDate',targetDate,'20171013-083816_1871485243');z.runParagraph('20171013-083816_1871485243')\"> Add Line</button>\n    <button type=\"submit\" class=\"btn btn-primary\" ng-click=\"z.runParagraph('20171027-112314_1454759430')\"> Run ATP</button>\n    </p>\n    <button type=\"submit\" class=\"btn btn-primary\" ng-click=\"z.runParagraph('20171017-111025_61937030');z.runParagraph('20171017-170300_1458091248');z.runParagraph('20171017-110511_1143487505');z.runParagraph('20171017-154006_520921794');z.runParagraph('20171017-172449_571207691')\"> Clear Lines</button>\n\n  </div>\n\n</form>\n\n",
+			"user": "splice",
+			"dateUpdated": "2018-02-07T19:13:42+0000",
+			"config": {
+				"tableHide": true,
+				"editorSetting": { "language": "sql", "editOnDblClick": true },
+				"colWidth": 12,
+				"editorMode": "ace/mode/undefined",
+				"editorHide": true,
+				"title": true,
+				"results": {},
+				"enabled": true
+			},
+			"settings": { "params": {}, "forms": {} },
+			"results": {
+				"code": "SUCCESS",
+				"msg": [
+					{
+						"type": "ANGULAR",
+						"data":
+							"<form class=\"form-inline\">\n  <div class=\"form-group\">\n    <label for=\"targetDate\"> Target Date: </label>\n    <input type=\"text\" class=\"form-control\" id=\"targetDate\" placeholder=\"Target Date ...\" ng-model=\"targetDate\"></input>\n    </p>\n    <label for=\"itemId\"> Item: </label>\n    <input type=\"text\" class=\"form-control\" id=\"itemId\" placeholder= Item id ...\" ng-model=\"itemId\"></input>\n    <label for=\"quantity\">Quantity: </label>\n    <input type=\"text\" class=\"form-control\" id=\"quantity\" placeholder= Quantity ...\" ng-model=\"quantity\"></input>\n    <button type=\"submit\" class=\"btn btn-primary\" ng-click=\"z.angularBind('itemId',itemId,'20171013-083816_1871485243');z.angularBind('quantity',quantity,'20171013-083816_1871485243'); z.angularBind('targetDate',targetDate,'20171013-083816_1871485243');z.runParagraph('20171013-083816_1871485243')\"> Add Line</button>\n    <button type=\"submit\" class=\"btn btn-primary\" ng-click=\"z.runParagraph('20171027-112314_1454759430')\"> Run ATP</button>\n    </p>\n    <button type=\"submit\" class=\"btn btn-primary\" ng-click=\"z.runParagraph('20171017-111025_61937030');z.runParagraph('20171017-170300_1458091248');z.runParagraph('20171017-110511_1143487505');z.runParagraph('20171017-154006_520921794');z.runParagraph('20171017-172449_571207691')\"> Clear Lines</button>\n\n  </div>\n\n</form>"
+					}
+				]
+			},
+			"apps": [],
+			"jobName": "paragraph_1517870435911_1811461050",
+			"id": "20171013-161049_2054081284",
+			"dateCreated": "2018-02-05T22:40:35+0000",
+			"dateStarted": "2018-02-06T19:54:02+0000",
+			"dateFinished": "2018-02-06T19:54:03+0000",
+			"status": "FINISHED",
+			"progressUpdateIntervalMs": 500,
+			"$$hashKey": "object:390"
+		},
+		{
+			"title": "Proposed Order (splicemachine)",
+			"text":
+				"%splicemachine\nselect inv_id, qty from timeline.quick_check_lines order by inv_id",
+			"dateUpdated": "2018-02-07T19:13:56+0000",
+			"config": {
+				"tableHide": true,
+				"editorSetting": { "language": "sql", "editOnDblClick": false },
+				"colWidth": 4,
+				"editorMode": "ace/mode/sql",
+				"editorHide": true,
+				"title": true,
+				"results": {
+					"0": {
+						"graph": {
+							"mode": "table",
+							"height": 300,
+							"optionOpen": false
+						},
+						"helium": {}
+					}
+				},
+				"enabled": true
+			},
+			"settings": { "params": {}, "forms": {} },
+			"results": {
+				"code": "SUCCESS",
+				"msg": [
+					{
+						"type": "TABLE",
+						"data": "INV_ID\tQTY\n100\t400\n200\t400\n600\t4000\n"
+					}
+				]
+			},
+			"apps": [],
+			"jobName": "paragraph_1517870435912_1809537306",
+			"id": "20171017-110511_1143487505",
+			"dateCreated": "2018-02-05T22:40:35+0000",
+			"status": "READY",
+			"errorMessage": "",
+			"progressUpdateIntervalMs": 500,
+			"$$hashKey": "object:391"
+		},
+		{
+			"title": "Order ATP (splicemachine)",
+			"text":
+				"%splicemachine\nselect combined_atp from timeline.result_date;",
+			"dateUpdated": "2018-02-07T19:14:05+0000",
+			"config": {
+				"tableHide": true,
+				"editorSetting": { "language": "sql", "editOnDblClick": false },
+				"colWidth": 3,
+				"editorMode": "ace/mode/sql",
+				"editorHide": true,
+				"title": true,
+				"results": {
+					"0": {
+						"graph": {
+							"mode": "table",
+							"height": 300,
+							"optionOpen": false
+						},
+						"helium": {}
+					}
+				},
+				"enabled": true
+			},
+			"settings": { "params": {}, "forms": {} },
+			"results": {
+				"code": "SUCCESS",
+				"msg": [
+					{ "type": "TABLE", "data": "COMBINED_ATP\n2016-12-20\n" }
+				]
+			},
+			"apps": [],
+			"jobName": "paragraph_1517870435912_1809537306",
+			"id": "20171017-154006_520921794",
+			"dateCreated": "2018-02-05T22:40:35+0000",
+			"status": "READY",
+			"errorMessage": "",
+			"progressUpdateIntervalMs": 500,
+			"$$hashKey": "object:392"
+		},
+		{
+			"title": "Line Item ATP (splicemachine)",
+			"text":
+				"%splicemachine\nselect inv_id, atp_on_target_date, atp_date from timeline.result_dates order by atp_date desc",
+			"dateUpdated": "2018-02-07T19:14:14+0000",
+			"config": {
+				"tableHide": true,
+				"editorSetting": { "language": "sql", "editOnDblClick": false },
+				"colWidth": 5,
+				"editorMode": "ace/mode/sql",
+				"editorHide": true,
+				"title": true,
+				"results": {},
+				"enabled": true
+			},
+			"settings": { "params": {}, "forms": {} },
+			"results": {
+				"code": "SUCCESS",
+				"msg": [
+					{
+						"type": "TABLE",
+						"data":
+							"INV_ID\tATP_ON_TARGET_DATE\tATP_DATE\n600\t1190\t2016-12-20\n100\t0\t2016-11-23\n200\t329\t2016-11-19\n"
+					}
+				]
+			},
+			"apps": [],
+			"jobName": "paragraph_1517870435913_1809152557",
+			"id": "20171017-172449_571207691",
+			"dateCreated": "2018-02-05T22:40:35+0000",
+			"status": "READY",
+			"errorMessage": "",
+			"progressUpdateIntervalMs": 500,
+			"$$hashKey": "object:393"
+		},
+		{
+			"text":
+				"%spark\n z.run(\"20171017-170300_1458091248\");\n val item = z.angular(\"itemId\").toString.toInt\n val quantity = z.angular(\"quantity\").toString.toInt\n val targetDateString = z.angular(\"targetDate\").toString\n\n // val splicemachineContext = new SplicemachineContext(defaultJDBCURL)\n case class LineItem(INV_ID: Int, QTY: Int)\n val li = new LineItem(item, quantity)\n val liDF = Seq(li).toDF\n \n splicemachineContext.insert(liDF,\"timeline.quick_check_lines\" )\n z.run(\"20171017-110511_1143487505\");\n\n\n",
+			"dateUpdated": "2018-02-07T19:14:39+0000",
+			"config": {
+				"tableHide": true,
+				"editorSetting": {
+					"language": "scala",
+					"editOnDblClick": false
+				},
+				"colWidth": 12,
+				"editorMode": "ace/mode/scala",
+				"editorHide": true,
+				"results": {},
+				"enabled": true,
+				"title": true
+			},
+			"settings": { "params": {}, "forms": {} },
+			"results": {
+				"code": "SUCCESS",
+				"msg": [
+					{
+						"type": "TEXT",
+						"data":
+							"\nitem: Int = 200\n\nquantity: Int = 400\n\ntargetDateString: String = 2016-10-15\n\ndefined class LineItem\n\nli: LineItem = LineItem(200,400)\n\nliDF: org.apache.spark.sql.DataFrame = [INV_ID: int, QTY: int]\n"
+					}
+				]
+			},
+			"apps": [],
+			"jobName": "paragraph_1517870435914_1810306804",
+			"id": "20171013-083816_1871485243",
+			"dateCreated": "2018-02-05T22:40:35+0000",
+			"status": "READY",
+			"errorMessage": "",
+			"progressUpdateIntervalMs": 500,
+			"$$hashKey": "object:394",
+			"title": "Unknown Spark Block 01 (spark)"
+		},
+		{
+			"text": "%splicemachine\ndelete from timeline.quick_check_lines",
+			"dateUpdated": "2018-02-07T19:15:11+0000",
+			"config": {
+				"tableHide": true,
+				"editorSetting": { "language": "sql", "editOnDblClick": false },
+				"colWidth": 6,
+				"editorMode": "ace/mode/sql",
+				"editorHide": true,
+				"results": {},
+				"enabled": true,
+				"title": true
+			},
+			"settings": { "params": {}, "forms": {} },
+			"results": {
+				"code": "SUCCESS",
+				"msg": [
+					{
+						"type": "TEXT",
+						"data": "Query executed successfully. Affected rows : 2"
+					}
+				]
+			},
+			"apps": [],
+			"jobName": "paragraph_1517870435914_1810306804",
+			"id": "20171017-111025_61937030",
+			"dateCreated": "2018-02-05T22:40:35+0000",
+			"status": "READY",
+			"errorMessage": "",
+			"progressUpdateIntervalMs": 500,
+			"$$hashKey": "object:395",
+			"title": "Delete timeline.quick_check_lines (splicemachine)"
+		},
+		{
+			"text":
+				"%splicemachine\ndelete from timeline.result_date;\ndelete from timeline.result_dates",
+			"dateUpdated": "2018-02-07T19:15:36+0000",
+			"config": {
+				"tableHide": true,
+				"editorSetting": { "language": "sql", "editOnDblClick": false },
+				"colWidth": 6,
+				"editorMode": "ace/mode/sql",
+				"editorHide": true,
+				"results": {},
+				"enabled": true,
+				"title": true
+			},
+			"settings": { "params": {}, "forms": {} },
+			"results": {
+				"code": "SUCCESS",
+				"msg": [
+					{
+						"type": "TEXT",
+						"data": "Query executed successfully. Affected rows : 1"
+					},
+					{
+						"type": "TEXT",
+						"data": "Query executed successfully. Affected rows : 2"
+					}
+				]
+			},
+			"apps": [],
+			"jobName": "paragraph_1517870435915_1809922055",
+			"id": "20171017-170300_1458091248",
+			"dateCreated": "2018-02-05T22:40:35+0000",
+			"status": "READY",
+			"errorMessage": "",
+			"progressUpdateIntervalMs": 500,
+			"$$hashKey": "object:396",
+			"title": "Delete timeline.*date* (splicemachine)"
+		},
+		{
+			"text":
+				"%spark\n val stmt = s\"select max(NVL(date(et),'$targetDateString')) as COMBINED_ATP from timeline.quick_check_lines qc left join (select inv_id, et, val, qty from timeline.timeline_int join timeline.quick_check_lines on timeline_id = inv_id where st >= '$targetDateString' and val < qty) y on qc.inv_id = y.inv_id\"\n val rdDF = splicemachineContext.df(stmt)\n splicemachineContext.insert(rdDF,\"timeline.result_date\")\n \n val stmt2 = s\"select qc.INV_ID , (select case when min(val) < 0 then 0 else min(val) end from timeline.timeline_int where timeline_id = qc.inv_id and st >= '$targetDateString') ATP_ON_TARGET_DATE, NVL(ATP,'$targetDateString') as ATP_DATE from timeline.quick_check_lines qc left join (select INV_ID, date(max(et)) as ATP from timeline.timeline_int join timeline.quick_check_lines on timeline_id = inv_id where st >= '$targetDateString' and val < qty group by inv_id order by ATP desc) y on qc.inv_id = y.inv_id\"\n val rd2DF = splicemachineContext.df(stmt2)\n splicemachineContext.insert(rd2DF,\"timeline.result_dates\")\n\n z.run(\"20171017-154006_520921794\");\n z.run(\"20171017-172449_571207691\");",
+			"dateUpdated": "2018-02-07T19:16:04+0000",
+			"config": {
+				"tableHide": true,
+				"editorSetting": {
+					"language": "scala",
+					"editOnDblClick": false
+				},
+				"colWidth": 12,
+				"editorMode": "ace/mode/scala",
+				"editorHide": true,
+				"results": {},
+				"enabled": true,
+				"title": true
+			},
+			"settings": { "params": {}, "forms": {} },
+			"results": {
+				"code": "SUCCESS",
+				"msg": [
+					{
+						"type": "TEXT",
+						"data":
+							"\nstmt: String = select max(NVL(date(et),'2016-10-15')) as COMBINED_ATP from timeline.quick_check_lines qc left join (select inv_id, et, val, qty from timeline.timeline_int join timeline.quick_check_lines on timeline_id = inv_id where st >= '2016-10-15' and val < qty) y on qc.inv_id = y.inv_id\n\nrdDF: org.apache.spark.sql.Dataset[org.apache.spark.sql.Row] = [COMBINED_ATP: date]\n\nstmt2: String = select qc.INV_ID , (select case when min(val) < 0 then 0 else min(val) end from timeline.timeline_int where timeline_id = qc.inv_id and st >= '2016-10-15') ATP_ON_TARGET_DATE, NVL(ATP,'2016-10-15') as ATP_DATE from timeline.quick_check_lines qc left join (select INV_ID, date(max(et)) as ATP from timeline.timeline_int join timeline.quick_check_lines on timeline_id = inv_id where st >= '2016-10-15' and val < qty group by inv_id order by ATP desc) y on qc.inv_id = y.inv_id\n\nrd2DF: org.apache.spark.sql.Dataset[org.apache.spark.sql.Row] = [INV_ID: int, ATP_ON_TARGET_DATE: bigint ... 1 more field]\n"
+					}
+				]
+			},
+			"apps": [],
+			"jobName": "paragraph_1517870435915_1809922055",
+			"id": "20171027-112314_1454759430",
+			"dateCreated": "2018-02-05T22:40:35+0000",
+			"status": "READY",
+			"errorMessage": "",
+			"progressUpdateIntervalMs": 500,
+			"$$hashKey": "object:397",
+			"title": "Unknown Spark Block 02 (spark)"
+		},
+		{
+			"text": "",
+			"user": "splice",
+			"dateUpdated": "2018-02-07T19:16:25+0000",
+			"config": {
+				"editorSetting": {
+					"language": "scala",
+					"editOnDblClick": false
+				},
+				"colWidth": 1,
+				"editorMode": "ace/mode/scala",
+				"editorHide": true,
+				"results": {},
+				"enabled": false,
+				"tableHide": false
+			},
+			"settings": { "params": {}, "forms": {} },
+			"apps": [],
+			"jobName": "paragraph_1517870435916_1807998310",
+			"id": "20170714-192918_375392082",
+			"dateCreated": "2018-02-05T22:40:35+0000",
+			"status": "FINISHED",
+			"errorMessage": "",
+			"progressUpdateIntervalMs": 500,
+			"$$hashKey": "object:398"
+		}
+	],
+	"name": "ATP",
+	"id": "2D8FWAJNJ",
+	"angularObjects": {
+		"2D52TDUHK:shared_process": [],
+		"2D4FFT11T:shared_process": [],
+		"2D65CWNVK:shared_process": [],
+		"2D6WPA2E1:shared_process": [],
+		"2D5EWZVT4:shared_process": [],
+		"2D5ABAFU7:shared_process": []
+	},
+	"config": { "looknfeel": "default", "personalizedMode": "false" },
+	"info": {}
+}

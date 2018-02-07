@@ -5,10 +5,9 @@ import {handle, writeToStreams} from "../../helpers";
 
 let rejected = (reason) => Promise.reject(reason);
 
-
 export function size(req: express.Request, res: express.Response) {
     res.send(String(Object.keys(statements).reduce((acc, stmt) => acc + statements[stmt].length, 0)));
-    // res.end();
+    res.end();
 }
 
 export function prepare(req: express.Request, res: express.Response) {
@@ -17,8 +16,6 @@ export function prepare(req: express.Request, res: express.Response) {
     let writer = (text) => {
         writeToStreams(text, res.write.bind(res), console.log)
     };
-
-    // try {
 
     db = new Database();
     db.initialize()
@@ -36,12 +33,5 @@ export function prepare(req: express.Request, res: express.Response) {
             res.end();
         }, rejected)
         .catch(handle.bind(null, res));
-
-    // } catch (e) {
-    //     console.log("Caught exception");
-    //     handle.bind(null, res, e);
-    // }
-
-
 }
 

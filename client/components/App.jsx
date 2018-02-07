@@ -42,17 +42,17 @@ export default class App extends Component {
         if (typeof route === "string") {
             return () => {
                 fetch(env.server() + route, this.getInit).then((response) => {
-                    if (response.bodyUsed) {
+                    // if (response.bodyUsed) {
                         console.log("Fetch came back");
                         const reader = response.body.getReader();
                         reader.read().then(this.processText(this.state.log, reader));
-                    } else {
-                        response.text()
-                            .then((result) => {
-                                this.state.log.push(result);
-                                this.setState(this.state);
-                            });
-                    }
+                    // } else {
+                    //     response.text()
+                    //         .then((result) => {
+                    //             this.state.log.push(result);
+                    //             this.setState(this.state);
+                    //         });
+                    // }
                 });
             }
         }
