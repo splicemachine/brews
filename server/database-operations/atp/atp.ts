@@ -49,10 +49,10 @@ export function transferOrders(req: express.Request, res: express.Response){
 
     db.initialize()
         .then(()=>{
-            return db.preparedSelect(statements.transferOrders, writer, 100);
+            return db.preparedSelect(statements.transferOrders, console.log, 100);
         })
         .then((result) => {
-            console.log("fucky");
+            res.send(result);
             console.log(result);
             res.end();
         }, rejected)

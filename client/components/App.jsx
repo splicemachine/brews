@@ -102,14 +102,13 @@ export default class App extends Component {
     transferOrders(destination) {
 
         fetch(env.server() + "/api/v1/transfer-orders", this.postInit({destination}))
-            .then(res => res.json())
-            .catch(error => console.error('Error:', error))
-            .then(response => console.log('Success:', response));
-
-
-        // console.log('A destination was submitted: ', destination, event);
-        // this.state.destinationInventory = destination;
-        // this.setState(this.state);
+            .then(res => res.text())
+            .catch(error => console.log('Error:', error))
+            .then(response => {
+                this.state.log.push(response);
+                this.setState(this.state);
+                // console.log('Success:', response);
+            });
     }
 
     render() {
