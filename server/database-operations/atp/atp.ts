@@ -35,3 +35,6 @@ export function prepare(req: express.Request, res: express.Response) {
         .catch(handle.bind(null, res));
 }
 
+export function transferOrders(req: express.Request, res: express.Response){
+    res.send(req.body)
+}

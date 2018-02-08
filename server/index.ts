@@ -8,10 +8,12 @@ const DEFAULT_PORT = 3000;
 
 const app = express();
 
+const jsonParser = bodyParser.json();
+
 app.set("port", process.env.PORT || DEFAULT_PORT);
 app.set("json spaces", 2);
 
-app.use(bodyParser.json());
+// app.use(bodyParser.json());
 // app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use(function (req, res, next) {
@@ -55,25 +57,13 @@ if (process.env.NODE_ENV === "development") {
 }
 
 /**
- * Import and configure the example route.
- * There's no way this one works anymore lol.
- */
-// import example from "./database-operations/example/example";
-// app.get("/api/v1/example", (req, res) => {
-//     example(res);
-// });
-
-/**
  * Import and configure the ATP route.
  */
-import {size, prepare} from "./database-operations/atp/atp";
+import {size, prepare, transferOrders} from "./database-operations/atp/atp";
 
 app.get("/api/v1/prepare", prepare);
 app.get("/api/v1/size", size);
-
-app.post("/api/v1/transfer-orders", (req: express.Request, res: express.Response) => {
-    res.send(req.body)
-});
+app.post("/api/v1/transfer-orders", jsonParser, transferOrders);
 
 
 
