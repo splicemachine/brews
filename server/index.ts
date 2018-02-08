@@ -1,5 +1,6 @@
 import express = require('express');
 import path = require('path');
+import bodyParser = require("body-parser");
 
 const DIST_DIR = path.join(__dirname, "../dist");
 const HTML_FILE = path.join(DIST_DIR, "index.html");
@@ -9,6 +10,10 @@ const app = express();
 
 app.set("port", process.env.PORT || DEFAULT_PORT);
 app.set("json spaces", 2);
+
+app.use(bodyParser.json());
+// app.use(bodyParser.urlencoded({ extended: false }));
+
 app.use(function (req, res, next) {
 
     // Website you wish to allow to connect
@@ -65,6 +70,10 @@ import {size, prepare} from "./database-operations/atp/atp";
 
 app.get("/api/v1/prepare", prepare);
 app.get("/api/v1/size", size);
+
+app.post("/api/v1/transfer-orders", (req: express.Request, res: express.Response) => {
+    res.send(req.body)
+});
 
 
 

@@ -3,12 +3,15 @@ import env from "../../server/environment"
 import "../styles/main.css"
 import Progress from "react-progressbar";
 import Output from "./Output.jsx";
+import TransferOrders from "./parameterized-selects/TransferOrders.jsx";
 
 export default class App extends Component {
 
     constructor(props) {
         super(props);
         this.generateClickHandler = this.generateClickHandler.bind(this);
+        this.processText = this.processText.bind(this);
+        this.transferOrders = this.transferOrders.bind(this);
         this.containerClasses = `pure-g`;
         this.buttonContainerClasses = `button__container pure-u-1 pure-u-md-1-4`;
         this.outputClasses = `pure-u-1 pure-u-md-3-4`;
@@ -20,6 +23,7 @@ export default class App extends Component {
             waiting: "Not Waiting.",
             completed: 0,
             total: 0,
+            destinationInventory: ''
         };
 
         this.getInit = {
@@ -27,6 +31,18 @@ export default class App extends Component {
             headers: new Headers(),
             mode: "cors",
             cache: "default"
+        };
+
+        this.postInit = (body) => {
+            return {
+                method: "POST",
+                body: JSON.stringify(body),
+                headers: new Headers({
+                    'Content-Type': 'application/json'
+                }),
+                mode: "cors",
+                cache: "default"
+            }
         };
 
         fetch(env.server() + "/api/v1/size", this.getInit).then((response) => {
@@ -42,10 +58,14 @@ export default class App extends Component {
         if (typeof route === "string") {
             return () => {
                 fetch(env.server() + route, this.getInit).then((response) => {
+                    /**
+                     * This is probably not needed because I bound the function correctly above now.
+                     * See TransferOrders.jsx for the comment.
+                     */
                     // if (response.bodyUsed) {
-                        console.log("Fetch came back");
-                        const reader = response.body.getReader();
-                        reader.read().then(this.processText(this.state.log, reader));
+                    console.log("Fetch came back");
+                    const reader = response.body.getReader();
+                    reader.read().then(this.processText(this.state.log, reader));
                     // } else {
                     //     response.text()
                     //         .then((result) => {
@@ -75,6 +95,23 @@ export default class App extends Component {
         }
     }
 
+    /**
+     * This gets called when someone clicks the button in TransferOrders
+     * @param destination
+     */
+    transferOrders(destination) {
+
+        fetch(env.server() + "/api/v1/transfer-orders", this.postInit({destination}))
+            .then(res => res.json())
+            .catch(error => console.error('Error:', error))
+            .then(response => console.log('Success:', response));
+
+
+        // console.log('A destination was submitted: ', destination, event);
+        // this.state.destinationInventory = destination;
+        // this.setState(this.state);
+    }
+
     render() {
         const buttonContainerStyle = {
             margin: "1em"
@@ -90,9 +127,8 @@ export default class App extends Component {
                                 Prepare and Import
                             </button>
                         </div>
-                        {/*<div style={buttonContainerStyle}>*/}
-                        {/*<button className="button" onClick={this.generateClickHandler("/api/v1/size")}>Get Size</button>*/}
-                        {/*</div>*/}
+                        <TransferOrders destination={this.state.destinationInventory}
+                                        submit={this.transferOrders}/>
                     </div>
                     <Output log={this.state.log} className={this.outputClasses}/>
                 </div>
