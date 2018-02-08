@@ -6,9 +6,7 @@ import express = require('express');
  * @param {() => any} fns: It is assumed that all other parameters are functions to be called.
  */
 export function writeToStreams(message: string, ...fns: Array<() => any>) {
-
     fns.forEach((fn) => {
-        console.log("calling", fn.name);
         fn.call(null, message)
     })
 }

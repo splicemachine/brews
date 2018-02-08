@@ -20,23 +20,12 @@ const config = {
     password: "admin"
 };
 
-/**
- * Do this once forever?
- * Looks like this is called at import time only. That's great for now.
- */
-// console.log("Making a new DB connection");
-// let database = new jdbc(config);
-// let connection = null;
-
-
-
 export default class {
 
     private database: any;
     private connection: any;
 
     constructor() {
-        // console.log("Serving Singleton Connection");
         this.database = new jdbc(config);
         this.connection = null;
     }
@@ -46,17 +35,14 @@ export default class {
         return new Promise((resolve, reject) => {
             this.database.initialize((err) => {
                 if (err) {
-                    // throw new Error(err)
                     reject(err);
                 } else {
                     this.database.reserve((err, c) => {
                         if (err) {
-                            // throw new Error(err)
                             reject(err);
                         } else {
                             c.conn.setAutoCommit(false, (err) => {
                                 if (err) {
-                                    // throw new Error(err)
                                     reject(err);
                                 } else {
                                     this.connection = c.conn;
@@ -97,6 +83,139 @@ export default class {
         }
         else {
             return serializePromiseFactoryArray(statement.map(s => () => this.transaction(s, logger)));
+        }
+    }
+
+    // testpreparedselectsetint: function(test) {
+    //     testconn.conn.prepareStatement("SELECT * FROM blah WHERE id=?",function(err, statement) {
+    //         if (err) {
+    //             console.log(err);
+    //         } else {
+    //             statement.setInt(1, 2, function(err) {
+    //                 if (err) {
+    //                     console.log(err);
+    //                 }
+    //                 else {
+    //                     statement.executeQuery(function(err, resultset) {
+    //                         test.expect(3);
+    //                         test.equal(null, err);
+    //                         test.ok(resultset);
+    //                         resultset.toObjArray(function(err, results) {
+    //                             test.equal(results.length, 1);
+    //                             test.done();
+    //                         });
+    //                     });
+    //                 }
+    //             });
+    //         }
+    //     });
+    // },
+    // testpreparedselectsetstring: function(test) {
+    //     testconn.conn.prepareStatement("SELECT * FROM blah WHERE name=?",function(err, statement) {
+    //         if (err) {
+    //             console.log(err);
+    //         } else {
+    //             statement.setString(1,'Jason', function(err) {
+    //                 if (err) {
+    //                     console.log(err);
+    //                 }
+    //                 else {
+    //                     statement.executeQuery(function(err, resultset) {
+    //                         test.expect(3);
+    //                         test.equal(null, err);
+    //                         test.ok(resultset);
+    //                         resultset.toObjArray(function(err, results) {
+    //                             test.equal(results.length, 1);
+    //                             test.done();
+    //                         });
+    //                     });
+    //                 }
+    //             });
+    //         }
+    //     });
+    // },
+
+
+    public preparedSelect(statement, logger, ...params) {
+
+        /**
+         * Mapping JS types to the names of the functions for prepared statements.
+         * Based on the typeof the arguments in params, we'll prepare the statement.
+         * Only number, string, and boolean are supported for now.
+         * TODO: Support other types.
+         */
+        let method = {
+            "number": "setInt",
+            "boolean": "setBoolean",
+            "string": "setString",
+        };
+
+        /**
+         * Make sure that the statement to prepare is actually a string.
+         */
+        if (typeof statement === "string") {
+            logger(statement);
+            return new Promise((resolve, reject) => {
+                this.connection.prepareStatement(statement, (err, s) => {
+                    if (err) {
+                        reject(err)
+                    } else {
+
+
+                        params.map((val, idx, arr) => {
+
+
+                            try {
+                                /**
+                                 * Typeof "object" not supported
+                                 * TODO: Was the switch structure more idiomatic here?
+                                 */
+                                console.log(`setting index ${idx}+1 to value ${val}`);
+
+                                s[method[typeof val]](idx + 1, val, (err) => {
+                                    if (err) {
+                                        console.log(`I got an error actually setting the method`);
+                                        reject(err);
+                                    } else {
+                                        if (arr.length - 1 === idx) {
+                                            /**
+                                             * End of the array
+                                             */
+                                            after.call(this);
+                                        }
+                                    }
+                                });
+                            } catch (e) {
+                                console.log(`I caught the exception`);
+                                reject(e);
+                            }
+                        });
+
+
+                        function after() {
+                            s.executeQuery(function (err, resultset) {
+                                if (err) {
+                                    console.log(`I got an error during execution first part`);
+                                    reject(err);
+                                } else {
+                                    resultset.toObjArray(function (err, results) {
+                                        if (err) {
+                                            console.log(`I got an error during execution`);
+                                            reject(err);
+                                        } else {
+                                            resolve(results)
+                                        }
+                                    });
+                                }
+                            });
+                        }
+
+                    }
+                })
+            });
+        }
+        else {
+            return serializePromiseFactoryArray(statement.map(s => () => this.preparedSelect(s, logger, ...params)));
         }
     }
 

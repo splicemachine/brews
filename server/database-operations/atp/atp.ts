@@ -12,22 +12,24 @@ export function size(req: express.Request, res: express.Response) {
 
 export function prepare(req: express.Request, res: express.Response) {
 
+    /***** REPEATED CODE *****/
     let db = null;
     let writer = (text) => {
         writeToStreams(text, res.write.bind(res), console.log)
     };
-
     db = new Database();
+    /***** REPEATED CODE *****/
+
     db.initialize()
         .then(() => {
             console.log("initialize came back");
-            return db._forced_transaction(statements.errorInvariant, writer);
+            return db._forced_transaction(statements.force, writer);
         })
         .then(() => {
-            return db.transaction(statements.create, writer);
+            return db.transaction(statements.createSchema, writer);
         }, rejected)
         .then(() => {
-            return db.storedProcedure(statements.insert, writer)
+            return db.storedProcedure(statements.dataImport, writer)
         }, rejected)
         .then(() => {
             res.end();
@@ -36,5 +38,23 @@ export function prepare(req: express.Request, res: express.Response) {
 }
 
 export function transferOrders(req: express.Request, res: express.Response){
-    res.send(req.body)
+
+    /***** REPEATED CODE *****/
+    let db = null;
+    let writer = (text) => {
+        writeToStreams(text, res.write.bind(res), console.log)
+    };
+    db = new Database();
+    /***** REPEATED CODE *****/
+
+    db.initialize()
+        .then(()=>{
+            return db.preparedSelect(statements.transferOrders, writer, 100);
+        })
+        .then((result) => {
+            console.log("fucky");
+            console.log(result);
+            res.end();
+        }, rejected)
+        .catch(handle.bind(null, res))
 }
