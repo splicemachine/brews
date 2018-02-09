@@ -160,11 +160,7 @@ export default class {
                     if (err) {
                         reject(err)
                     } else {
-
-
                         params.map((val, idx, arr) => {
-
-
                             try {
                                 /**
                                  * Typeof "object" not supported
