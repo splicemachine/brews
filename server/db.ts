@@ -86,56 +86,6 @@ export default class {
         }
     }
 
-    // testpreparedselectsetint: function(test) {
-    //     testconn.conn.prepareStatement("SELECT * FROM blah WHERE id=?",function(err, statement) {
-    //         if (err) {
-    //             console.log(err);
-    //         } else {
-    //             statement.setInt(1, 2, function(err) {
-    //                 if (err) {
-    //                     console.log(err);
-    //                 }
-    //                 else {
-    //                     statement.executeQuery(function(err, resultset) {
-    //                         test.expect(3);
-    //                         test.equal(null, err);
-    //                         test.ok(resultset);
-    //                         resultset.toObjArray(function(err, results) {
-    //                             test.equal(results.length, 1);
-    //                             test.done();
-    //                         });
-    //                     });
-    //                 }
-    //             });
-    //         }
-    //     });
-    // },
-    // testpreparedselectsetstring: function(test) {
-    //     testconn.conn.prepareStatement("SELECT * FROM blah WHERE name=?",function(err, statement) {
-    //         if (err) {
-    //             console.log(err);
-    //         } else {
-    //             statement.setString(1,'Jason', function(err) {
-    //                 if (err) {
-    //                     console.log(err);
-    //                 }
-    //                 else {
-    //                     statement.executeQuery(function(err, resultset) {
-    //                         test.expect(3);
-    //                         test.equal(null, err);
-    //                         test.ok(resultset);
-    //                         resultset.toObjArray(function(err, results) {
-    //                             test.equal(results.length, 1);
-    //                             test.done();
-    //                         });
-    //                     });
-    //                 }
-    //             });
-    //         }
-    //     });
-    // },
-
-
     public preparedSelect(statement, logger, ...params) {
 
         /**

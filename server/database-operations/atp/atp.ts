@@ -41,19 +41,15 @@ export function transferOrders(req: express.Request, res: express.Response){
 
     /***** REPEATED CODE *****/
     let db = null;
-    // let writer = (text) => {
-    //     writeToStreams(text, res.write.bind(res), console.log)
-    // };
     db = new Database();
     /***** REPEATED CODE *****/
 
     db.initialize()
         .then(()=>{
-            return db.preparedSelect(statements.transferOrders, console.log, req.body.destination);
+            return db.preparedSelect(statements.transferOrders, ()=>{},req.body.destination);
         })
         .then((result) => {
             res.send(result);
-            console.log(result);
             res.end();
         }, rejected)
         .catch(handle.bind(null, res))
