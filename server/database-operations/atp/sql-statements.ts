@@ -125,9 +125,25 @@ let transferOrders = [
     `select * from timeline.transferorders where shipfrom in (1,2,3) and shipto in (1,2,3) and destinationinventory=?`
 ];
 
+let atpOnDate = [
+    `select case when min(val) < 0 then 0 else min(val) end AS Available from timeline.timeline_int
+        where timeline_id = ? 
+        AND ST >= ?  
+        AND ET < ?`
+];
+
+let trackingInventoryAsTimelines = [
+    `select * from timeline.timeline_int
+        where TIMELINE_ID = ?
+        and st >= date('2016-09-15')
+        order by TIMELINE.TIMELINE_INT.ST`
+];
+
 export default {
     force,
     createSchema,
     dataImport,
     transferOrders,
+    atpOnDate,
+    trackingInventoryAsTimelines,
 }

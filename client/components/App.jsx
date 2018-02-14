@@ -82,8 +82,7 @@ export default class App extends Component {
         const {waiting, completed, total, log} = this.state;
 
         /**
-         * CLASSES
-         * TODO: Export Styles
+         * TODO: Export Classes
          */
         const classes = {
             transfer: `pure-u-1 pure-u-md-1-4`,
@@ -94,7 +93,6 @@ export default class App extends Component {
         };
 
         /**
-         * STYLES
          * TODO: Export Styles
          */
         const buttonStyle = {
@@ -104,9 +102,47 @@ export default class App extends Component {
         const transferOrders = {
             endpoint: `/api/v1/transfer-orders`,
             title: `Transfer Orders`,
+            backgroundColor: getRandomColor(),
             parameters: [
                 {
                     placeholder: "Destination Inventory",
+                    type: "number",
+                    value: 0,
+                },
+            ]
+        };
+
+        const atpOnDate = {
+            endpoint: `/api/v1/atp-on-date`,
+            title: `ATP On Date`,
+            backgroundColor: getRandomColor(),
+            parameters: [
+                {
+                    placeholder: "Inventory",
+                    type: "number",
+                    value: 0,
+                },
+                {
+                    placeholder: "Time ATP",
+                    type: "date",
+                    value: "",
+                },
+                {
+                    placeholder: "Time Horizon",
+                    type: "date",
+                    value: "",
+                },
+            ]
+        };
+
+        const trackingInventoryAsTimelines = {
+            endpoint: `/api/v1/tracking-inventory-as-timelines`,
+            title: `Tracking Inventory As Timelines`,
+            backgroundColor: getRandomColor(),
+            parameters: [
+                {
+                    placeholder: "Inventory",
+                    type: "number",
                     value: 0,
                 },
             ]
@@ -117,6 +153,8 @@ export default class App extends Component {
                 <h1>Available to Promise: {waiting}</h1>
 
                 <TableSelect config={transferOrders}/>
+                <TableSelect config={atpOnDate}/>
+                <TableSelect config={trackingInventoryAsTimelines}/>
 
                 <div className={classes.container}>
                     <div className={classes.button}>
@@ -136,3 +174,11 @@ export default class App extends Component {
 }
 
 
+function getRandomColor() {
+    let letters = '0123456789ABCDEF';
+    let color = '#';
+    for (let i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+}

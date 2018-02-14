@@ -8,10 +8,16 @@ export default class TableSelect extends Component {
     constructor(props) {
         super(props);
         this.props = props;
+
+
         this.state = {
             columns: [{Header: "No Data"}],
             data: [],
-            fields: this.props.config.parameters.map((item) => ({value: item.value, placeholder: item.placeholder})),
+            fields: this.props.config.parameters.map((item) => ({
+                value: item.value,
+                type: item.type,
+                placeholder: item.placeholder
+            })),
         };
 
         this.postInit = (body) => {
@@ -49,14 +55,14 @@ export default class TableSelect extends Component {
          * TODO: Do I really want to force NaN to the user? (yes obviously, but really)
          * @type {number}
          */
-        this.state.fields[index].value = parseInt(event.target.value);
+        this.state.fields[index].value = event.target.value;
         this.setState(this.state);
 
     }
 
     handleSubmit(event) {
         event.preventDefault();
-        this.getResults(this.state.fields.map((item)=>item.value))
+        this.getResults(this.state.fields.map((item) => item.value))
             .then((result) => {
                 if (result[0]) {
                     this.setState({columns: Object.keys(result[0]).map((item) => ({Header: item, accessor: item}))})
@@ -79,7 +85,7 @@ export default class TableSelect extends Component {
          * @type {{backgroundColor: string, height: string, overflowY: string}}
          */
         const containerStyle = {
-            backgroundColor: "#ffaa00",
+            backgroundColor: this.props.config.backgroundColor,
             height: "auto",
             overflowY: "auto",
         };
@@ -94,7 +100,7 @@ export default class TableSelect extends Component {
                                 return (
                                     <input
                                         key={index}
-                                        type="text"
+                                        type={item.type}
                                         placeholder={item.placeholder}
                                         value={item.value}
                                         onChange={this.handleChange.bind(this, index)}/>

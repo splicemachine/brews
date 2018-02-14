@@ -45,19 +45,49 @@ export function transferOrderResults(req: express.Request, res: express.Response
     db = new Database();
     /***** REPEATED CODE *****/
 
-    console.log("HEY", typeof req.body.params);
-    req.body.params.map((item) => {
-        console.log("dumping", typeof item, item)
-    });
+    db.initialize()
+        .then(() => {
+            return db.preparedSelect(statements.transferOrders, () => {
+            }, req.body.params);
+        })
+        .then((result) => {
+            res.send(result);
+            res.end();
+        }, rejected)
+        .catch(handle.bind(null, res))
+}
 
 
+export function atpOnDate(req: express.Request, res: express.Response) {
 
-
+    /***** REPEATED CODE *****/
+    let db = null;
+    db = new Database();
+    /***** REPEATED CODE *****/
 
     db.initialize()
         .then(() => {
-            console.log(req.body.params);
-            return db.preparedSelect(statements.transferOrders, () => {
+            return db.preparedSelect(statements.atpOnDate, () => {
+            }, req.body.params);
+        })
+        .then((result) => {
+            res.send(result);
+            res.end();
+        }, rejected)
+        .catch(handle.bind(null, res))
+}
+
+
+export function trackingInventoryAsTimelines(req: express.Request, res: express.Response) {
+
+    /***** REPEATED CODE *****/
+    let db = null;
+    db = new Database();
+    /***** REPEATED CODE *****/
+
+    db.initialize()
+        .then(() => {
+            return db.preparedSelect(statements.trackingInventoryAsTimelines, () => {
             }, req.body.params);
         })
         .then((result) => {
