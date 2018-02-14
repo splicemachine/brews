@@ -98,4 +98,24 @@ export function trackingInventoryAsTimelines(req: express.Request, res: express.
 }
 
 
+export function inventoryOnDate(req: express.Request, res: express.Response) {
+
+    /***** REPEATED CODE *****/
+    let db = null;
+    db = new Database();
+    /***** REPEATED CODE *****/
+
+    db.initialize()
+        .then(() => {
+            return db.preparedSelect(statements.inventoryOnDate, () => {
+            }, req.body.params);
+        })
+        .then((result) => {
+            res.send(result);
+            res.end();
+        }, rejected)
+        .catch(handle.bind(null, res))
+}
+
+
 

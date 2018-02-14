@@ -66,11 +66,12 @@ app.get("/api/v1/size", size);
 /**
  * Import handlers separately
  */
-import {transferOrderResults, atpOnDate, trackingInventoryAsTimelines} from "./database-operations/atp/atp";
+import {transferOrderResults, atpOnDate, trackingInventoryAsTimelines, inventoryOnDate} from "./database-operations/atp/atp";
 
 app.post("/api/v1/transfer-orders", jsonParser, transferOrderResults);
 app.post("/api/v1/atp-on-date", jsonParser, atpOnDate);
 app.post("/api/v1/tracking-inventory-as-timelines", jsonParser, trackingInventoryAsTimelines);
+app.post("/api/v1/inventory-on-date", jsonParser, inventoryOnDate);
 
 
 

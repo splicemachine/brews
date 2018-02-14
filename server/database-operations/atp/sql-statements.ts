@@ -139,6 +139,12 @@ let trackingInventoryAsTimelines = [
         order by TIMELINE.TIMELINE_INT.ST`
 ];
 
+let inventoryOnDate = [
+    `select val as Inventory from timeline.timeline_int where timeline_id = ?
+        AND ST <= ?  
+        AND ET > ?`
+];
+
 export default {
     force,
     createSchema,
@@ -146,4 +152,5 @@ export default {
     transferOrders,
     atpOnDate,
     trackingInventoryAsTimelines,
+    inventoryOnDate,
 }

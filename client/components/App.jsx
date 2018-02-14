@@ -143,6 +143,29 @@ export default class App extends Component {
             ]
         };
 
+        const inventoryOnDate = {
+            endpoint: `/api/v1/inventory-on-date`,
+            title: `Inventory on Date`,
+            backgroundColor: getRandomColor(),
+            parameters: [
+                {
+                    placeholder: "Inventory",
+                    type: "number",
+                    value: 0,
+                },
+                {
+                    placeholder: "Date",
+                    type: "date",
+                    value: "",
+                },
+                {
+                    placeholder: "Same Date",
+                    type: "date",
+                    value: "",
+                },
+            ]
+        };
+
         return (
             <div>
                 <h1>Available to Promise: {waiting}</h1>
@@ -150,6 +173,7 @@ export default class App extends Component {
                 <TableSelect config={transferOrders}/>
                 <TableSelect config={atpOnDate}/>
                 <TableSelect config={trackingInventoryAsTimelines}/>
+                <TableSelect config={inventoryOnDate}/>
 
                 <div className={classes.container}>
                     <div className={classes.button}>
