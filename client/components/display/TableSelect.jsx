@@ -4,16 +4,15 @@ import ReactTable from "react-table";
 import env from "../../../server/environment";
 import "react-table/react-table.css";
 
-
 export default class TableSelect extends Component {
     constructor(props) {
         super(props);
         this.props = props;
         this.config = this.props.config;
         this.state = {
-            columns: [],
+            columns: [{Header:"No Data"}],
             data: [],
-            value: '',
+            value: "",
         };
 
         this.getInit = {
@@ -42,7 +41,6 @@ export default class TableSelect extends Component {
          */
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
-        this.getColumns = this.getColumns.bind(this);
         this.getResults = this.getResults.bind(this);
         this.render = this.render.bind(this);
     }
@@ -50,23 +48,23 @@ export default class TableSelect extends Component {
     /**
      * React Initialization Hook
      */
-    componentDidMount() {
-        this.getColumns().then((data) => {
-            /**
-             * This comes back as an array of strings.
-             * React table would like an array of objects with 'name' and 'accessor'
-             * @type {Response}
-             */
-            this.state.columns = data.map((item) => ({Header: item, accessor: item}));
-            this.setState(this.state);
-        });
-    }
+    // componentDidMount() {
+    //     this.getColumns().then((data) => {
+    //         /**
+    //          * This comes back as an array of strings.
+    //          * React table would like an array of objects with 'name' and 'accessor'
+    //          * @type {Response}
+    //          */
+    //         this.state.columns = data.map((item) => ({Header: item, accessor: item}));
+    //         this.setState(this.state);
+    //     });
+    // }
 
-    getColumns() {
-        return fetch(env.server() + this.config.endpoint, this.getInit).then((response) => {
-            return response.json()
-        })
-    }
+    // getColumns() {
+    //     return fetch(env.server() + this.config.endpoint, this.getInit).then((response) => {
+    //         return response.json()
+    //     })
+    // }
 
     getResults(value) {
         return fetch(env.server() + this.config.endpoint, this.postInit({destination: value})).then((response) => {
@@ -82,6 +80,9 @@ export default class TableSelect extends Component {
         event.preventDefault();
         this.getResults(this.state.value)
             .then((result) => {
+                if (result[0]) {
+                    this.setState({columns: Object.keys(result[0]).map((item) => ({Header: item, accessor: item}))})
+                }
                 this.setState({data: result});
             })
             .catch((e) => {
@@ -118,7 +119,12 @@ export default class TableSelect extends Component {
                     </label>
                     <input type="submit" value="Submit"/>
                 </form>
-                <ReactTable columns={this.state.columns} data={this.state.data}/>
+                <ReactTable
+                    columns={this.state.columns}
+                    data={this.state.data}
+                    noDataText="No Data Yet!"
+                    defaultPageSize={10}
+                />
             </div>
 
         );

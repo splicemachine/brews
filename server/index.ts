@@ -64,12 +64,11 @@ app.get("/api/v1/prepare", prepare);
 app.get("/api/v1/size", size);
 
 /**
- * Import handlers seperately
+ * Import handlers separately
  */
-import {transferOrderResults, transferOrdersColumns} from "./database-operations/atp/atp";
+import {transferOrderResults} from "./database-operations/atp/atp";
 app.post("/api/v1/transfer-orders", jsonParser, transferOrderResults);
-app.get("/api/v1/transfer-orders", jsonParser, transferOrdersColumns);
-
+// app.get("/api/v1/transfer-orders", jsonParser, transferOrdersColumns);
 
 
 

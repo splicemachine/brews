@@ -37,38 +37,6 @@ export function prepare(req: express.Request, res: express.Response) {
         .catch(handle.bind(null, res));
 }
 
-/**
- * TODO: Fire a describe to get these columns.
- * @param {e.Request} req
- * @param {e.Response} res
- */
-export function transferOrdersColumns(req: express.Request, res: express.Response){
-
-    const cols = [
-        "TO_ID",
-        "PO_ID",
-        "SHIPFROM",
-        "SHIPTO",
-        "SHIPDATE",
-        "DELIVERYDATE",
-        "MODDELIVERYDATE",
-        "SOURCEINVENTORY",
-        "DESTINATIONINVENTORY",
-        "QTY",
-        "SUPPLIER",
-        "ASN",
-        "CONTAINER",
-        "TRANSPORTMODE",
-        "CARRIER",
-        "FROMWEATHER",
-        "TOWEATHER",
-        "LATITUDE",
-        "LONGITUDE"
-    ];
-
-    res.send(cols);
-    return res.end();
-}
 
 export function transferOrderResults(req: express.Request, res: express.Response){
 
@@ -87,3 +55,6 @@ export function transferOrderResults(req: express.Request, res: express.Response
         }, rejected)
         .catch(handle.bind(null, res))
 }
+
+
+
