@@ -121,17 +121,6 @@ let dataImport = [
     `call SYSCS_UTIL.IMPORT_DATA('TIMELINE','TIMELINE_INT', null, 's3a://${env.ATP_S3_USER}:${env.ATP_S3_SECRET}@splice-demo/supplychain/data_0623/train_inv.csv', null, null, 'yyyy-MM-dd HH:mm:ss.S', null, null, -1, '/tmp', true, null)`,
 ];//3
 
-// function transferOrders(...params){
-//     if(!params ||  params.length !== 1 || typeof params[0] !== "number"){
-//         let err = "transferOrders only accepts a single parameter of type number";
-//         console.error(err);
-//         throw new Error(err);
-//     }
-//     else{
-//         return `select * from timeline.transferorders where shipfrom in (1,2,3) and shipto in (1,2,3) and destinationinventory = ${params[0]}`
-//     }
-// }
-
 let transferOrders = [
     `select * from timeline.transferorders where shipfrom in (1,2,3) and shipto in (1,2,3) and destinationinventory=?`
 ];

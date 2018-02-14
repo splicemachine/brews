@@ -38,16 +38,27 @@ export function prepare(req: express.Request, res: express.Response) {
 }
 
 
-export function transferOrderResults(req: express.Request, res: express.Response){
+export function transferOrderResults(req: express.Request, res: express.Response) {
 
     /***** REPEATED CODE *****/
     let db = null;
     db = new Database();
     /***** REPEATED CODE *****/
 
+    console.log("HEY", typeof req.body.params);
+    req.body.params.map((item) => {
+        console.log("dumping", typeof item, item)
+    });
+
+
+
+
+
     db.initialize()
-        .then(()=>{
-            return db.preparedSelect(statements.transferOrders, ()=>{},req.body.destination);
+        .then(() => {
+            console.log(req.body.params);
+            return db.preparedSelect(statements.transferOrders, () => {
+            }, req.body.params);
         })
         .then((result) => {
             res.send(result);

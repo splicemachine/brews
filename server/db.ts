@@ -86,7 +86,7 @@ export default class {
         }
     }
 
-    public preparedSelect(statement, logger, ...params) {
+    public preparedSelect(statement, logger, params) {
 
         /**
          * Mapping JS types to the names of the functions for prepared statements.
@@ -112,12 +112,6 @@ export default class {
                     } else {
                         params.map((val, idx, arr) => {
                             try {
-                                /**
-                                 * Typeof "object" not supported
-                                 * TODO: Was the switch structure more idiomatic here?
-                                 */
-                                console.log(`setting index ${idx}+1 to value ${val}`);
-
                                 s[method[typeof val]](idx + 1, val, (err) => {
                                     if (err) {
                                         console.log(`I got an error actually setting the method`);
@@ -136,7 +130,6 @@ export default class {
                                 reject(e);
                             }
                         });
-
 
                         function after() {
                             s.executeQuery(function (err, resultset) {
@@ -161,7 +154,7 @@ export default class {
             });
         }
         else {
-            return serializePromiseFactoryArray(statement.map(s => () => this.preparedSelect(s, logger, ...params)));
+            return serializePromiseFactoryArray(statement.map(s => () => this.preparedSelect(s, logger, params)));
         }
     }
 

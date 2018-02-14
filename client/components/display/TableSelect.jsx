@@ -8,18 +8,10 @@ export default class TableSelect extends Component {
     constructor(props) {
         super(props);
         this.props = props;
-        this.config = this.props.config;
         this.state = {
-            columns: [{Header:"No Data"}],
+            columns: [{Header: "No Data"}],
             data: [],
-            value: "",
-        };
-
-        this.getInit = {
-            method: "GET",
-            headers: new Headers(),
-            mode: "cors",
-            cache: "default"
+            fields: this.props.config.parameters.map((item) => ({value: item.value, placeholder: item.placeholder})),
         };
 
         this.postInit = (body) => {
@@ -45,40 +37,26 @@ export default class TableSelect extends Component {
         this.render = this.render.bind(this);
     }
 
-    /**
-     * React Initialization Hook
-     */
-    // componentDidMount() {
-    //     this.getColumns().then((data) => {
-    //         /**
-    //          * This comes back as an array of strings.
-    //          * React table would like an array of objects with 'name' and 'accessor'
-    //          * @type {Response}
-    //          */
-    //         this.state.columns = data.map((item) => ({Header: item, accessor: item}));
-    //         this.setState(this.state);
-    //     });
-    // }
-
-    // getColumns() {
-    //     return fetch(env.server() + this.config.endpoint, this.getInit).then((response) => {
-    //         return response.json()
-    //     })
-    // }
-
     getResults(value) {
-        return fetch(env.server() + this.config.endpoint, this.postInit({destination: value})).then((response) => {
+        console.log("get results", value);
+        return fetch(env.server() + this.props.config.endpoint, this.postInit({params: value})).then((response) => {
             return response.json()
         })
     }
 
-    handleChange(event) {
-        this.setState({value: event.target.value});
+    handleChange(index, event) {
+        /**
+         * TODO: Do I really want to force NaN to the user? (yes obviously, but really)
+         * @type {number}
+         */
+        this.state.fields[index].value = parseInt(event.target.value);
+        this.setState(this.state);
+
     }
 
     handleSubmit(event) {
         event.preventDefault();
-        this.getResults(this.state.value)
+        this.getResults(this.state.fields.map((item)=>item.value))
             .then((result) => {
                 if (result[0]) {
                     this.setState({columns: Object.keys(result[0]).map((item) => ({Header: item, accessor: item}))})
@@ -109,13 +87,20 @@ export default class TableSelect extends Component {
         return (
             <div className={className || "fucking-nothing"} style={containerStyle}>
                 <form onSubmit={this.handleSubmit}>
-                    <h3>{this.config.title}</h3>
+                    <h3>{this.props.config.title}</h3>
                     <label>
-                        <input
-                            type="text"
-                            placeholder="Destination Inventory"
-                            value={this.state.value}
-                            onChange={this.handleChange}/>
+                        {
+                            this.state.fields.map((item, index) => {
+                                return (
+                                    <input
+                                        key={index}
+                                        type="text"
+                                        placeholder={item.placeholder}
+                                        value={item.value}
+                                        onChange={this.handleChange.bind(this, index)}/>
+                                )
+                            })
+                        }
                     </label>
                     <input type="submit" value="Submit"/>
                 </form>

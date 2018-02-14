@@ -103,7 +103,13 @@ export default class App extends Component {
 
         const transferOrders = {
             endpoint: `/api/v1/transfer-orders`,
-            title: `Transfer Orders Generalized`,
+            title: `Transfer Orders`,
+            parameters: [
+                {
+                    placeholder: "Destination Inventory",
+                    value: 0,
+                },
+            ]
         };
 
         return (
