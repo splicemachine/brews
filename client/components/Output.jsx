@@ -6,19 +6,21 @@ export default class Output extends Component {
     constructor(props) {
         super(props);
         this.props = props;
-        console.log("Output Props", this.props);
+        this.state = {};
     }
 
     render() {
         const {className} = this.props;
+
         const listStyle = {
             display: "inherit",
             color: "#16aa16",
             backgroundColor: "#161616",
         };
+
         const containerStyle = {
             backgroundColor: "#161616",
-            height: "70em",
+            height: "20em",
             overflowY: "auto",
         };
 

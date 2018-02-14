@@ -1,29 +1,22 @@
+// noinspection NpmUsedModulesInstalled
+import Progress from "react-progressbar";
 import React, {Component} from "react";
 import env from "../../server/environment"
 import "../styles/main.css"
-import Progress from "react-progressbar";
 import Output from "./Output.jsx";
-import TransferOrders from "./parameterized-selects/TransferOrders.jsx";
+import TableSelect from "./display/TableSelect.jsx";
+
 
 export default class App extends Component {
 
     constructor(props) {
         super(props);
-        this.generateClickHandler = this.generateClickHandler.bind(this);
-        this.processText = this.processText.bind(this);
-        this.transferOrders = this.transferOrders.bind(this);
-        this.containerClasses = `pure-g`;
-        this.buttonContainerClasses = `button__container pure-u-1 pure-u-md-1-4`;
-        this.outputClasses = `pure-u-1 pure-u-md-3-4`;
-
-        // this.waiting = "Not Waiting.";
 
         this.state = {
             log: [],
             waiting: "Not Waiting.",
             completed: 0,
             total: 0,
-            destinationInventory: ''
         };
 
         this.getInit = {
@@ -33,25 +26,18 @@ export default class App extends Component {
             cache: "default"
         };
 
-        this.postInit = (body) => {
-            return {
-                method: "POST",
-                body: JSON.stringify(body),
-                headers: new Headers({
-                    'Content-Type': 'application/json'
-                }),
-                mode: "cors",
-                cache: "default"
-            }
-        };
-
         fetch(env.server() + "/api/v1/size", this.getInit).then((response) => {
             return response.json()
         }).then((data) => {
             console.log(data);
             this.state.total = data;
             this.setState(this.state);
-        })
+        });
+
+        this.generateClickHandler = this.generateClickHandler.bind(this);
+        this.processText = this.processText.bind(this);
+        this.render = this.render.bind(this);
+
     }
 
     generateClickHandler(route) {
@@ -61,18 +47,12 @@ export default class App extends Component {
                     /**
                      * This is probably not needed because I bound the function correctly above now.
                      * See TransferOrders.jsx for the comment.
+                     * There was an error about response.bodyUsed when I was using FF, but I forgot the context.
+                     * I removed the commented if check for that.
                      */
-                    // if (response.bodyUsed) {
                     console.log("Fetch came back");
                     const reader = response.body.getReader();
                     reader.read().then(this.processText(this.state.log, reader));
-                    // } else {
-                    //     response.text()
-                    //         .then((result) => {
-                    //             this.state.log.push(result);
-                    //             this.setState(this.state);
-                    //         });
-                    // }
                 });
             }
         }
@@ -95,41 +75,54 @@ export default class App extends Component {
         }
     }
 
-    /**
-     * This gets called when someone clicks the button in TransferOrders
-     * @param destination
-     */
-    transferOrders(destination) {
 
-        fetch(env.server() + "/api/v1/transfer-orders", this.postInit({destination}))
-            .then(res => res.text())
-            .catch(error => console.log('Error:', error))
-            .then(response => {
-                this.state.log.push(response);
-                this.setState(this.state);
-                // console.log('Success:', response);
-            });
-    }
 
     render() {
-        const buttonContainerStyle = {
+
+        const {waiting, completed, total, log} = this.state;
+
+        /**
+         * CLASSES
+         * TODO: Export Styles
+         */
+        const classes = {
+            transfer: `pure-u-1 pure-u-md-1-4`,
+            table: `pure-u-1 pure-u-md-3-4`,
+            container: `pure-g`,
+            button: `button__container pure-u-1 pure-u-md-1-4`,
+            output: `pure-u-1 pure-u-md-3-4`,
+        };
+
+        /**
+         * STYLES
+         * TODO: Export Styles
+         */
+        const buttonStyle = {
             margin: "1em"
         };
+
+        const transferOrders = {
+            endpoint: `/api/v1/transfer-orders`,
+            title: `Transfer Orders Generalized`,
+        };
+
         return (
             <div>
-                <h1>Available to Promise: {this.state.waiting}</h1>
-                <div className={this.containerClasses}>
-                    <div className={this.buttonContainerClasses}>
-                        <Progress completed={(this.state.completed / this.state.total) * 100}/>
-                        <div style={buttonContainerStyle}>
+                <h1>Available to Promise: {waiting}</h1>
+
+                <TableSelect config={transferOrders}/>
+
+                <div className={classes.container}>
+                    <div className={classes.button}>
+                        <Progress completed={(completed / total) * 100}/>
+                        <div style={buttonStyle}>
                             <button className="button" onClick={this.generateClickHandler("/api/v1/prepare")}>
                                 Prepare and Import
                             </button>
                         </div>
-                        <TransferOrders destination={this.state.destinationInventory}
-                                        submit={this.transferOrders}/>
+
                     </div>
-                    <Output log={this.state.log} className={this.outputClasses}/>
+                    <Output log={log} className={classes.output}/>
                 </div>
             </div>
         );

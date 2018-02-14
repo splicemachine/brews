@@ -59,11 +59,16 @@ if (process.env.NODE_ENV === "development") {
 /**
  * Import and configure the ATP route.
  */
-import {size, prepare, transferOrders} from "./database-operations/atp/atp";
-
+import {size, prepare} from "./database-operations/atp/atp";
 app.get("/api/v1/prepare", prepare);
 app.get("/api/v1/size", size);
-app.post("/api/v1/transfer-orders", jsonParser, transferOrders);
+
+/**
+ * Import handlers seperately
+ */
+import {transferOrderResults, transferOrdersColumns} from "./database-operations/atp/atp";
+app.post("/api/v1/transfer-orders", jsonParser, transferOrderResults);
+app.get("/api/v1/transfer-orders", jsonParser, transferOrdersColumns);
 
 
 

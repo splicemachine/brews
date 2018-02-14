@@ -25,6 +25,7 @@
     "react": "^15.4.2",
     "react-dom": "^15.4.2",
     "react-progressbar": "^15.4.1",
+    "react-table": "^6.7.6",
     "typescript": "^2.6.2",
     "webpack": "^1.14.0"
   },
