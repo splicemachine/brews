@@ -1,7 +1,7 @@
-import React, {Component} from "react";
-import "../../styles/main.css"
-import ReactTable from "react-table";
 import env from "../../../server/environment";
+import React, {Component} from "react";
+import ReactTable from "react-table";
+import "../../styles/main.css"
 import "react-table/react-table.css";
 
 export default class TableSelect extends Component {
@@ -44,20 +44,14 @@ export default class TableSelect extends Component {
     }
 
     getResults(value) {
-        console.log("get results", value);
         return fetch(env.server() + this.props.config.endpoint, this.postInit({params: value})).then((response) => {
             return response.json()
         })
     }
 
     handleChange(index, event) {
-        /**
-         * TODO: Do I really want to force NaN to the user? (yes obviously, but really)
-         * @type {number}
-         */
         this.state.fields[index].value = event.target.value;
         this.setState(this.state);
-
     }
 
     handleSubmit(event) {
@@ -70,7 +64,7 @@ export default class TableSelect extends Component {
                 this.setState({data: result});
             })
             .catch((e) => {
-                console.log("fucked up", e)
+                console.log("some shit happened", e)
             });
     }
 

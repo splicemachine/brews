@@ -6,7 +6,6 @@ import "../styles/main.css"
 import Output from "./Output.jsx";
 import TableSelect from "./display/TableSelect.jsx";
 
-
 export default class App extends Component {
 
     constructor(props) {
@@ -29,7 +28,6 @@ export default class App extends Component {
         fetch(env.server() + "/api/v1/size", this.getInit).then((response) => {
             return response.json()
         }).then((data) => {
-            console.log(data);
             this.state.total = data;
             this.setState(this.state);
         });
@@ -50,7 +48,6 @@ export default class App extends Component {
                      * There was an error about response.bodyUsed when I was using FF, but I forgot the context.
                      * I removed the commented if check for that.
                      */
-                    console.log("Fetch came back");
                     const reader = response.body.getReader();
                     reader.read().then(this.processText(this.state.log, reader));
                 });
@@ -63,7 +60,6 @@ export default class App extends Component {
             if (done) {
                 this.state.waiting = "Not Waiting.";
                 this.setState(this.state);
-                console.log("Stream complete");
                 return;
             }
             this.state.completed++;
@@ -74,7 +70,6 @@ export default class App extends Component {
             return reader.read().then(this.processText(stream, reader))
         }
     }
-
 
 
     render() {

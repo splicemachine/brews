@@ -13,9 +13,6 @@ const jsonParser = bodyParser.json();
 app.set("port", process.env.PORT || DEFAULT_PORT);
 app.set("json spaces", 2);
 
-// app.use(bodyParser.json());
-// app.use(bodyParser.urlencoded({ extended: false }));
-
 app.use(function (req, res, next) {
 
     // Website you wish to allow to connect
@@ -56,21 +53,24 @@ if (process.env.NODE_ENV === "development") {
     app.get("/", (req, res) => res.sendFile(HTML_FILE));
 }
 
+
 /**
  * Import and configure the ATP route.
  */
 import {size, prepare} from "./database-operations/atp/atp";
+
 app.get("/api/v1/prepare", prepare);
 app.get("/api/v1/size", size);
+
 
 /**
  * Import handlers separately
  */
 import {transferOrderResults, atpOnDate, trackingInventoryAsTimelines} from "./database-operations/atp/atp";
+
 app.post("/api/v1/transfer-orders", jsonParser, transferOrderResults);
 app.post("/api/v1/atp-on-date", jsonParser, atpOnDate);
 app.post("/api/v1/tracking-inventory-as-timelines", jsonParser, trackingInventoryAsTimelines);
-// app.get("/api/v1/transfer-orders", jsonParser, transferOrdersColumns);
 
 
 
