@@ -108,7 +108,7 @@ export default class TableSelect extends Component {
                     columns={this.state.columns}
                     data={this.state.data}
                     noDataText="No Data Yet!"
-                    defaultPageSize={10}
+                    defaultPageSize={5}
                 />
             </div>
 
