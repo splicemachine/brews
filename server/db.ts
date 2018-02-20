@@ -110,26 +110,35 @@ export default class {
                     if (err) {
                         reject(err)
                     } else {
-                        params.map((val, idx, arr) => {
-                            try {
-                                s[method[typeof val]](idx + 1, val, (err) => {
-                                    if (err) {
-                                        console.log(`I got an error actually setting the method`);
-                                        reject(err);
-                                    } else {
-                                        if (arr.length - 1 === idx) {
-                                            /**
-                                             * End of the array
-                                             */
-                                            after.call(this);
+
+                        if(params && params.length > 0){
+                            params.map((val, idx, arr) => {
+                                try {
+                                    s[method[typeof val]](idx + 1, val, (err) => {
+                                        if (err) {
+                                            console.log(`I got an error actually setting the method`);
+                                            reject(err);
+                                        } else {
+                                            if (arr.length - 1 === idx) {
+                                                /**
+                                                 * End of the array
+                                                 */
+                                                after.call(this);
+                                            }
                                         }
-                                    }
-                                });
-                            } catch (e) {
-                                console.log(`I caught the exception`);
-                                reject(e);
-                            }
-                        });
+                                    });
+                                } catch (e) {
+                                    console.log(`I caught the exception`);
+                                    reject(e);
+                                }
+                            });
+                        }else{
+                            /**
+                             * Why couldn't we do this with no parameters?
+                             */
+                            after.call(this);
+                        }
+
 
                         function after() {
                             s.executeQuery(function (err, resultset) {

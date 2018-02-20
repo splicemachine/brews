@@ -166,6 +166,25 @@ export default class App extends Component {
             ]
         };
 
+        const proposedOrder = {
+            endpoint: `/api/v1/proposed-order`,
+            title: `Proposed Order`,
+            backgroundColor: getRandomColor(),
+            parameters: []
+        };
+        const orderATP = {
+            endpoint: `/api/v1/order-atp`,
+            title: `Order ATP`,
+            backgroundColor: getRandomColor(),
+            parameters: []
+        };
+        const lineItemATP = {
+            endpoint: `/api/v1/line-item-atp`,
+            title: `Line Item ATP`,
+            backgroundColor: getRandomColor(),
+            parameters: []
+        };
+
         return (
             <div>
                 <h1>Available to Promise: {waiting}</h1>
@@ -174,6 +193,9 @@ export default class App extends Component {
                 <TableSelect config={atpOnDate}/>
                 <TableSelect config={trackingInventoryAsTimelines}/>
                 <TableSelect config={inventoryOnDate}/>
+                <TableSelect config={proposedOrder}/>
+                <TableSelect config={orderATP}/>
+                <TableSelect config={lineItemATP}/>
 
                 <div className={classes.container}>
                     <div className={classes.button}>

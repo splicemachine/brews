@@ -10,7 +10,7 @@ import env from "../../environment";
  * prior to running the code I want.
  * @type {string[]}
  */
-let force = [
+export const force = [
     `drop table IF EXISTS TIMELINE.TRANSFERORDERS`,
     `drop table IF EXISTS TIMELINE.TO_DELIVERY_CHG_EVENT`,
     `drop table IF EXISTS TIMELINE.TIMELINE_INT`,
@@ -22,7 +22,7 @@ let force = [
     `drop schema TIMELINE restrict`
 ];//8
 
-let createSchema = [
+export const createSchema = [
     `create schema TIMELINE`,
 
     `drop table IF EXISTS TIMELINE.TRANSFERORDERS`,
@@ -115,42 +115,98 @@ let createSchema = [
     )`
 ];//17
 
-let dataImport = [
+export const dataImport = [
     `call SYSCS_UTIL.IMPORT_DATA('TIMELINE','TRANSFERORDERS',null, 's3a://${env.ATP_S3_USER}:${env.ATP_S3_SECRET}@splice-demo/supplychain/data_0623/train_orders.csv', null, null, 'yyyy-MM-dd HH:mm:ss.S', null, null, -1, '/tmp', true, null)`,
     `call SYSCS_UTIL.IMPORT_DATA('TIMELINE','TO_DELIVERY_CHG_EVENT', null, 's3a://${env.ATP_S3_USER}:${env.ATP_S3_SECRET}@splice-demo/supplychain/data_0623/train_events.csv', null, null, 'yyyy-MM-dd HH:mm:ss.S', null, null, -1, '/tmp', true, null)`,
     `call SYSCS_UTIL.IMPORT_DATA('TIMELINE','TIMELINE_INT', null, 's3a://${env.ATP_S3_USER}:${env.ATP_S3_SECRET}@splice-demo/supplychain/data_0623/train_inv.csv', null, null, 'yyyy-MM-dd HH:mm:ss.S', null, null, -1, '/tmp', true, null)`,
 ];//3
 
-let transferOrders = [
+
+export const sparkBlock2 = [
+    `
+    SELECT Max(Nvl(Date(et), '$targetDateString')) AS COMBINED_ATP 
+    FROM   timeline.quick_check_lines qc 
+           LEFT JOIN (SELECT inv_id, 
+                             et, 
+                             val, 
+                             qty 
+                      FROM   timeline.timeline_int 
+                             JOIN timeline.quick_check_lines 
+                               ON timeline_id = inv_id 
+                      WHERE  st >= '$targetDateString' 
+                             AND val < qty) y 
+                  ON qc.inv_id = y.inv_id 
+    `,
+    `
+    SELECT qc.inv_id, 
+           (SELECT CASE 
+                     WHEN Min(val) < 0 THEN 0 
+                     ELSE Min(val) 
+                   END 
+            FROM   timeline.timeline_int 
+            WHERE  timeline_id = qc.inv_id 
+                   AND st >= '$targetDateString') ATP_ON_TARGET_DATE, 
+           Nvl(atp, '$targetDateString')          AS ATP_DATE 
+    FROM   timeline.quick_check_lines qc 
+           LEFT JOIN (SELECT inv_id, 
+                             Date(Max(et)) AS ATP 
+                      FROM   timeline.timeline_int 
+                             JOIN timeline.quick_check_lines 
+                               ON timeline_id = inv_id 
+                      WHERE  st >= '$targetDateString' 
+                             AND val < qty 
+                      GROUP  BY inv_id 
+                      ORDER  BY atp DESC) y 
+                  ON qc.inv_id = y.inv_id 
+    `,
+    ``,
+    ``,
+    ``,
+];
+
+
+/**
+ * Generated function calls
+ */
+
+export const transferOrders = [
     `select * from timeline.transferorders where shipfrom in (1,2,3) and shipto in (1,2,3) and destinationinventory=?`
 ];
 
-let atpOnDate = [
+export const atpOnDate = [
     `select case when min(val) < 0 then 0 else min(val) end AS Available from timeline.timeline_int
         where timeline_id = ? 
         AND ST >= ?  
         AND ET < ?`
 ];
 
-let trackingInventoryAsTimelines = [
+export const trackingInventoryAsTimelines = [
     `select * from timeline.timeline_int
         where TIMELINE_ID = ?
         and st >= date('2016-09-15')
         order by TIMELINE.TIMELINE_INT.ST`
 ];
 
-let inventoryOnDate = [
+export const inventoryOnDate = [
     `select val as Inventory from timeline.timeline_int where timeline_id = ?
         AND ST <= ?  
         AND ET > ?`
 ];
 
-export default {
-    force,
-    createSchema,
-    dataImport,
-    transferOrders,
-    atpOnDate,
-    trackingInventoryAsTimelines,
-    inventoryOnDate,
-}
+export const proposedOrder = [
+    `
+    select inv_id, qty from timeline.quick_check_lines order by inv_id
+    `
+];
+
+export const orderATP = [
+    `
+    select combined_atp from timeline.result_date
+    `
+];
+
+export const lineItemATP = [
+    `
+    select inv_id, atp_on_target_date, atp_date from timeline.result_dates order by atp_date desc
+    `
+];

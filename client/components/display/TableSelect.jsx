@@ -18,6 +18,7 @@ export default class TableSelect extends Component {
                 type: item.type,
                 placeholder: item.placeholder
             })),
+            collapsed: "collapsed",
         };
 
         this.postInit = (body) => {
@@ -35,11 +36,12 @@ export default class TableSelect extends Component {
         /**
          * These are important for when HTML actions are triggered based on function calls.
          * That makes sense because they won't be bound to anything at the time of calling
-         * without and explicit reference.
+         * without an explicit reference.
          */
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.getResults = this.getResults.bind(this);
+        this.toggleVisibility = this.toggleVisibility.bind(this);
         this.render = this.render.bind(this);
     }
 
@@ -68,6 +70,11 @@ export default class TableSelect extends Component {
             });
     }
 
+    toggleVisibility() {
+        this.state.collapsed = this.state.collapsed === "" ? "collapsed" : "";
+        this.setState(this.state);
+    }
+
     render() {
         /**
          * Extract a class if it was passed in.
@@ -83,35 +90,41 @@ export default class TableSelect extends Component {
             height: "auto",
             overflowY: "auto",
         };
+        const inline = {
+            "display": "inline-block",
+            "margin": "1em",
+        };
 
         return (
             <div className={className || "fucking-nothing"} style={containerStyle}>
-                <form onSubmit={this.handleSubmit}>
-                    <h3>{this.props.config.title}</h3>
-                    <label>
-                        {
-                            this.state.fields.map((item, index) => {
-                                return (
-                                    <input
-                                        key={index}
-                                        type={item.type}
-                                        placeholder={item.placeholder}
-                                        value={item.value}
-                                        onChange={this.handleChange.bind(this, index)}/>
-                                )
-                            })
-                        }
-                    </label>
-                    <input type="submit" value="Submit"/>
-                </form>
-                <ReactTable
-                    columns={this.state.columns}
-                    data={this.state.data}
-                    noDataText="No Data Yet!"
-                    defaultPageSize={5}
-                />
+                <button style={inline} onClick={this.toggleVisibility}>&nbsp;</button>
+                <h3 style={inline}>{this.props.config.title}</h3>
+                <div className={this.state.collapsed}>
+                    <form onSubmit={this.handleSubmit}>
+                        <label>
+                            {
+                                this.state.fields.map((item, index) => {
+                                    return (
+                                        <input
+                                            key={index}
+                                            type={item.type}
+                                            placeholder={item.placeholder}
+                                            value={item.value}
+                                            onChange={this.handleChange.bind(this, index)}/>
+                                    )
+                                })
+                            }
+                        </label>
+                        <input type="submit" value="Submit"/>
+                    </form>
+                    <ReactTable
+                        columns={this.state.columns}
+                        data={this.state.data}
+                        noDataText="No Data Yet!"
+                        defaultPageSize={5}
+                    />
+                </div>
             </div>
-
         );
     }
 }

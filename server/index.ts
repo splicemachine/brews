@@ -62,16 +62,26 @@ import {size, prepare} from "./database-operations/atp/atp";
 app.get("/api/v1/prepare", prepare);
 app.get("/api/v1/size", size);
 
-
 /**
  * Import handlers separately
  */
-import {transferOrderResults, atpOnDate, trackingInventoryAsTimelines, inventoryOnDate} from "./database-operations/atp/atp";
+import {
+    generateSelectHandler
+} from "./database-operations/atp/atp";
 
-app.post("/api/v1/transfer-orders", jsonParser, transferOrderResults);
-app.post("/api/v1/atp-on-date", jsonParser, atpOnDate);
-app.post("/api/v1/tracking-inventory-as-timelines", jsonParser, trackingInventoryAsTimelines);
-app.post("/api/v1/inventory-on-date", jsonParser, inventoryOnDate);
+// app.post("/api/v1/transfer-orders", jsonParser, transferOrderResults);
+// app.post("/api/v1/atp-on-date", jsonParser, atpOnDate);
+// app.post("/api/v1/tracking-inventory-as-timelines", jsonParser, trackingInventoryAsTimelines);
+// app.post("/api/v1/inventory-on-date", jsonParser, inventoryOnDate);
+
+app.post("/api/v1/transfer-orders", jsonParser, generateSelectHandler("transferOrders"));
+app.post("/api/v1/atp-on-date", jsonParser, generateSelectHandler("atpOnDate"));
+app.post("/api/v1/tracking-inventory-as-timelines", jsonParser, generateSelectHandler("trackingInventoryAsTimelines"));
+app.post("/api/v1/inventory-on-date", jsonParser, generateSelectHandler("inventoryOnDate"));
+
+app.post("/api/v1/proposed-order", jsonParser, generateSelectHandler("proposedOrder"));
+app.post("/api/v1/order-atp", jsonParser, generateSelectHandler("orderATP"));
+app.post("/api/v1/line-item-atp", jsonParser, generateSelectHandler("lineItemATP"));
 
 
 

@@ -1,4 +1,4 @@
-import statements from "./sql-statements";
+import * as statements from "./sql-statements";
 import express = require("express");
 import Database from "../../db";
 import {handle, writeToStreams} from "../../helpers";
@@ -10,6 +10,18 @@ export function size(req: express.Request, res: express.Response) {
     res.end();
 }
 
+/**
+ * Direct handler used for the prepare binding.
+ * This handler runs several different types of database calls:
+ *  _forced_transaction
+ *      These are table drops and the like that we want to run without regard to error.
+ *  transaction
+ *      These are table creation, they take no parameters and return no results.
+ *  storedProcedure
+ *      These are the S3 import calls, they take no parameters and return no results.
+ * @param {e.Request} req
+ * @param {e.Response} res
+ */
 export function prepare(req: express.Request, res: express.Response) {
 
     /***** REPEATED CODE *****/
@@ -37,84 +49,33 @@ export function prepare(req: express.Request, res: express.Response) {
         .catch(handle.bind(null, res));
 }
 
+/**
+ * Generator for Select Handlers
+ * This function is designed to return a handler for a request that will take parameters and return results.
+ * The binding for the number of parameters is driven by the front end and needs to match the number of '?'
+ * on the backend.
+ */
+export function generateSelectHandler(group) {
+    return function (req: express.Request, res: express.Response) {
 
-export function transferOrderResults(req: express.Request, res: express.Response) {
+        /***** REPEATED CODE *****/
+        let db = null;
+        db = new Database();
+        /***** REPEATED CODE *****/
 
-    /***** REPEATED CODE *****/
-    let db = null;
-    db = new Database();
-    /***** REPEATED CODE *****/
-
-    db.initialize()
-        .then(() => {
-            return db.preparedSelect(statements.transferOrders, () => {
-            }, req.body.params);
-        })
-        .then((result) => {
-            res.send(result);
-            res.end();
-        }, rejected)
-        .catch(handle.bind(null, res))
-}
-
-
-export function atpOnDate(req: express.Request, res: express.Response) {
-
-    /***** REPEATED CODE *****/
-    let db = null;
-    db = new Database();
-    /***** REPEATED CODE *****/
-
-    db.initialize()
-        .then(() => {
-            return db.preparedSelect(statements.atpOnDate, () => {
-            }, req.body.params);
-        })
-        .then((result) => {
-            res.send(result);
-            res.end();
-        }, rejected)
-        .catch(handle.bind(null, res))
-}
-
-
-export function trackingInventoryAsTimelines(req: express.Request, res: express.Response) {
-
-    /***** REPEATED CODE *****/
-    let db = null;
-    db = new Database();
-    /***** REPEATED CODE *****/
-
-    db.initialize()
-        .then(() => {
-            return db.preparedSelect(statements.trackingInventoryAsTimelines, () => {
-            }, req.body.params);
-        })
-        .then((result) => {
-            res.send(result);
-            res.end();
-        }, rejected)
-        .catch(handle.bind(null, res))
-}
-
-
-export function inventoryOnDate(req: express.Request, res: express.Response) {
-
-    /***** REPEATED CODE *****/
-    let db = null;
-    db = new Database();
-    /***** REPEATED CODE *****/
-
-    db.initialize()
-        .then(() => {
-            return db.preparedSelect(statements.inventoryOnDate, () => {
-            }, req.body.params);
-        })
-        .then((result) => {
-            res.send(result);
-            res.end();
-        }, rejected)
-        .catch(handle.bind(null, res))
+        console.log("group:", group);
+        console.log("statement:", statements[group]);
+        db.initialize()
+            .then(() => {
+                return db.preparedSelect(statements[group], () => {
+                }, req.body.params);
+            })
+            .then((result) => {
+                res.send(result);
+                res.end();
+            }, rejected)
+            .catch(handle.bind(null, res))
+    }
 }
 
 
