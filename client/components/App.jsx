@@ -3,6 +3,8 @@ import Progress from "react-progressbar";
 import React, {Component} from "react";
 import env from "../../server/environment"
 import "../styles/main.css"
+import "../../node_modules/purecss/build/pure-min.css"
+import "../../node_modules/purecss/build/grids-responsive-min.css"
 import Output from "./Output.jsx";
 import TableSelect from "./display/TableSelect.jsx";
 import Insert from "./display/Insert.jsx";
@@ -26,12 +28,16 @@ export default class App extends Component {
             cache: "default"
         };
 
-        fetch(env.server() + "/api/v1/size", this.getInit).then((response) => {
-            return response.json()
-        }).then((data) => {
-            this.state.total = data;
-            this.setState(this.state);
-        });
+        /**
+         * The progress bar is more complicated now, so I will turn it off until I can componentize it.
+         * @type {any}
+         */
+        // fetch(env.server() + "/api/v1/size", this.getInit).then((response) => {
+        //     return response.json()
+        // }).then((data) => {
+        //     this.state.total = data;
+        //     this.setState(this.state);
+        // });
 
         this.generateClickHandler = this.generateClickHandler.bind(this);
         this.processText = this.processText.bind(this);
@@ -63,7 +69,7 @@ export default class App extends Component {
                 this.setState(this.state);
                 return;
             }
-            this.state.completed++;
+            // this.state.completed++;
             this.state.waiting = "Waiting...";
             let additionalText = String.fromCharCode.apply(null, value);
             stream.push(additionalText);
@@ -219,7 +225,7 @@ export default class App extends Component {
 
                 <div className={classes.container}>
                     <div className={classes.button}>
-                        <Progress completed={(completed / total) * 100}/>
+                        {/*<Progress completed={(completed / total) * 100}/>*/}
                         <div style={buttonStyle}>
                             <button className="button" onClick={this.generateClickHandler("/api/v1/prepare")}>
                                 Prepare and Import

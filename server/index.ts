@@ -4,6 +4,7 @@ import bodyParser = require("body-parser");
 
 const DIST_DIR = path.join(__dirname, "../dist");
 const HTML_FILE = path.join(DIST_DIR, "index.html");
+const FAVICON = path.join(__dirname, "..", "static", "img", "favicon.ico");
 const DEFAULT_PORT = 3000;
 
 const app = express();
@@ -51,6 +52,7 @@ if (process.env.NODE_ENV === "development") {
      */
     app.use(express.static(DIST_DIR));
     app.get("/", (req, res) => res.sendFile(HTML_FILE));
+    app.get("/favicon.ico", (req, res) => res.sendFile(FAVICON));
 }
 
 /**

@@ -21,9 +21,12 @@ RUN apt-get update && \
 
 WORKDIR /app
 ADD ./client /app/client
+ADD ./static /app/static
 ADD ./server /app/server
 ADD ./config /app/config
+
 ADD ./package.json /app
+ADD ./package-lock.json /app
 ADD ./webpack.config.js /app
 ADD ./.babelrc /app
 ADD gulpfile.babel.js /app
