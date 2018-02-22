@@ -121,50 +121,6 @@ export const dataImport = [
     `call SYSCS_UTIL.IMPORT_DATA('TIMELINE','TIMELINE_INT', null, 's3a://${env.ATP_S3_USER}:${env.ATP_S3_SECRET}@splice-demo/supplychain/data_0623/train_inv.csv', null, null, 'yyyy-MM-dd HH:mm:ss.S', null, null, -1, '/tmp', true, null)`,
 ];//3
 
-
-export const sparkBlock2 = [
-    `
-    SELECT Max(Nvl(Date(et), '$targetDateString')) AS COMBINED_ATP 
-    FROM   timeline.quick_check_lines qc 
-           LEFT JOIN (SELECT inv_id, 
-                             et, 
-                             val, 
-                             qty 
-                      FROM   timeline.timeline_int 
-                             JOIN timeline.quick_check_lines 
-                               ON timeline_id = inv_id 
-                      WHERE  st >= '$targetDateString' 
-                             AND val < qty) y 
-                  ON qc.inv_id = y.inv_id 
-    `,
-    `
-    SELECT qc.inv_id, 
-           (SELECT CASE 
-                     WHEN Min(val) < 0 THEN 0 
-                     ELSE Min(val) 
-                   END 
-            FROM   timeline.timeline_int 
-            WHERE  timeline_id = qc.inv_id 
-                   AND st >= '$targetDateString') ATP_ON_TARGET_DATE, 
-           Nvl(atp, '$targetDateString')          AS ATP_DATE 
-    FROM   timeline.quick_check_lines qc 
-           LEFT JOIN (SELECT inv_id, 
-                             Date(Max(et)) AS ATP 
-                      FROM   timeline.timeline_int 
-                             JOIN timeline.quick_check_lines 
-                               ON timeline_id = inv_id 
-                      WHERE  st >= '$targetDateString' 
-                             AND val < qty 
-                      GROUP  BY inv_id 
-                      ORDER  BY atp DESC) y 
-                  ON qc.inv_id = y.inv_id 
-    `,
-    ``,
-    ``,
-    ``,
-];
-
-
 /**
  * Generated function calls
  */
@@ -210,3 +166,12 @@ export const lineItemATP = [
     select inv_id, atp_on_target_date, atp_date from timeline.result_dates order by atp_date desc
     `
 ];
+
+export const addQuickCheckLine = [
+    `
+    INSERT INTO TIMELINE.QUICK_CHECK_LINES VALUES (?, ?)
+    `
+];
+
+
+

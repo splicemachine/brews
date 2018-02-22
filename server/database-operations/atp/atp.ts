@@ -34,7 +34,6 @@ export function prepare(req: express.Request, res: express.Response) {
 
     db.initialize()
         .then(() => {
-            console.log("initialize came back");
             return db._forced_transaction(statements.force, writer);
         })
         .then(() => {
@@ -57,14 +56,10 @@ export function prepare(req: express.Request, res: express.Response) {
  */
 export function generateSelectHandler(group) {
     return function (req: express.Request, res: express.Response) {
-
         /***** REPEATED CODE *****/
         let db = null;
         db = new Database();
         /***** REPEATED CODE *****/
-
-        console.log("group:", group);
-        console.log("statement:", statements[group]);
         db.initialize()
             .then(() => {
                 return db.preparedSelect(statements[group], () => {
@@ -78,5 +73,20 @@ export function generateSelectHandler(group) {
     }
 }
 
+export function addQuickCheckLine(req: express.Request, res: express.Response) {
+    /***** REPEATED CODE *****/
+    let db = null;
+    db = new Database();
+    /***** REPEATED CODE *****/
+    db.initialize()
+        .then(() => {
+            return db.preparedTransaction(statements.addQuickCheckLine, () => {
+            }, req.body.params);
+        })
+        .then((result) => {
+            res.send(result);
+            res.end();
+        }, rejected)
+        .catch(handle.bind(null, res))
 
-
+}

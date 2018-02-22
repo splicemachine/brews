@@ -5,6 +5,7 @@ import env from "../../server/environment"
 import "../styles/main.css"
 import Output from "./Output.jsx";
 import TableSelect from "./display/TableSelect.jsx";
+import Insert from "./display/Insert.jsx";
 
 export default class App extends Component {
 
@@ -185,6 +186,23 @@ export default class App extends Component {
             parameters: []
         };
 
+        const addQuickCheckLine = {
+            title: `Add Quick Check Line`,
+            endpoint: `/api/v1/add-quick-check-line`,
+            parameters: [
+                {
+                    placeholder: "Item ID",
+                    type: "number",
+                    value: 0,
+                },
+                {
+                    placeholder: "Quantity",
+                    type: "number",
+                    value: 0,
+                },
+            ]
+        };
+
         return (
             <div>
                 <h1>Available to Promise: {waiting}</h1>
@@ -197,6 +215,8 @@ export default class App extends Component {
                 <TableSelect config={orderATP}/>
                 <TableSelect config={lineItemATP}/>
 
+                <Insert config={addQuickCheckLine}/>
+
                 <div className={classes.container}>
                     <div className={classes.button}>
                         <Progress completed={(completed / total) * 100}/>
@@ -205,7 +225,6 @@ export default class App extends Component {
                                 Prepare and Import
                             </button>
                         </div>
-
                     </div>
                     <Output log={log} className={classes.output}/>
                 </div>
@@ -213,7 +232,6 @@ export default class App extends Component {
         );
     }
 }
-
 
 function getRandomColor() {
     let letters = '0123456789ABCDEF';

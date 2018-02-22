@@ -53,7 +53,6 @@ if (process.env.NODE_ENV === "development") {
     app.get("/", (req, res) => res.sendFile(HTML_FILE));
 }
 
-
 /**
  * Import and configure the ATP route.
  */
@@ -69,24 +68,16 @@ import {
     generateSelectHandler
 } from "./database-operations/atp/atp";
 
-// app.post("/api/v1/transfer-orders", jsonParser, transferOrderResults);
-// app.post("/api/v1/atp-on-date", jsonParser, atpOnDate);
-// app.post("/api/v1/tracking-inventory-as-timelines", jsonParser, trackingInventoryAsTimelines);
-// app.post("/api/v1/inventory-on-date", jsonParser, inventoryOnDate);
-
 app.post("/api/v1/transfer-orders", jsonParser, generateSelectHandler("transferOrders"));
 app.post("/api/v1/atp-on-date", jsonParser, generateSelectHandler("atpOnDate"));
 app.post("/api/v1/tracking-inventory-as-timelines", jsonParser, generateSelectHandler("trackingInventoryAsTimelines"));
 app.post("/api/v1/inventory-on-date", jsonParser, generateSelectHandler("inventoryOnDate"));
-
 app.post("/api/v1/proposed-order", jsonParser, generateSelectHandler("proposedOrder"));
 app.post("/api/v1/order-atp", jsonParser, generateSelectHandler("orderATP"));
 app.post("/api/v1/line-item-atp", jsonParser, generateSelectHandler("lineItemATP"));
 
+import {
+    addQuickCheckLine
+} from "./database-operations/atp/atp";
 
-
-
-
-
-
-
+app.post("/api/v1/add-quick-check-line", jsonParser, addQuickCheckLine);
