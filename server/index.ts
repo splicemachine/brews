@@ -79,7 +79,9 @@ app.post("/api/v1/order-atp", jsonParser, generateSelectHandler("orderATP"));
 app.post("/api/v1/line-item-atp", jsonParser, generateSelectHandler("lineItemATP"));
 
 import {
-    addQuickCheckLine
+    addQuickCheckLine,
+    deleteTimelineDates
 } from "./database-operations/atp/atp";
 
 app.post("/api/v1/add-quick-check-line", jsonParser, addQuickCheckLine);
+app.post("/api/v1/delete-timeline-dates", jsonParser, deleteTimelineDates);

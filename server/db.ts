@@ -133,7 +133,9 @@ export default class {
      */
     public transaction(statement, logger) {
         if (typeof statement === "string") {
-            logger(statement);
+            if (typeof logger === "function") {
+                logger(statement);
+            }
             return new Promise((resolve, reject) => {
                 this.connection.createStatement((err, s) => {
                     if (err) {
@@ -205,7 +207,9 @@ export default class {
          * Make sure that the statement to prepare is actually a string.
          */
         if (typeof statement === "string") {
-            logger(statement);
+            if (typeof logger === "function") {
+                logger(statement);
+            }
             return new Promise((resolve, reject) => {
                 this.connection.prepareStatement(statement, (err, s) => {
                     if (err) {

@@ -1,5 +1,5 @@
 // noinspection NpmUsedModulesInstalled
-import Progress from "react-progressbar";
+// import Progress from "react-progressbar";
 import React, {Component} from "react";
 import env from "../../server/environment"
 import "../styles/main.css"
@@ -8,6 +8,7 @@ import "../../node_modules/purecss/build/grids-responsive-min.css"
 import Output from "./Output.jsx";
 import TableSelect from "./display/TableSelect.jsx";
 import Insert from "./display/Insert.jsx";
+import Delete from "./display/Delete.jsx";
 
 export default class App extends Component {
 
@@ -209,19 +210,28 @@ export default class App extends Component {
             ]
         };
 
+        const deleteTimelineDates = {
+            endpoint: `/api/v1/delete-timeline-dates`,
+            title: `Delete Timeline Dates`,
+            backgroundColor: getRandomColor(),
+            parameters: []
+        };
+
         return (
             <div>
                 <h1>Available to Promise: {waiting}</h1>
 
-                <TableSelect config={transferOrders}/>
-                <TableSelect config={atpOnDate}/>
-                <TableSelect config={trackingInventoryAsTimelines}/>
-                <TableSelect config={inventoryOnDate}/>
-                <TableSelect config={proposedOrder}/>
-                <TableSelect config={orderATP}/>
-                <TableSelect config={lineItemATP}/>
+                {/*<TableSelect config={transferOrders}/>*/}
+                {/*<TableSelect config={atpOnDate}/>*/}
+                {/*<TableSelect config={trackingInventoryAsTimelines}/>*/}
+                {/*<TableSelect config={inventoryOnDate}/>*/}
+                {/*<TableSelect config={proposedOrder}/>*/}
+                {/*<TableSelect config={orderATP}/>*/}
+                {/*<TableSelect config={lineItemATP}/>*/}
 
                 <Insert config={addQuickCheckLine}/>
+
+                <Delete config={deleteTimelineDates}/>
 
                 <div className={classes.container}>
                     <div className={classes.button}>

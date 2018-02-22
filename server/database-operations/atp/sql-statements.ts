@@ -173,5 +173,10 @@ export const addQuickCheckLine = [
     `
 ];
 
+export const deleteTimelineDates = [
+    `delete from timeline.result_date`,
+    `delete from timeline.result_dates`
+];
+
 
 

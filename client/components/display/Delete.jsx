@@ -2,19 +2,13 @@ import env from "../../../server/environment";
 import React, {Component} from "react";
 import "../../styles/main.css"
 
-export default class Insert extends Component {
+export default class Delete extends Component {
     constructor(props) {
         super(props);
         this.props = props;
 
         this.state = {
-            columns: [{Header: "No Data"}],
             rowsUpdated: "Not updated yet.",
-            fields: this.props.config.parameters.map((item) => ({
-                value: item.value,
-                type: item.type,
-                placeholder: item.placeholder
-            })),
             collapsed: "collapsed",
         };
 
@@ -42,8 +36,8 @@ export default class Insert extends Component {
         this.render = this.render.bind(this);
     }
 
-    getResults(value) {
-        return fetch(env.server() + this.props.config.endpoint, this.postInit({params: value})).then((response) => {
+    getResults() {
+        return fetch(env.server() + this.props.config.endpoint, this.postInit()).then((response) => {
             return response.json()
         })
     }
@@ -55,16 +49,7 @@ export default class Insert extends Component {
 
     handleSubmit(event) {
         event.preventDefault();
-        this.getResults(this.state.fields.map((item) => {
-            switch (item.type) {
-                case "number":
-                    return Number(item.value);
-                case "boolean":
-                    return Boolean(item.value);
-                default:
-                    return item.value;
-            }
-        }))
+        this.getResults()
             .then((result) => {
                 if (result[0]) {
                     this.setState({rowsUpdated: result[0]})
@@ -106,20 +91,6 @@ export default class Insert extends Component {
                 <h3 style={inline}>{this.props.config.title}</h3>
                 <div className={this.state.collapsed}>
                     <form onSubmit={this.handleSubmit}>
-                        <label>
-                            {
-                                this.state.fields.map((item, index) => {
-                                    return (
-                                        <input
-                                            key={index}
-                                            type={item.type}
-                                            placeholder={item.placeholder}
-                                            value={item.value}
-                                            onChange={this.handleChange.bind(this, index)}/>
-                                    )
-                                })
-                            }
-                        </label>
                         <input type="submit" value="Submit"/>
                     </form>
                     Rows Updated: {this.state.rowsUpdated}
