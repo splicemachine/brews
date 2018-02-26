@@ -178,5 +178,59 @@ export const deleteTimelineDates = [
     `delete from timeline.result_dates`
 ];
 
+/**
+ * We do not ave the TSQL ability to DECLARE and SET local variables,
+ * This means that each of the `?` in the prepared statements will have to be set to a corresponding value.
+ * Gene got around this by using the variable interpolation $targetDate.
+ * I could easily "prepare" my own statements by passing in the variable to a function, but that might
+ * be a worse idea than actually doing the iteration for this series.
+ *
+ * I think I will create a function for these statements because they are somewhat special
+ * @type {string[]}
+ */
+
+export const addResultDate = [
+    `
+    INSERT INTO timeline.result_date 
+    SELECT Max(Nvl(Date(et), ?)) AS COMBINED_ATP 
+    FROM   timeline.quick_check_lines qc 
+           LEFT JOIN (SELECT inv_id, 
+                             et, 
+                             val, 
+                             qty 
+                      FROM   timeline.timeline_int 
+                             JOIN timeline.quick_check_lines 
+                               ON timeline_id = inv_id 
+                      WHERE  st >= ? 
+                             AND val < qty) y 
+                  ON qc.inv_id = y.inv_id 
+    `,
+];
+
+export const addResultDates = [
+    `
+    INSERT INTO timeline.result_dates 
+    SELECT qc.inv_id, 
+           (SELECT CASE 
+                     WHEN Min(val) < 0 THEN 0 
+                     ELSE Min(val) 
+                   END 
+            FROM   timeline.timeline_int 
+            WHERE  timeline_id = qc.inv_id 
+                   AND st >= ?) ATP_ON_TARGET_DATE, 
+           Nvl(atp, ?)          AS ATP_DATE 
+    FROM   timeline.quick_check_lines qc 
+           LEFT JOIN (SELECT inv_id, 
+                             Date(Max(et)) AS ATP 
+                      FROM   timeline.timeline_int 
+                             JOIN timeline.quick_check_lines 
+                               ON timeline_id = inv_id 
+                      WHERE  st >= ? 
+                             AND val < qty 
+                      GROUP  BY inv_id 
+                      ORDER  BY atp DESC) y 
+                  ON qc.inv_id = y.inv_id     
+    `,
+];
 
 

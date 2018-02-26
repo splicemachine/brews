@@ -210,6 +210,45 @@ export default class App extends Component {
             ]
         };
 
+        const addResultDate = {
+            title: `Run Result Date`,
+            endpoint: `/api/v1/add-result-date`,
+            parameters: [
+                {
+                    placeholder: "Target Date",
+                    type: "date",
+                    value: "",
+                },
+                {
+                    placeholder: "Target Date",
+                    type: "date",
+                    value: "",
+                },
+            ]
+        };
+
+        const addResultDates = {
+            title: `Run Result Dates`,
+            endpoint: `/api/v1/add-result-dates`,
+            parameters: [
+                {
+                    placeholder: "Target Date",
+                    type: "date",
+                    value: "",
+                },
+                {
+                    placeholder: "Target Date",
+                    type: "date",
+                    value: "",
+                },
+                {
+                    placeholder: "Target Date",
+                    type: "date",
+                    value: "",
+                },
+            ]
+        };
+
         const deleteTimelineDates = {
             endpoint: `/api/v1/delete-timeline-dates`,
             title: `Delete Timeline Dates`,
@@ -230,6 +269,8 @@ export default class App extends Component {
                 {/*<TableSelect config={lineItemATP}/>*/}
 
                 <Insert config={addQuickCheckLine}/>
+                <Insert config={addResultDate}/>
+                <Insert config={addResultDates}/>
 
                 <Delete config={deleteTimelineDates}/>
 

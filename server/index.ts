@@ -46,6 +46,7 @@ if (process.env.NODE_ENV === "development") {
      * DEVELOPMENT
      */
     app.get("/", (req, res) => res.send("Development Mode!"));
+    app.get("/favicon.ico", (req, res) => res.send());
 } else {
     /**
      * PRODUCTION
@@ -54,6 +55,8 @@ if (process.env.NODE_ENV === "development") {
     app.get("/", (req, res) => res.sendFile(HTML_FILE));
     app.get("/favicon.ico", (req, res) => res.sendFile(FAVICON));
 }
+
+
 
 /**
  * Import and configure the ATP route.
@@ -80,8 +83,14 @@ app.post("/api/v1/line-item-atp", jsonParser, generateSelectHandler("lineItemATP
 
 import {
     addQuickCheckLine,
-    deleteTimelineDates
+    deleteTimelineDates,
+    addResultDate,
+    addResultDates,
 } from "./database-operations/atp/atp";
 
 app.post("/api/v1/add-quick-check-line", jsonParser, addQuickCheckLine);
 app.post("/api/v1/delete-timeline-dates", jsonParser, deleteTimelineDates);
+
+
+app.post("/api/v1/add-result-date", jsonParser, addResultDate);
+app.post("/api/v1/add-result-dates", jsonParser, addResultDates);

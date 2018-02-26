@@ -107,3 +107,43 @@ export function deleteTimelineDates(req: express.Request, res: express.Response)
         .catch(handle.bind(null, res))
 
 }
+
+
+
+export function addResultDate(req: express.Request, res: express.Response) {
+    /***** REPEATED CODE *****/
+    let db = null;
+    db = new Database();
+    /***** REPEATED CODE *****/
+    db.initialize()
+        .then(() => {
+            return db.preparedTransaction(statements.addResultDate, () => {
+            }, req.body.params);
+        })
+        .then((result) => {
+            res.send(result);
+            res.end();
+        }, rejected)
+        .catch(handle.bind(null, res))
+
+}
+
+
+
+export function addResultDates(req: express.Request, res: express.Response) {
+    /***** REPEATED CODE *****/
+    let db = null;
+    db = new Database();
+    /***** REPEATED CODE *****/
+    db.initialize()
+        .then(() => {
+            return db.preparedTransaction(statements.addResultDates, () => {
+            }, req.body.params);
+        })
+        .then((result) => {
+            res.send(result);
+            res.end();
+        }, rejected)
+        .catch(handle.bind(null, res))
+
+}
