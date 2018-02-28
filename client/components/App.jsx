@@ -260,13 +260,13 @@ export default class App extends Component {
             <div>
                 <h1>Available to Promise: {waiting}</h1>
 
-                {/*<TableSelect config={transferOrders}/>*/}
-                {/*<TableSelect config={atpOnDate}/>*/}
-                {/*<TableSelect config={trackingInventoryAsTimelines}/>*/}
-                {/*<TableSelect config={inventoryOnDate}/>*/}
-                {/*<TableSelect config={proposedOrder}/>*/}
-                {/*<TableSelect config={orderATP}/>*/}
-                {/*<TableSelect config={lineItemATP}/>*/}
+                <TableSelect config={transferOrders}/>
+                <TableSelect config={atpOnDate}/>
+                <TableSelect config={trackingInventoryAsTimelines}/>
+                <TableSelect config={inventoryOnDate}/>
+                <TableSelect config={proposedOrder}/>
+                <TableSelect config={orderATP}/>
+                <TableSelect config={lineItemATP}/>
 
                 <Insert config={addQuickCheckLine}/>
                 <Insert config={addResultDate}/>
