@@ -5,10 +5,19 @@ import env from "../../server/environment"
 import "../styles/main.css"
 import "../../node_modules/purecss/build/pure-min.css"
 import "../../node_modules/purecss/build/grids-responsive-min.css"
+
+import "../styles/side-menu-old-ie.css"
+import "../styles/side-menu.css"
+
 import Output from "./Output.jsx";
 import TableSelect from "./display/TableSelect.jsx";
 import Insert from "./display/Insert.jsx";
 import Delete from "./display/Delete.jsx";
+
+import SideMenu from "./SideMenu.jsx"
+import Content from "./Content.jsx";
+import Header from "./Header.jsx";
+import Hamburger from "./Hamburger.jsx";
 
 export default class App extends Component {
 
@@ -257,33 +266,12 @@ export default class App extends Component {
         };
 
         return (
-            <div>
-                <h1>Available to Promise: {waiting}</h1>
-
-                <TableSelect config={transferOrders}/>
-                <TableSelect config={atpOnDate}/>
-                <TableSelect config={trackingInventoryAsTimelines}/>
-                <TableSelect config={inventoryOnDate}/>
-                <TableSelect config={proposedOrder}/>
-                <TableSelect config={orderATP}/>
-                <TableSelect config={lineItemATP}/>
-
-                <Insert config={addQuickCheckLine}/>
-                <Insert config={addResultDate}/>
-                <Insert config={addResultDates}/>
-
-                <Delete config={deleteTimelineDates}/>
-
-                <div className={classes.container}>
-                    <div className={classes.button}>
-                        {/*<Progress completed={(completed / total) * 100}/>*/}
-                        <div style={buttonStyle}>
-                            <button className="button" onClick={this.generateClickHandler("/api/v1/prepare")}>
-                                Prepare and Import
-                            </button>
-                        </div>
-                    </div>
-                    <Output log={log} className={classes.output}/>
+            <div id="layout">
+                <Hamburger/>
+                <div id="main">
+                    <Header/>
+                    <SideMenu/>
+                    <Content/>
                 </div>
             </div>
         );
