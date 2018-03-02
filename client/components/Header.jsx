@@ -14,8 +14,8 @@ export default class Header extends Component {
         return (
 
             <div className="header">
-                <h1>Page Title</h1>
-                <h2>A subtitle for your page goes here</h2>
+                <h1>Available to Promise</h1>
+                <h2>A Splice Machine Use-Case</h2>
             </div>
 
         )

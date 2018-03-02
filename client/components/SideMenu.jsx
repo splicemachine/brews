@@ -9,19 +9,28 @@ export default class SideMenu extends Component {
     }
 
     render() {
-        // const {className} = this.props;
+
+        const active = {
+            services: false,
+            home: true,
+        };
+
+        const services = `pure-menu-item ${active.services? "pure-menu-selected" : ""}`;
+        const home = `pure-menu-item ${active.home? "pure-menu-selected" : ""}`;
 
         return (
             <div id="menu">
                 <div className="pure-menu">
-                    <a className="pure-menu-heading" href="#">Company</a>
+                    <a className={"menu-header-link"} href="https://www.splicemachine.com/">
+                        <img className={"menu-header-image"} src="../../static/img/splice-logo.png" alt=""/>
+                    </a>
                     <ul className="pure-menu-list">
-                        <li className="pure-menu-item"><a href="#" className="pure-menu-link">Home</a></li>
-                        <li className="pure-menu-item"><a href="#" className="pure-menu-link">About</a></li>
-                        <li className="pure-menu-item menu-item-divided pure-menu-selected">
+                        <li className={home}>
+                            <a href="#" className="pure-menu-link">Home</a>
+                        </li>
+                        <li className={services}>
                             <a href="#" className="pure-menu-link">Services</a>
                         </li>
-                        <li className="pure-menu-item"><a href="#" className="pure-menu-link">Contact</a></li>
                     </ul>
                 </div>
             </div>

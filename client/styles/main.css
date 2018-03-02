@@ -5,3 +5,14 @@ body {
 .collapsed {
     display: none;
 }
+
+.menu-header-image {
+    width: 80%;
+    padding: 10%;
+}
+
+/* I hate it when they get so specific. */
+#menu .menu-header-link{
+    border: none;
+    padding: 0;
+}
