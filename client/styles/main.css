@@ -16,3 +16,7 @@ body {
     border: none;
     padding: 0;
 }
+
+div.content > .pure-g label{
+    letter-spacing: 0em;
+}
