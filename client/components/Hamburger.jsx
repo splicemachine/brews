@@ -6,13 +6,16 @@ export default class Hamburger extends Component {
         super(props);
         this.props = props;
         this.state = {};
+
+
+        this.render = this.render.bind(this);
     }
 
     render() {
 
         return (
 
-            <a href="#menu" id="menuLink" className="menu-link">
+            <a onClick={this.props.toggle} id="menuLink" className="menu-link">
                 <span/>
             </a>
 
