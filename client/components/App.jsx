@@ -28,7 +28,7 @@ export default class App extends Component {
                 {
                     title: "Home",
                     component: <Home/>,
-                    active: true,
+                    active: false,
                 },
                 {
                     title: "Services",
@@ -38,14 +38,14 @@ export default class App extends Component {
                 {
                     title: "ATP",
                     component: <ATP/>,
-                    active: false
+                    active: true
                 }
             ],
             currentPage: {},
             sideBarActive: false,
         };
 
-        this.state.currentPage = this.state.sideBar[0];
+        this.state.currentPage = this.state.sideBar[2];
 
         this.render = this.render.bind(this);
         this.navigate = this.navigate.bind(this);
