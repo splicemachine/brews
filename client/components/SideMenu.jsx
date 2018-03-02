@@ -5,19 +5,25 @@ export default class SideMenu extends Component {
     constructor(props) {
         super(props);
         this.props = props;
-        this.state = {};
+        this.state = {
+            config: props.config
+        };
+
+        this.navigate = props.callback;
+
+        this.render = this.render.bind(this);
+        this.selectItem = this.selectItem.bind(this);
+    }
+
+    selectItem(clicked){
+        this.state.config.forEach((item)=>{
+            item.active = item === clicked;
+        });
+        this.setState(this.state);
+        this.navigate(clicked);
     }
 
     render() {
-
-        const active = {
-            services: false,
-            home: true,
-        };
-
-        const services = `pure-menu-item ${active.services? "pure-menu-selected" : ""}`;
-        const home = `pure-menu-item ${active.home? "pure-menu-selected" : ""}`;
-
         return (
             <div id="menu">
                 <div className="pure-menu">
@@ -25,12 +31,17 @@ export default class SideMenu extends Component {
                         <img className={"menu-header-image"} src="../../static/img/splice-logo.png" alt=""/>
                     </a>
                     <ul className="pure-menu-list">
-                        <li className={home}>
-                            <a href="#" className="pure-menu-link">Home</a>
-                        </li>
-                        <li className={services}>
-                            <a href="#" className="pure-menu-link">Services</a>
-                        </li>
+                        {
+                            this.state.config.map((item, index) => {
+                                return (
+                                    <li className={`pure-menu-item ${item.active? "pure-menu-selected" : ""}`} key={index}>
+                                        <a onClick={this.selectItem.bind(this, item)} className="pure-menu-link">
+                                            {item.title}
+                                        </a>
+                                    </li>
+                                )
+                            })
+                        }
                     </ul>
                 </div>
             </div>
