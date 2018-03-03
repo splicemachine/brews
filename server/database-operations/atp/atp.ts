@@ -33,6 +33,10 @@ export function addLine(req: express.Request, res: express.Response) {
 }
 
 export function runATP(req: express.Request, res: express.Response) {
+    /***** REPEATED CODE *****/
+    let db = null;
+    db = new Database();
+    /***** REPEATED CODE *****/
     let results = [];
     db.initialize()
         .then(() => {

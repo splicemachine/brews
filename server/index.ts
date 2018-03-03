@@ -73,9 +73,9 @@ app.post("/api/v1/add-line", jsonParser, addLine);
 app.post("/api/v1/run-atp", jsonParser, runATP);
 app.post("/api/v1/clear-lines", jsonParser, clearLines);
 
-// app.post("/api/v1/proposed-order", jsonParser, generateSelectHandler("proposedOrder"));
-// app.post("/api/v1/order-atp", jsonParser, generateSelectHandler("orderATP"));
-// app.post("/api/v1/line-item-atp", jsonParser, generateSelectHandler("lineItemATP"));
+app.post("/api/v1/proposed-order", jsonParser, generateSelectHandler("proposedOrder"));
+app.post("/api/v1/order-atp", jsonParser, generateSelectHandler("orderATP"));
+app.post("/api/v1/line-item-atp", jsonParser, generateSelectHandler("lineItemATP"));
 
 /**
  * Import and configure the ATP route.

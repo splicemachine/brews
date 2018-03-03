@@ -53,6 +53,8 @@ export default class ATP extends Component {
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.disable = this.disable.bind(this);
+        this.displayResults = this.displayResults.bind(this);
+        this.getResults = this.getResults.bind(this);
     }
 
     handleChange(key, event) {
@@ -88,6 +90,9 @@ export default class ATP extends Component {
             clearLines: `/api/v1/clear-lines`,
         };
 
+        /**
+         * Construct the payload.
+         */
         switch (form) {
             case "addLine":
                 payload.quantity = this.state.quantity;
@@ -103,19 +108,69 @@ export default class ATP extends Component {
                 break;
         }
 
-
+        /**
+         * Run the functions to do the inserts.
+         */
         fetch(env.server() + endpoints[form], this.postInit(payload)).then((response) => {
             return response.json()
         })
-            .then((result) => {
-                console.log(result)
-            })
+            .then(this.getResults.bind(this, form))
             .catch((e) => {
                 console.error(e)
             });
 
-        console.log(payload);
         event.preventDefault();
+    }
+
+    displayResults(target, result){
+        let block = this.state.results.find(item => item.key === target);
+        if (result[0]) {
+            block.columns = Object.keys(result[0]).map((item) => ({Header: item, accessor: item}));
+        }
+        block.data = result;
+        this.setState(this.state.results);
+        console.log(result)
+    }
+
+    getResults(form){
+        /**
+         * Run the functions we want to do after button actions.
+         */
+        switch (form) {
+            case "addLine":
+                //7505 :: Proposed Order
+                fetch(env.server() + `/api/v1/proposed-order`, this.postInit({})).then((response) => {
+                    return response.json()
+                })
+                    .then(this.displayResults.bind(this, "proposedOrder"))
+                    .catch((e) => {
+                        console.error(e)
+                    });
+                break;
+            case "runATP":
+                //1794 :: Order ATP
+                fetch(env.server() + `/api/v1/order-atp`, this.postInit({})).then((response) => {
+                    return response.json()
+                })
+                    .then(this.displayResults.bind(this, "orderATP"))
+                    .catch((e) => {
+                        console.error(e)
+                    });
+                //7691 :: Line Item ATP
+                fetch(env.server() + `/api/v1/line-item-atp`, this.postInit({})).then((response) => {
+                    return response.json()
+                })
+                    .then(this.displayResults.bind(this, "lineItemATP"))
+                    .catch((e) => {
+                        console.error(e)
+                    });
+                break;
+            case "clearLines":
+                break;
+            default:
+                console.log("I don't know what that one is.");
+                break;
+        }
     }
 
     disable(form) {
