@@ -12,11 +12,20 @@ body {
 }
 
 /* I hate it when they get so specific. */
-#menu .menu-header-link{
+#menu .menu-header-link {
     border: none;
     padding: 0;
 }
 
-div.content > .pure-g label{
+div.content > .pure-g label {
     letter-spacing: 0em;
+}
+
+.table-container {
+
+}
+
+.table-container h3 {
+    display: inline-block;
+    margin: 1em;
 }

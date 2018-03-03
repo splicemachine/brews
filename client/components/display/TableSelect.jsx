@@ -18,7 +18,7 @@ export default class TableSelect extends Component {
                 type: item.type,
                 placeholder: item.placeholder
             })),
-            collapsed: "collapsed",
+            collapsed: this.props.collapsed,
         };
 
         this.postInit = (body) => {
@@ -71,7 +71,7 @@ export default class TableSelect extends Component {
     }
 
     toggleVisibility() {
-        this.state.collapsed = this.state.collapsed === "" ? "collapsed" : "";
+        this.state.collapsed = !this.state.collapsed;
         this.setState(this.state);
     }
 
@@ -96,10 +96,10 @@ export default class TableSelect extends Component {
         };
 
         return (
-            <div className={className || "fucking-nothing"} style={containerStyle}>
-                <button style={inline} onClick={this.toggleVisibility}>&nbsp;</button>
-                <h3 style={inline}>{this.props.config.title}</h3>
-                <div className={this.state.collapsed}>
+            <div className={"table-container"}>
+                <button className={"pure-button"} onClick={this.toggleVisibility}>&nbsp;</button>
+                <h3>{this.props.config.title}</h3>
+                <div className={this.state.collapsed? "collapsed": ""}>
                     <form onSubmit={this.handleSubmit}>
                         <label>
                             {
