@@ -2,8 +2,9 @@
   "name": "brews",
   "version": "1.0.0",
   "description": "PoC Node Splice Machine Communication",
+  "author": "Nikhil Nygaard <nikhil.nygaard@gmail.com> (http://nygaard.site)",
   "main": "index.js",
-  "license": "MIT",
+  "license": "Affero General Public License v3",
   "scripts": {
     "dev": "npm run server | npm run client",
     "kill": "pm2 delete brews-client brews-server",
@@ -47,6 +48,6 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/njnygaard/brews.git"
+    "url": "git+https://github.com/splicemachine/brews.git"
   }
 }

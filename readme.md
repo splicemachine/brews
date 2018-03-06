@@ -22,7 +22,7 @@ This was developed with `node@v8.9.3` and `npm@5.6.0`.
 
 Install our global dependencies `gulp` (task runner) and `webpack-dev-server`.
 ```bash
-npm install -g gulp webpack-dev-server
+npm install -g gulp-cli webpack-dev-server
 npm install
 ```
 

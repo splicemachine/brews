@@ -5,11 +5,6 @@ import {handle, writeToStreams} from "../../helpers";
 
 let rejected = (reason) => Promise.reject(reason);
 
-export function size(req: express.Request, res: express.Response) {
-    res.send(String(Object.keys(statements).reduce((acc, stmt) => acc + statements[stmt].length, 0)));
-    res.end();
-}
-
 export function addLine(req: express.Request, res: express.Response) {
     /***** REPEATED CODE *****/
     let db = null;

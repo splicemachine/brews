@@ -1,7 +1,7 @@
 import React, {Component} from "react";
 import ReactTable from "react-table";
 import "react-table/react-table.css";
-import env from "../../server/environment";
+import * as env from "../../server/environment";
 
 export default class ATP extends Component {
 
