@@ -9,10 +9,7 @@ export default class Header extends Component {
     }
 
     render() {
-
-
         return (
-
             <div className="header">
                 <h1>Available to Promise</h1>
                 <h2>A Splice Machine Use-Case</h2>

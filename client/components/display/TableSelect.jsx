@@ -99,7 +99,7 @@ export default class TableSelect extends Component {
             <div className={"table-container"}>
                 <button className={"pure-button"} onClick={this.toggleVisibility}>&nbsp;</button>
                 <h3>{this.props.config.title}</h3>
-                <div className={this.state.collapsed? "collapsed": ""}>
+                <div className={this.state.collapsed ? "collapsed" : ""}>
                     <form onSubmit={this.handleSubmit}>
                         <label>
                             {

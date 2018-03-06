@@ -15,8 +15,8 @@ export default class SideMenu extends Component {
         this.selectItem = this.selectItem.bind(this);
     }
 
-    selectItem(clicked){
-        this.state.config.forEach((item)=>{
+    selectItem(clicked) {
+        this.state.config.forEach((item) => {
             item.active = item === clicked;
         });
         this.setState(this.state);
@@ -34,7 +34,8 @@ export default class SideMenu extends Component {
                         {
                             this.state.config.map((item, index) => {
                                 return (
-                                    <li className={`pure-menu-item ${item.active? "pure-menu-selected" : ""}`} key={index}>
+                                    <li className={`pure-menu-item ${item.active ? "pure-menu-selected" : ""}`}
+                                        key={index}>
                                         <a onClick={this.selectItem.bind(this, item)} className="pure-menu-link">
                                             {item.title}
                                         </a>

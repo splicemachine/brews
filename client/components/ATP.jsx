@@ -38,6 +38,11 @@ export default class ATP extends Component {
             ]
         };
 
+        /**
+         * This is a helper function to format JSON for use with the Fetch API
+         * @param body
+         * @returns {{method: string, body: string, headers: Headers, mode: string, cache: string}}
+         */
         this.postInit = (body) => {
             return {
                 method: "POST",
@@ -50,6 +55,9 @@ export default class ATP extends Component {
             }
         };
 
+        /**
+         * Bind everything you need to the constructor context.
+         */
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.disable = this.disable.bind(this);
@@ -57,9 +65,13 @@ export default class ATP extends Component {
         this.getResults = this.getResults.bind(this);
     }
 
+    /**
+     * React requires that changes be handled within the framework.
+     * Also a very convenient place to handle form validations.
+     * @param key
+     * @param event
+     */
     handleChange(key, event) {
-
-
         this.state[key] = event.target.value;
         this.state.formComplete = !(this.state.targetDate === '' ||
             this.state.itemNumber === '' ||
@@ -81,6 +93,11 @@ export default class ATP extends Component {
          */
     }
 
+    /**
+     * Triggered on button clicks.
+     * @param form
+     * @param event
+     */
     handleSubmit(form, event) {
         let payload = {};
 
@@ -122,23 +139,33 @@ export default class ATP extends Component {
         event.preventDefault();
     }
 
-    displayResults(target, result){
+    /**
+     * Used to refresh our table views.
+     * @param target
+     * @param result
+     */
+    displayResults(target, result) {
         let block = this.state.results.find(item => item.key === target);
-        if (result[0]) {
+        if (result && result[0]) {
             block.columns = Object.keys(result[0]).map((item) => ({Header: item, accessor: item}));
+            block.data = result;
+        } else {
+            block.columns = [{Header: "No Data"}];
+            block.data = [];
         }
-        block.data = result;
         this.setState(this.state.results);
-        console.log(result)
     }
 
-    getResults(form){
+    /**
+     * Collect all the API calls and map them to table display refreshing.
+     * @param form
+     */
+    getResults(form) {
         /**
          * Run the functions we want to do after button actions.
          */
         switch (form) {
             case "addLine":
-                //7505 :: Proposed Order
                 fetch(env.server() + `/api/v1/proposed-order`, this.postInit({})).then((response) => {
                     return response.json()
                 })
@@ -148,7 +175,6 @@ export default class ATP extends Component {
                     });
                 break;
             case "runATP":
-                //1794 :: Order ATP
                 fetch(env.server() + `/api/v1/order-atp`, this.postInit({})).then((response) => {
                     return response.json()
                 })
@@ -156,7 +182,6 @@ export default class ATP extends Component {
                     .catch((e) => {
                         console.error(e)
                     });
-                //7691 :: Line Item ATP
                 fetch(env.server() + `/api/v1/line-item-atp`, this.postInit({})).then((response) => {
                     return response.json()
                 })
@@ -166,6 +191,18 @@ export default class ATP extends Component {
                     });
                 break;
             case "clearLines":
+                fetch(env.server() + `/api/v1/clear-lines`, this.postInit({})).then((response) => {
+                    return response.json()
+                })
+                /**
+                 * Not sure that we're deleting enough stuff here.
+                 */
+                    .then(this.displayResults.bind(this, "proposedOrder"))
+                    .then(this.displayResults.bind(this, "orderATP"))
+                    .then(this.displayResults.bind(this, "lineItemATP"))
+                    .catch((e) => {
+                        console.error(e)
+                    });
                 break;
             default:
                 console.log("I don't know what that one is.");
@@ -173,6 +210,11 @@ export default class ATP extends Component {
         }
     }
 
+    /**
+     * Validation helper.
+     * @param form
+     * @returns {boolean}
+     */
     disable(form) {
         switch (form) {
             case "addLine":

@@ -15,21 +15,10 @@ app.set("port", process.env.PORT || DEFAULT_PORT);
 app.set("json spaces", 2);
 
 app.use(function (req, res, next) {
-
-    // Website you wish to allow to connect
     res.setHeader("Access-Control-Allow-Origin", "http://localhost:8080");
-
-    // Request methods you wish to allow
     res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, PATCH, DELETE");
-
-    // Request headers you wish to allow
     res.setHeader("Access-Control-Allow-Headers", "X-Requested-With,content-type");
-
-    // Set to true if you need the website to include cookies in the requests sent
-    // to the API (e.g. in case you use sessions)
     res.setHeader("Access-Control-Allow-Credentials", "true");
-
-    // Pass to next layer of middleware
     next();
 });
 
@@ -56,38 +45,38 @@ if (process.env.NODE_ENV === "development") {
     app.get("/favicon.ico", (req, res) => res.sendFile(FAVICON));
 }
 
-
+/**
+ * Import all the functions you need to bind to endpoints.
+ */
 import {
-    // proposedOrder,
-    // orderATP,
-    // lineItemATP,
-
     addLine,
     runATP,
     clearLines,
+    prepare,
     generateSelectHandler
 } from "./database-operations/atp/atp"
 
+/**
+ * Preparation handler that takes no parameters.
+ */
+app.get("/api/v1/prepare", prepare);
 
+/**
+ * Custom handlers.
+ */
 app.post("/api/v1/add-line", jsonParser, addLine);
 app.post("/api/v1/run-atp", jsonParser, runATP);
 app.post("/api/v1/clear-lines", jsonParser, clearLines);
 
+/**
+ * Generated functions for SELECT calls that do not take parameters.
+ */
 app.post("/api/v1/proposed-order", jsonParser, generateSelectHandler("proposedOrder"));
 app.post("/api/v1/order-atp", jsonParser, generateSelectHandler("orderATP"));
 app.post("/api/v1/line-item-atp", jsonParser, generateSelectHandler("lineItemATP"));
 
 /**
- * Import and configure the ATP route.
- */
-// import {size, prepare} from "./database-operations/atp/atp";
-//
-// app.get("/api/v1/prepare", prepare);
-// app.get("/api/v1/size", size);
-
-
-/**
- * Import handlers separately
+ * Deprecated Handlers
  */
 // import {
 //     generateSelectHandler

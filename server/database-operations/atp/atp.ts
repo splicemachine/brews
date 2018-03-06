@@ -18,7 +18,8 @@ export function addLine(req: express.Request, res: express.Response) {
 
     db.initialize()
         .then(() => {
-            return db.transaction(statements.deleteTimelineDates, ()=>{});
+            return db.transaction(statements.deleteTimelineDates, () => {
+            });
         }, rejected)
         .then(() => {
             return db.preparedTransaction(statements.addQuickCheckLine, () => {
@@ -29,7 +30,6 @@ export function addLine(req: express.Request, res: express.Response) {
             res.end();
         }, rejected)
         .catch(handle.bind(null, res))
-
 }
 
 export function runATP(req: express.Request, res: express.Response) {
@@ -63,7 +63,8 @@ export function clearLines(req: express.Request, res: express.Response) {
     /***** REPEATED CODE *****/
     db.initialize()
         .then(() => {
-            return db.transaction(statements.deleteTimelineDates, ()=>{});
+            return db.transaction(statements.deleteTimelineDates, () => {
+            });
         }, rejected)
         .then((r) => {
             res.send(r);
@@ -84,31 +85,31 @@ export function clearLines(req: express.Request, res: express.Response) {
  * @param {e.Request} req
  * @param {e.Response} res
  */
-// export function prepare(req: express.Request, res: express.Response) {
-//
-//     /***** REPEATED CODE *****/
-//     let db = null;
-//     let writer = (text) => {
-//         writeToStreams(text, res.write.bind(res), console.log)
-//     };
-//     db = new Database();
-//     /***** REPEATED CODE *****/
-//
-//     db.initialize()
-//         .then(() => {
-//             return db._forced_transaction(statements.force, writer);
-//         })
-//         .then(() => {
-//             return db.transaction(statements.createSchema, writer);
-//         }, rejected)
-//         .then(() => {
-//             return db.storedProcedure(statements.dataImport, writer)
-//         }, rejected)
-//         .then(() => {
-//             res.end();
-//         }, rejected)
-//         .catch(handle.bind(null, res));
-// }
+export function prepare(req: express.Request, res: express.Response) {
+
+    /***** REPEATED CODE *****/
+    let db = null;
+    let writer = (text) => {
+        writeToStreams(text, res.write.bind(res), console.log)
+    };
+    db = new Database();
+    /***** REPEATED CODE *****/
+
+    db.initialize()
+        .then(() => {
+            return db._forced_transaction(statements.force, writer);
+        })
+        .then(() => {
+            return db.transaction(statements.createSchema, writer);
+        }, rejected)
+        .then(() => {
+            return db.storedProcedure(statements.dataImport, writer)
+        }, rejected)
+        .then(() => {
+            res.end();
+        }, rejected)
+        .catch(handle.bind(null, res));
+}
 
 /**
  * Generator for Select Handlers
@@ -135,7 +136,9 @@ export function generateSelectHandler(group) {
     }
 }
 
-//
+/**
+ * Deprecated Handlers
+ */
 // export function addQuickCheckLine(req: express.Request, res: express.Response) {
 //     /***** REPEATED CODE *****/
 //     let db = null;

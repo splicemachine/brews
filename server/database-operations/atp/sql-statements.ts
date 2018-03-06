@@ -1,6 +1,3 @@
-/**
- * DO NOT AUTOFORMAT THIS FILE
- */
 import env from "../../environment";
 
 /**
@@ -20,7 +17,7 @@ export const force = [
     `drop table IF EXISTS TIMELINE.QUICK_CHECK_LINES`,
 
     `drop schema TIMELINE restrict`
-];//8
+];
 
 export const createSchema = [
     `create schema TIMELINE`,
@@ -113,13 +110,13 @@ export const createSchema = [
         inv_id int,
         qty int
     )`
-];//17
+];
 
 export const dataImport = [
     `call SYSCS_UTIL.IMPORT_DATA('TIMELINE','TRANSFERORDERS',null, 's3a://${env.ATP_S3_USER}:${env.ATP_S3_SECRET}@splice-demo/supplychain/data_0623/train_orders.csv', null, null, 'yyyy-MM-dd HH:mm:ss.S', null, null, -1, '/tmp', true, null)`,
     `call SYSCS_UTIL.IMPORT_DATA('TIMELINE','TO_DELIVERY_CHG_EVENT', null, 's3a://${env.ATP_S3_USER}:${env.ATP_S3_SECRET}@splice-demo/supplychain/data_0623/train_events.csv', null, null, 'yyyy-MM-dd HH:mm:ss.S', null, null, -1, '/tmp', true, null)`,
     `call SYSCS_UTIL.IMPORT_DATA('TIMELINE','TIMELINE_INT', null, 's3a://${env.ATP_S3_USER}:${env.ATP_S3_SECRET}@splice-demo/supplychain/data_0623/train_inv.csv', null, null, 'yyyy-MM-dd HH:mm:ss.S', null, null, -1, '/tmp', true, null)`,
-];//3
+];
 
 /**
  * Generated function calls
