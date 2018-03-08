@@ -58,7 +58,7 @@ export function clearLines(req: express.Request, res: express.Response) {
     /***** REPEATED CODE *****/
     db.initialize()
         .then(() => {
-            return db.transaction(statements.deleteTimelineDates, () => {
+            return db.transaction([...statements.deleteTimelineDates,...statements.deleteQuickCheckLines], () => {
             });
         }, rejected)
         .then((r) => {

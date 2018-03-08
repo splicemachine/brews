@@ -175,6 +175,10 @@ export const deleteTimelineDates = [
     `delete from timeline.result_dates`
 ];
 
+export const deleteQuickCheckLines = [
+    `delete from timeline.quick_check_lines`
+];
+
 /**
  * We do not ave the TSQL ability to DECLARE and SET local variables,
  * This means that each of the `?` in the prepared statements will have to be set to a corresponding value.

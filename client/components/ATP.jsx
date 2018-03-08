@@ -65,6 +65,10 @@ export default class ATP extends Component {
         this.getResults = this.getResults.bind(this);
     }
 
+    componentWillMount() {
+        this.getResults("clearLines");
+    }
+
     /**
      * React requires that changes be handled within the framework.
      * Also a very convenient place to handle form validations.
@@ -194,15 +198,34 @@ export default class ATP extends Component {
                 fetch(env.server() + `/api/v1/clear-lines`, this.postInit({})).then((response) => {
                     return response.json()
                 })
-                /**
-                 * Not sure that we're deleting enough stuff here.
-                 */
-                    .then(this.displayResults.bind(this, "proposedOrder"))
+                    .catch((e) => {
+                        console.error(e)
+                    });
+
+                fetch(env.server() + `/api/v1/order-atp`, this.postInit({})).then((response) => {
+                    return response.json()
+                })
                     .then(this.displayResults.bind(this, "orderATP"))
+                    .catch((e) => {
+                        console.error(e)
+                    });
+
+                fetch(env.server() + `/api/v1/line-item-atp`, this.postInit({})).then((response) => {
+                    return response.json()
+                })
                     .then(this.displayResults.bind(this, "lineItemATP"))
                     .catch((e) => {
                         console.error(e)
                     });
+
+                fetch(env.server() + `/api/v1/proposed-order`, this.postInit({})).then((response) => {
+                    return response.json()
+                })
+                    .then(this.displayResults.bind(this, "proposedOrder"))
+                    .catch((e) => {
+                        console.error(e)
+                    });
+
                 break;
             default:
                 console.log("I don't know what that one is.");
