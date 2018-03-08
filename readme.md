@@ -20,16 +20,17 @@ Make sure you have [Node.js installed][4].
 
 This was developed with `node@v8.9.3` and `npm@5.6.0`.
 
-Install our global dependencies `gulp` (task runner) and `webpack-dev-server`.
+Install our global dependencies `gulp` (task runner) and `webpack-dev-server` (hot reload server).
 ```bash
-npm install -g gulp-cli webpack-dev-server
-npm install
+npm install -g gulp-cli webpack-dev-server && npm install
 ```
 
 |Command|Description|
 |-|-|
-|`gulp kill`|Stop the development server.|
+|`gulp`|Start the development server.|
+|`^c`|End terminal output (server is still running).|
 |`pm2 ls`|Inspect the running servers.|
+|`gulp kill`|Stop the development server.|
 
 **Note**: For now, I have removed the preparation step from the ATP Demo workflow. If you are running against a cluster that does not have the ATP schema or data, please navigate to [http://localhost:3000/api/v1/prepare][7] in your browser.
 
@@ -60,6 +61,58 @@ There is an example `marathon.json` in `/config`. Use that to start `brews` as a
 - **E**xpress
 - **W**ebpack
 - **S**plice Machine
+
+## Example Test Case
+<!-- 
+### ATP on Date
+Run "Inventory on Date" and "ATP on Date" to see how they differ. You can use the following inputs to test.
+
+For example:
+- Inventory on Date
+    + Parameters
+        * `Inv` : `600`
+        * `Time` : `2016-10-15 00:00:00.0`
+    + Output
+        * `INVENTORY` : `1900`
+- ATP on Date
+    + Parameters
+        * `Inv` : `600`
+        * `TimeATP` : `2016-10-15 00:00:00.0`
+        * `TimeHorizon` : `2017-05-01 00:00:00.0`
+    + Output
+        * `AVAILABLE` : `1190`
+-->
+### Multi-Line ATP
+
+We can add the following parameters to get a view of when a multi-line order will be available to promise. First, we add the lines of inventory that represent the proposed order we would like to 'promise'. Then we can set the target date by which the order must be ready. The output represent when each of the items will be 'Available to Promise' and the maximum of those values is the earliest we can promise the proposed order.
+
+For example:
+#### Input Parameters
+##### Proposed Order
+|`INV_ID`|`QTY`|
+|-|-|
+|`100`|`400`|
+|`200`|`400`|
+|`600`|`4000`|
+
+##### Target Date
+`2016-10-15`
+
+#### Output
+##### Order ATP
+|`COMBINED_ATP`|
+|-|
+|`2016-12-20`|
+
+##### Line Item ATP
+|`INV_ID`|`ATP_ON_TARGET_DATE`|`ATP_DATE`|
+|-|-|-|
+|`600`|`0`|`2016-12-20`|
+|`200`|`0`|`2016-11-19`|
+|`100`|`0`|`2016-11-23`|
+
+
+
 
 [1]: https://github.com/scotch-io/hello-world-react
 [2]: https://scotch.io/tutorials/setup-a-react-environment-using-webpack-and-babel
