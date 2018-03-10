@@ -3,17 +3,21 @@
 This repository contains an example Splice Machine use-case using a React Frontend and a Node.js Backend. The frontend uses a plain React-based stack with no official state management framework as of yet. The backend is written in TypeScript and makes use of [node-jdbc][3] to communicate with a Splice Machine instance.
 
 ## Installation
-You will need a Splice Machine JDBC URL to configure the application. You should have received an email outlining this configuration parameter.
 
-Before running or installing, you must create the file `server/environment.ts`. There is an example of this file at `server/environment.example.ts`. You must populate the ternary assignments, or set the environment variables for:
-- `JDBC_URL`
+This repository was developed on MacOS v10.12.6 (16G1114). The development workflow has been tested only for this environment.
+
+The production deployment is a docker container.
+
+You will need a Splice Machine JDBC URL to configure the application. If you created a Splice Machine database with the Cloud UI, your JDBC URL will be in your Cluster Ready email, or can be found on that Cluster's page in the Cloud Manager. For other environments, see our documentation at doc.splicemachine.com for JDBC URL information.
+
+Before running or installing, you must create the file `server/environment.ts`. There is an example of this file at `server/environment.example.ts`. 
+
+Please set `JDBC_URL` accordingly.
+
+**Note** that to run the ATP demo, you will also need to configure S3 credentials. This example uses S3 to demonstrate Stored Procedure interoperability by loading sample data from S3.
+
 - `ATP_S3_USER`
 - `ATP_S3_SECRET`
-
-If you haven't completed this step, you will see console errors containing:
-```
-Error: Cannot find module '../../environment'
-```
 
 ### Local Development
 Make sure you have [Node.js installed][4].
