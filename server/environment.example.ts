@@ -3,6 +3,9 @@
  * @type {string | undefined | string}
  */
 
+export function server(){
+    return process.env.NODE_ENV === "development" ? "http://localhost:3000" : "";
+}
 
 let jdbc = process.env.JDBC_URL ? process.env.JDBC_URL : "jdbc:splice://localhost:1527/splicedb;user=splice;password=admin";
 let atp_s3_user = process.env.ATP_S3_USER ? process.env.ATP_S3_USER : "";
