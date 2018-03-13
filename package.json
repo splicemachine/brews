@@ -43,6 +43,7 @@
     "babel-register": "^6.26.0",
     "css-loader": "^0.28.8",
     "del": "^3.0.0",
+    "file-loader": "^1.1.11",
     "style-loader": "^0.19.1",
     "webpack-dev-server": "^1.16.2"
   },

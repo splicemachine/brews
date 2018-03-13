@@ -35,7 +35,10 @@ if (process.env.NODE_ENV === "development") {
      * DEVELOPMENT
      */
     app.get("/", (req, res) => res.send("Development Mode!"));
-    app.get("/favicon.ico", (req, res) => res.send());
+    app.get("/favicon.ico", (req, res) => {
+        console.log(`serving ${FAVICON}`);
+        res.sendFile(FAVICON)
+    });
 } else {
     /**
      * PRODUCTION

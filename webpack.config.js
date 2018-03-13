@@ -33,7 +33,11 @@ module.exports = {
         loaders: [
             {test: /\.css/, loader: "style-loader!css-loader"},
             {test: /\.js$/, loader: 'babel-loader', exclude: /node_modules/},
-            {test: /\.jsx?$/, loader: 'babel-loader', exclude: /node_modules/}
+            {test: /\.jsx?$/, loader: 'babel-loader', exclude: /node_modules/},
+            {
+                test: /\.jpe?g$|\.ico$|\.gif$|\.png$|\.svg$|\.woff$|\.ttf$|\.wav$|\.mp3$/,
+                loader: 'file-loader?name=[name].[ext]'  // <-- retain original file name
+            }
         ]
     },
     plugins: [HtmlWebpackPluginConfig]

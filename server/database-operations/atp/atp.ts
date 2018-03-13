@@ -35,6 +35,10 @@ export function runATP(req: express.Request, res: express.Response) {
     let results = [];
     db.initialize()
         .then(() => {
+            return db.transaction(statements.deleteTimelineDates, () => {
+            });
+        }, rejected)
+        .then(() => {
             return db.preparedTransaction(statements.addResultDate, () => {
             }, [req.body.targetDate, req.body.targetDate]);
         })

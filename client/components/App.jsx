@@ -3,6 +3,7 @@ import "../../node_modules/purecss/build/pure-min.css"
 import "../../node_modules/purecss/build/grids-responsive-min.css"
 import "../styles/side-menu-old-ie.css"
 import "../styles/side-menu.css"
+import "../../static/img/favicon.ico"
 import React, {Component} from "react";
 import SideMenu from "./SideMenu.jsx"
 import Header from "./Header.jsx";
