@@ -1,4 +1,5 @@
 import React, {Component} from "react";
+import logo from "../../static/img/splice-logo.png";
 
 export default class SideMenu extends Component {
 
@@ -28,7 +29,7 @@ export default class SideMenu extends Component {
             <div id="menu">
                 <div className="pure-menu">
                     <a className={"menu-header-link"} href="https://www.splicemachine.com/">
-                        <img className={"menu-header-image"} src="../../static/img/splice-logo.png" alt=""/>
+                        <img className={"menu-header-image"} src={logo} alt=""/>
                     </a>
                     <ul className="pure-menu-list">
                         {

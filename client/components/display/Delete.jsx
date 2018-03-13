@@ -1,4 +1,4 @@
-import env from "../../../server/environment";
+// import env from "../../../server/environment";
 import React, {Component} from "react";
 import "../../styles/main.css"
 

@@ -1,7 +1,14 @@
 import React, {Component} from "react";
 import ReactTable from "react-table";
 import "react-table/react-table.css";
-import * as env from "../../server/environment";
+
+
+
+function server() {
+    return process.env.NODE_ENV === "development" ? "http://localhost:3000": "";
+}
+
+// import * as env from "../../server/environment";
 
 export default class ATP extends Component {
 
@@ -132,7 +139,7 @@ export default class ATP extends Component {
         /**
          * Run the functions to do the inserts.
          */
-        fetch(env.server() + endpoints[form], this.postInit(payload)).then((response) => {
+        fetch(server() + endpoints[form], this.postInit(payload)).then((response) => {
             return response.json()
         })
             .then(this.getResults.bind(this, form))
@@ -170,7 +177,7 @@ export default class ATP extends Component {
          */
         switch (form) {
             case "addLine":
-                fetch(env.server() + `/api/v1/proposed-order`, this.postInit({})).then((response) => {
+                fetch(server() + `/api/v1/proposed-order`, this.postInit({})).then((response) => {
                     return response.json()
                 })
                     .then(this.displayResults.bind(this, "proposedOrder"))
@@ -179,14 +186,14 @@ export default class ATP extends Component {
                     });
                 break;
             case "runATP":
-                fetch(env.server() + `/api/v1/order-atp`, this.postInit({})).then((response) => {
+                fetch(server() + `/api/v1/order-atp`, this.postInit({})).then((response) => {
                     return response.json()
                 })
                     .then(this.displayResults.bind(this, "orderATP"))
                     .catch((e) => {
                         console.error(e)
                     });
-                fetch(env.server() + `/api/v1/line-item-atp`, this.postInit({})).then((response) => {
+                fetch(server() + `/api/v1/line-item-atp`, this.postInit({})).then((response) => {
                     return response.json()
                 })
                     .then(this.displayResults.bind(this, "lineItemATP"))
@@ -195,14 +202,14 @@ export default class ATP extends Component {
                     });
                 break;
             case "clearLines":
-                fetch(env.server() + `/api/v1/clear-lines`, this.postInit({})).then((response) => {
+                fetch(server() + `/api/v1/clear-lines`, this.postInit({})).then((response) => {
                     return response.json()
                 })
                     .catch((e) => {
                         console.error(e)
                     });
 
-                fetch(env.server() + `/api/v1/order-atp`, this.postInit({})).then((response) => {
+                fetch(server() + `/api/v1/order-atp`, this.postInit({})).then((response) => {
                     return response.json()
                 })
                     .then(this.displayResults.bind(this, "orderATP"))
@@ -210,7 +217,7 @@ export default class ATP extends Component {
                         console.error(e)
                     });
 
-                fetch(env.server() + `/api/v1/line-item-atp`, this.postInit({})).then((response) => {
+                fetch(server() + `/api/v1/line-item-atp`, this.postInit({})).then((response) => {
                     return response.json()
                 })
                     .then(this.displayResults.bind(this, "lineItemATP"))
@@ -218,7 +225,7 @@ export default class ATP extends Component {
                         console.error(e)
                     });
 
-                fetch(env.server() + `/api/v1/proposed-order`, this.postInit({})).then((response) => {
+                fetch(server() + `/api/v1/proposed-order`, this.postInit({})).then((response) => {
                     return response.json()
                 })
                     .then(this.displayResults.bind(this, "proposedOrder"))

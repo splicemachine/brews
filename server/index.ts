@@ -14,11 +14,19 @@ const jsonParser = bodyParser.json();
 app.set("port", process.env.PORT || DEFAULT_PORT);
 app.set("json spaces", 2);
 
-app.use(function (req, res, next) {
-    res.setHeader("Access-Control-Allow-Origin", "http://localhost:8080");
-    res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, PATCH, DELETE");
-    res.setHeader("Access-Control-Allow-Headers", "X-Requested-With,content-type");
-    res.setHeader("Access-Control-Allow-Credentials", "true");
+// console.log("WELL", process.env.NODE_ENV);
+// app.use(function (req, res, next) {
+//     console.log("why won't you set headers>");
+//     res.setHeader("Access-Control-Allow-Origin", "http://localhost:8080");
+//     res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, PATCH, DELETE");
+//     res.setHeader("Access-Control-Allow-Headers", "X-Requested-With,content-type");
+//     res.setHeader("Access-Control-Allow-Credentials", "true");
+//     next();
+// });
+
+app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     next();
 });
 

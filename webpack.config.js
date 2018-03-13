@@ -1,3 +1,4 @@
+const webpack = require("webpack");
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const HtmlWebpackPluginConfig = new HtmlWebpackPlugin({
     template: './client/index.html',
@@ -5,7 +6,13 @@ const HtmlWebpackPluginConfig = new HtmlWebpackPlugin({
     inject: 'body'
 });
 
-module.exports = {
+const url = new webpack.DefinePlugin({
+    'process.env': {
+        NODE_ENV: JSON.stringify(process.env.NODE_ENV),
+    }
+});
+
+const config = {
     entry: './client/index.js',
     output: {
         path: './dist',
@@ -37,8 +44,21 @@ module.exports = {
             {
                 test: /\.jpe?g$|\.ico$|\.gif$|\.png$|\.svg$|\.woff$|\.ttf$|\.wav$|\.mp3$/,
                 loader: 'file-loader?name=[name].[ext]'  // <-- retain original file name
+            },
+            {
+                test: /\.(jpg|png|svg|ico)$/,
+                loader: 'file-loader?name=[name].[ext]&mimetype=image/png',
+                include: "../../static/img"
             }
         ]
     },
-    plugins: [HtmlWebpackPluginConfig]
+    plugins: [HtmlWebpackPluginConfig, url]
 };
+
+
+function go(env) {
+    return config;
+}
+
+module.exports = go();
+
