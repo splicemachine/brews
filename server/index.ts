@@ -14,25 +14,10 @@ const jsonParser = bodyParser.json();
 app.set("port", process.env.PORT || DEFAULT_PORT);
 app.set("json spaces", 2);
 
-// console.log("WELL", process.env.NODE_ENV);
-// app.use(function (req, res, next) {
-//     console.log("why won't you set headers>");
-//     res.setHeader("Access-Control-Allow-Origin", "http://localhost:8080");
-//     res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, PATCH, DELETE");
-//     res.setHeader("Access-Control-Allow-Headers", "X-Requested-With,content-type");
-//     res.setHeader("Access-Control-Allow-Credentials", "true");
-//     next();
-// });
-
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     next();
-});
-
-const server = app.listen(app.get("port"), () => {
-    console.log("Server Started");
-    server.keepAliveTimeout = 0;
 });
 
 /**
@@ -87,30 +72,14 @@ app.post("/api/v1/order-atp", jsonParser, generateSelectHandler("orderATP"));
 app.post("/api/v1/line-item-atp", jsonParser, generateSelectHandler("lineItemATP"));
 
 /**
- * Deprecated Handlers
+ * This handler needs to be delared after all other app.use (and it would seem app.post et.al.)
  */
-// import {
-//     generateSelectHandler
-// } from "./database-operations/atp/atp";
-//
-// app.post("/api/v1/transfer-orders", jsonParser, generateSelectHandler("transferOrders"));
-// app.post("/api/v1/atp-on-date", jsonParser, generateSelectHandler("atpOnDate"));
-// app.post("/api/v1/tracking-inventory-as-timelines", jsonParser, generateSelectHandler("trackingInventoryAsTimelines"));
-// app.post("/api/v1/inventory-on-date", jsonParser, generateSelectHandler("inventoryOnDate"));
-// app.post("/api/v1/proposed-order", jsonParser, generateSelectHandler("proposedOrder"));
-// app.post("/api/v1/order-atp", jsonParser, generateSelectHandler("orderATP"));
-// app.post("/api/v1/line-item-atp", jsonParser, generateSelectHandler("lineItemATP"));
-//
-// import {
-//     addQuickCheckLine,
-//     deleteTimelineDates,
-//     addResultDate,
-//     addResultDates,
-// } from "./database-operations/atp/atp";
-//
-// app.post("/api/v1/add-quick-check-line", jsonParser, addQuickCheckLine);
-// app.post("/api/v1/delete-timeline-dates", jsonParser, deleteTimelineDates);
-//
-//
-// app.post("/api/v1/add-result-date", jsonParser, addResultDate);
-// app.post("/api/v1/add-result-dates", jsonParser, addResultDates);
+app.use(function (err, req, res, next) {
+    res.status(500).json({message: err.message});
+    next();
+});
+
+const server = app.listen(app.get("port"), () => {
+    console.log("Server Started");
+    server.keepAliveTimeout = 0;
+});

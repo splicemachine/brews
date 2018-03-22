@@ -5,7 +5,12 @@ import {handle, writeToStreams} from "../../helpers";
 
 let rejected = (reason) => Promise.reject(reason);
 
-export function addLine(req: express.Request, res: express.Response) {
+function errorHandler(next: express.NextFunction, message: string) {
+    console.log("catch handler for everybody");
+    next(new Error(message));
+}
+
+export function addLine(req: express.Request, res: express.Response, next: express.NextFunction) {
     /***** REPEATED CODE *****/
     let db = null;
     db = new Database();
@@ -24,10 +29,10 @@ export function addLine(req: express.Request, res: express.Response) {
             res.send(result);
             res.end();
         }, rejected)
-        .catch(handle.bind(null, res))
+        .catch(errorHandler.bind(null, next));
 }
 
-export function runATP(req: express.Request, res: express.Response) {
+export function runATP(req: express.Request, res: express.Response, next: express.NextFunction) {
     /***** REPEATED CODE *****/
     let db = null;
     db = new Database();
@@ -52,24 +57,24 @@ export function runATP(req: express.Request, res: express.Response) {
             res.send(results);
             res.end();
         }, rejected)
-        .catch(handle.bind(null, res))
+        .catch(errorHandler.bind(null, next));
 }
 
-export function clearLines(req: express.Request, res: express.Response) {
+export function clearLines(req: express.Request, res: express.Response, next: express.NextFunction) {
     /***** REPEATED CODE *****/
     let db = null;
     db = new Database();
     /***** REPEATED CODE *****/
     db.initialize()
         .then(() => {
-            return db.transaction([...statements.deleteTimelineDates,...statements.deleteQuickCheckLines], () => {
+            return db.transaction([...statements.deleteTimelineDates, ...statements.deleteQuickCheckLines], () => {
             });
         }, rejected)
         .then((r) => {
             res.send(r);
             res.end();
         }, rejected)
-        .catch(handle.bind(null, res))
+        .catch(errorHandler.bind(null, next));
 }
 
 /**
@@ -83,8 +88,9 @@ export function clearLines(req: express.Request, res: express.Response) {
  *      These are the S3 import calls, they take no parameters and return no results.
  * @param {e.Request} req
  * @param {e.Response} res
+ * @param {e.NextFunction} next
  */
-export function prepare(req: express.Request, res: express.Response) {
+export function prepare(req: express.Request, res: express.Response, next: express.NextFunction) {
 
     /***** REPEATED CODE *****/
     let db = null;
@@ -107,7 +113,7 @@ export function prepare(req: express.Request, res: express.Response) {
         .then(() => {
             res.end();
         }, rejected)
-        .catch(handle.bind(null, res));
+        .catch(errorHandler.bind(null, next));
 }
 
 /**
@@ -117,7 +123,7 @@ export function prepare(req: express.Request, res: express.Response) {
  * on the backend.
  */
 export function generateSelectHandler(group) {
-    return function (req: express.Request, res: express.Response) {
+    return function (req: express.Request, res: express.Response, next: express.NextFunction) {
         /***** REPEATED CODE *****/
         let db = null;
         db = new Database();
@@ -131,84 +137,6 @@ export function generateSelectHandler(group) {
                 res.send(result);
                 res.end();
             }, rejected)
-            .catch(handle.bind(null, res))
+            .catch(errorHandler.bind(null, next));
     }
 }
-
-/**
- * Deprecated Handlers
- */
-// export function addQuickCheckLine(req: express.Request, res: express.Response) {
-//     /***** REPEATED CODE *****/
-//     let db = null;
-//     db = new Database();
-//     /***** REPEATED CODE *****/
-//     db.initialize()
-//         .then(() => {
-//             return db.preparedTransaction(statements.addQuickCheckLine, () => {
-//             }, req.body.params);
-//         })
-//         .then((result) => {
-//             res.send(result);
-//             res.end();
-//         }, rejected)
-//         .catch(handle.bind(null, res))
-//
-// }
-//
-// export function deleteTimelineDates(req: express.Request, res: express.Response) {
-//     /***** REPEATED CODE *****/
-//     let db = null;
-//     db = new Database();
-//     /***** REPEATED CODE *****/
-//     db.initialize()
-//         .then(() => {
-//             return db.preparedTransaction(statements.deleteTimelineDates);
-//         })
-//         .then((result) => {
-//             res.send(result);
-//             res.end();
-//         }, rejected)
-//         .catch(handle.bind(null, res))
-//
-// }
-//
-//
-//
-// export function addResultDate(req: express.Request, res: express.Response) {
-//     /***** REPEATED CODE *****/
-//     let db = null;
-//     db = new Database();
-//     /***** REPEATED CODE *****/
-//     db.initialize()
-//         .then(() => {
-//             return db.preparedTransaction(statements.addResultDate, () => {
-//             }, req.body.params);
-//         })
-//         .then((result) => {
-//             res.send(result);
-//             res.end();
-//         }, rejected)
-//         .catch(handle.bind(null, res))
-//
-// }
-//
-//
-//
-// export function addResultDates(req: express.Request, res: express.Response) {
-//     /***** REPEATED CODE *****/
-//     let db = null;
-//     db = new Database();
-//     /***** REPEATED CODE *****/
-//     db.initialize()
-//         .then(() => {
-//             return db.preparedTransaction(statements.addResultDates, () => {
-//             }, req.body.params);
-//         })
-//         .then((result) => {
-//             res.send(result);
-//             res.end();
-//         }, rejected)
-//         .catch(handle.bind(null, res))
-//
-// }
