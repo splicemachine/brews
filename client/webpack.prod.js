@@ -1,6 +1,6 @@
 const path = require('path');
 
-const FaviconsWebpackPlugin = require('favicons-webpack-plugin')
+const FaviconsWebpackPlugin = require('favicons-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin'); //installed via npm
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
@@ -18,10 +18,9 @@ module.exports = {
     module: {
         rules: [
             {
-                test: /\.js$/,
+                test: /\.jsx?$/,
                 exclude: /node_modules/,
                 loader: 'babel-loader',
-
                 options: {
                     presets: ['env']
                 }
@@ -38,11 +37,13 @@ module.exports = {
                             }
                         },
                         {
-                            // Runs compiled CSS through postcss for vendor prefixing
                             loader: 'postcss-loader',
                             options: {
-                                sourceMap: true
-                            }
+                                sourceMap: true,
+                                config: {
+                                    path: path.resolve(__dirname, './postcss.config.js'),
+                                },
+                            },
                         },
                         {
                             // compiles Sass to CSS
@@ -59,7 +60,7 @@ module.exports = {
             },
             {
                 // Load all images as base64 encoding if they are smaller than 8192 bytes
-                test: /\.(png|jpg|gif)$/,
+                test: /\.(png|jpg|gif|ico)$/,
                 use: [
                     {
                         loader: 'url-loader',
