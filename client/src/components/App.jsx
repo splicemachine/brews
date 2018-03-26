@@ -1,8 +1,8 @@
-import "../styles/main.css"
+// import "../styles/main.css"
 import "../../node_modules/purecss/build/pure-min.css"
 import "../../node_modules/purecss/build/grids-responsive-min.css"
-import "../styles/side-menu-old-ie.css"
-import "../styles/side-menu.css"
+import "../styles/side-menu-old-ie.scss"
+import "../styles/side-menu.scss"
 import "../assets/favicon.ico"
 import React, {Component} from "react";
 import SideMenu from "./SideMenu.jsx"
