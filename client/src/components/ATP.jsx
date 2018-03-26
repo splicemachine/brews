@@ -1,14 +1,12 @@
-import React, {Component} from "react";
+
+// noinspection NpmUsedModulesInstalled
 import ReactTable from "react-table";
 import "react-table/react-table.css";
-
-
+import React, {Component} from "react";
 
 function server() {
-    return process.env.NODE_ENV === "development" ? "http://localhost:3000": "";
+    return process.env.NODE_ENV === "development" ? "http://localhost:3000" : "";
 }
-
-// import * as env from "../../server/environment";
 
 export default class ATP extends Component {
 
@@ -48,7 +46,7 @@ export default class ATP extends Component {
         /**
          * This is a helper function to format JSON for use with the Fetch API
          * @param body
-         * @returns {{method: string, body: string, headers: Headers, mode: string, cache: string}}
+         * @returns RequestInit
          */
         this.postInit = (body) => {
             return {
@@ -70,6 +68,7 @@ export default class ATP extends Component {
         this.disable = this.disable.bind(this);
         this.displayResults = this.displayResults.bind(this);
         this.getResults = this.getResults.bind(this);
+        this.exceptionHandler = this.exceptionHandler.bind(this);
     }
 
     componentWillMount() {
@@ -139,13 +138,12 @@ export default class ATP extends Component {
         /**
          * Run the functions to do the inserts.
          */
-        fetch(server() + endpoints[form], this.postInit(payload)).then((response) => {
-            return response.json()
-        })
+        fetch(server() + endpoints[form], this.postInit(payload))
+            .then((response) => {
+                return response.json()
+            })
             .then(this.getResults.bind(this, form))
-            .catch((e) => {
-                console.error(e)
-            });
+            .catch(this.exceptionHandler);
 
         event.preventDefault();
     }
@@ -164,6 +162,7 @@ export default class ATP extends Component {
             block.columns = [{Header: "No Data"}];
             block.data = [];
         }
+        // noinspection JSCheckFunctionSignatures
         this.setState(this.state.results);
     }
 
@@ -177,67 +176,71 @@ export default class ATP extends Component {
          */
         switch (form) {
             case "addLine":
-                fetch(server() + `/api/v1/proposed-order`, this.postInit({})).then((response) => {
-                    return response.json()
-                })
+                fetch(server() + `/api/v1/proposed-order`, this.postInit({}))
+                    .then((response) => {
+                        return response.json()
+                    })
                     .then(this.displayResults.bind(this, "proposedOrder"))
-                    .catch((e) => {
-                        console.error(e)
-                    });
+                    .catch(this.exceptionHandler);
                 break;
             case "runATP":
-                fetch(server() + `/api/v1/order-atp`, this.postInit({})).then((response) => {
-                    return response.json()
-                })
+                fetch(server() + `/api/v1/order-atp`, this.postInit({}))
+                    .then((response) => {
+                        return response.json()
+                    })
                     .then(this.displayResults.bind(this, "orderATP"))
-                    .catch((e) => {
-                        console.error(e)
-                    });
-                fetch(server() + `/api/v1/line-item-atp`, this.postInit({})).then((response) => {
-                    return response.json()
-                })
+                    .catch(this.exceptionHandler);
+                fetch(server() + `/api/v1/line-item-atp`, this.postInit({}))
+                    .then((response) => {
+                        return response.json()
+                    })
                     .then(this.displayResults.bind(this, "lineItemATP"))
-                    .catch((e) => {
-                        console.error(e)
-                    });
+                    .catch(this.exceptionHandler);
                 break;
             case "clearLines":
-                fetch(server() + `/api/v1/clear-lines`, this.postInit({})).then((response) => {
-                    return response.json()
-                })
-                    .catch((e) => {
-                        console.error(e)
-                    });
-
-                fetch(server() + `/api/v1/order-atp`, this.postInit({})).then((response) => {
-                    return response.json()
-                })
+                fetch(server() + `/api/v1/clear-lines`, this.postInit({}))
+                    .then((response) => {
+                        return response.json()
+                    })
+                    .catch(this.exceptionHandler);
+                fetch(server() + `/api/v1/order-atp`, this.postInit({}))
+                    .then((response) => {
+                        return response.json()
+                    })
                     .then(this.displayResults.bind(this, "orderATP"))
-                    .catch((e) => {
-                        console.error(e)
-                    });
-
-                fetch(server() + `/api/v1/line-item-atp`, this.postInit({})).then((response) => {
-                    return response.json()
-                })
+                    .catch(this.exceptionHandler);
+                fetch(server() + `/api/v1/line-item-atp`, this.postInit({}))
+                    .then((response) => {
+                        return response.json()
+                    })
                     .then(this.displayResults.bind(this, "lineItemATP"))
-                    .catch((e) => {
-                        console.error(e)
-                    });
-
-                fetch(server() + `/api/v1/proposed-order`, this.postInit({})).then((response) => {
-                    return response.json()
-                })
+                    .catch(this.exceptionHandler);
+                fetch(server() + `/api/v1/proposed-order`, this.postInit({}))
+                    .then((response) => {
+                        return response.json()
+                    })
                     .then(this.displayResults.bind(this, "proposedOrder"))
-                    .catch((e) => {
-                        console.error(e)
-                    });
+                    .catch(this.exceptionHandler);
 
                 break;
             default:
                 console.log("I don't know what that one is.");
                 break;
         }
+    }
+
+    // noinspection JSMethodCanBeStatic
+    /**
+     * Catches exceptions.
+     * @param exception
+     */
+    exceptionHandler(exception) {
+        if (exception instanceof TypeError) {
+            console.log("I think the server isn't hooked up.");
+            return;
+        }
+
+        console.error(exception);
     }
 
     /**
@@ -259,6 +262,7 @@ export default class ATP extends Component {
     }
 
     render() {
+        // noinspection HtmlUnknownAttribute
         return (
             <div className="content">
                 <h2 className="content-subhead">ATP</h2>
