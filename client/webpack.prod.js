@@ -36,15 +36,15 @@ module.exports = {
                                 sourceMap: true
                             }
                         },
-                        {
-                            loader: 'postcss-loader',
-                            options: {
-                                sourceMap: true,
-                                config: {
-                                    path: path.resolve(__dirname, './postcss.config.js'),
-                                },
-                            },
-                        },
+                        // {
+                        //     loader: 'postcss-loader',
+                        //     options: {
+                        //         sourceMap: true,
+                        //         config: {
+                        //             path: path.resolve(__dirname, './postcss.config.js'),
+                        //         },
+                        //     },
+                        // },
                         {
                             // compiles Sass to CSS
                             loader: 'sass-loader',
@@ -112,17 +112,17 @@ module.exports = {
         new ExtractTextPlugin('styles.[contentHash].css', {
             allChunks: true
         }),
-        new OptimizeCssAssetsPlugin({
-            cssProcessor: require('cssnano'),
-            cssProcessorOptions: {
-                map: {
-                    inline: false,
-                },
-                discardComments: {
-                    removeAll: true
-                }
-            },
-            canPrint: true
-        })
+        // new OptimizeCssAssetsPlugin({
+        //     cssProcessor: require('cssnano'),
+        //     cssProcessorOptions: {
+        //         map: {
+        //             inline: false,
+        //         },
+        //         discardComments: {
+        //             removeAll: true
+        //         }
+        //     },
+        //     canPrint: true
+        // })
     ]
 };
