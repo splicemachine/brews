@@ -1,0 +1,32 @@
+{
+  "compilerOptions": {
+    "target": "es2015",
+    "module": "commonjs",
+    "outDir": "dist",
+    "sourceMap": true
+  },
+  "files": [
+    "./node_modules/@types/body-parser/index.d.ts",
+    "./node_modules/@types/chokidar/index.d.ts",
+    "./node_modules/@types/events/index.d.ts",
+    "./node_modules/@types/express/index.d.ts",
+    "./node_modules/@types/express-serve-static-core/index.d.ts",
+    "./node_modules/@types/glob/index.d.ts",
+    "./node_modules/@types/glob-stream/index.d.ts",
+    "./node_modules/@types/gulp/index.d.ts",
+    "./node_modules/@types/mime/index.d.ts",
+    "./node_modules/@types/minimatch/index.d.ts",
+    "./node_modules/@types/node/index.d.ts",
+    "./node_modules/@types/serve-static/index.d.ts",
+    "./node_modules/@types/undertaker/index.d.ts",
+    "./node_modules/@types/undertaker-registry/index.d.ts",
+    "./node_modules/@types/vinyl/index.d.ts",
+    "./node_modules/@types/vinyl-fs/index.d.ts"
+  ],
+  "include": [
+    "./**/*.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}
