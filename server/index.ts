@@ -2,7 +2,7 @@ import express = require('express');
 import path = require('path');
 import bodyParser = require("body-parser");
 
-const DIST_DIR = path.join(__dirname, "../dist/client");
+const DIST_DIR = path.join(__dirname, "./client");
 const HTML_FILE = path.join(DIST_DIR, "index.html");
 const FAVICON = path.join(__dirname, "..", "static", "img", "favicon.ico");
 const DEFAULT_PORT = 3000;
