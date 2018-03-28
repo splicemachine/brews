@@ -1,7 +1,7 @@
 # Makefile for transpiling with Babel in a Node app, or in a client- or
 # server-side shared library.
 
-.PHONY: all clean
+.PHONY: all clean node_modules docker
 
 typescript_files := $(shell find server/ -name '*.ts')
 
@@ -17,3 +17,6 @@ clean:
 
 node_modules: server/package.json
 	cd server && npm install
+
+docker: all
+	docker build .
