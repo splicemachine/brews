@@ -1,10 +1,10 @@
-const path = require('path');
+const path = require("path");
 
-const HtmlWebpackPlugin = require('html-webpack-plugin');
+const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 module.exports = {
-    devtool: 'eval-cheap-module-source-map',
-    entry: './src/index.js',
+    devtool: "eval-cheap-module-source-map",
+    entry: "./src/index.js",
     devServer: {
         port: 8080,
         contentBase: path.join(__dirname, "dist")
@@ -14,9 +14,9 @@ module.exports = {
             {
                 test: /\.jsx?$/,
                 exclude: /node_modules/,
-                loader: 'babel-loader',
+                loader: "babel-loader",
                 options: {
-                    presets: ['env']
+                    presets: ["env", "react"]
                 }
             },
             {
@@ -40,7 +40,7 @@ module.exports = {
                         // compiles Sass to CSS
                         loader: "sass-loader",
                         options: {
-                            outputStyle: 'expanded',
+                            outputStyle: "expanded",
                             sourceMap: true,
                             sourceMapContents: true
                         }
@@ -54,10 +54,10 @@ module.exports = {
                 test: /\.(png|jpg|gif|ico)$/,
                 use: [
                     {
-                        loader: 'url-loader',
+                        loader: "url-loader",
                         options: {
                             // On development we want to see where the file is coming from, hence we preserve the [path]
-                            name: '[path][name].[ext]?hash=[hash:20]',
+                            name: "[path][name].[ext]?hash=[hash:20]",
                             limit: 8192
                         }
                     }
@@ -67,7 +67,7 @@ module.exports = {
     },
     plugins: [
         new HtmlWebpackPlugin({
-            template: './index.html',
+            template: "./index.html",
             inject: true
         })
     ]
