@@ -36,7 +36,8 @@ export default class WorkflowManager extends Component {
         this.toggleSelection = this.toggleSelection.bind(this);
         this.toggleAll = this.toggleAll.bind(this);
         this.isSelected = this.isSelected.bind(this);
-        this.logSelection = this.logSelection.bind(this);
+        // this.logSelection = this.logSelection.bind(this);
+        this.next = this.props.next.bind(this);
 
         /**
          * Private...
@@ -74,8 +75,19 @@ export default class WorkflowManager extends Component {
      * @param form
      * @param event
      */
-    handleSubmit(form, event) {
+    handleSubmit(event) {
+        //console.log(this.state.selection);
+        let item = this.state.table.data.find((item)=>item._id === this.state.selection[0]);
+        this.next(item);
         event.preventDefault();
+    }
+
+    /**
+     * Validation helper.
+     * @returns {boolean}
+     */
+    disable() {
+        return this.state.selection.length === 0;
     }
 
     /**
@@ -113,12 +125,13 @@ export default class WorkflowManager extends Component {
         return this.state.selection.includes(key);
     }
 
-    logSelection() {
-        console.log('selection:', this.state.selection);
-    }
+    // logSelection() {
+    //     console.log('selection:', this.state.selection);
+    // }
 
     render() {
-        const {toggleSelection, toggleAll, isSelected, logSelection} = this;
+        const {toggleSelection, toggleAll, isSelected} = this;
+        // const {toggleSelection, toggleAll, isSelected, logSelection} = this;
         const {selectAll} = this.state;
 
         const checkboxProps = {
@@ -131,7 +144,7 @@ export default class WorkflowManager extends Component {
 
         return (
             <div>
-                <button onClick={logSelection}>Log Selection</button>
+                {/*<button onClick={logSelection}>Log Selection</button>*/}
                 <h3>Models</h3>
 
                 <CheckboxTable
@@ -144,9 +157,17 @@ export default class WorkflowManager extends Component {
                 />
 
                 <form className="pure-form pure-form-aligned"
-                      onSubmit={this.handleSubmit.bind(this, "addLine")}>
+                      onSubmit={this.handleSubmit}>
                     <fieldset>
-
+                        <button type="submit" className="pure-button pure-button-primary"
+                                disabled={this.disable()}>Train / Run
+                        </button>
+                        <button type="submit" className="pure-button pure-button-primary"
+                                disabled={true}>Deploy
+                        </button>
+                        <button type="submit" className="pure-button pure-button-primary"
+                                disabled={true}>Delete
+                        </button>
                     </fieldset>
                 </form>
             </div>

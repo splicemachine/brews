@@ -24,7 +24,7 @@ import App from "./components/App.jsx";
 import rootReducer from './reducers'; // The default import is the combination of reducers.
 
 const store = createStore(rootReducer);
-console.log(store.getState());
+// console.log(store.getState());
 
 render(
     <Provider store={store}>

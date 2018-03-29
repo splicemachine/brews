@@ -17,20 +17,21 @@ export default class Modeling extends Component {
     constructor(props) {
         super(props);
         this.props = props;
+        this.advanceFlow = this.advanceFlow.bind(this);
         this.state = {
-            currentPage:0,
+            currentPage: 0,
             pages: [
                 {
-                    component: <WorkflowManager/>
+                    component: <WorkflowManager next={this.advanceFlow}/>
                 },
                 {
-                    component: <TrainAndRun/>
+                    component: <TrainAndRun next={this.advanceFlow}/>
                 },
                 {
-                    component: <JobStatus/>
+                    component: <JobStatus next={this.advanceFlow}/>
                 },
                 {
-                    component: <Output/>
+                    component: <Output next={this.advanceFlow}/>
                 },
             ]
         };
@@ -58,6 +59,25 @@ export default class Modeling extends Component {
         this.exceptionHandler = this.exceptionHandler.bind(this);
     }
 
+    advanceFlow(...context) {
+        switch (this.state.currentPage) {
+            case 0:
+                console.log("Workflow Manager sent this:", ...context);
+                break;
+            case 1:
+                console.log("Train and Run sent this:", ...context);
+                break;
+            case 2:
+                console.log("Job Status sent this:", ...context);
+                break;
+            case 3:
+                console.log("Output sent this:", ...context);
+                break;
+            default:
+                console.log("YOU SHOULD HANDLE ALL THE FLOW CASES FOOL.")
+        }
+
+    }
 
 
     // noinspection JSMethodCanBeStatic
