@@ -11,7 +11,7 @@ import Hamburger from "./Hamburger.jsx";
 import Services from "./Services.jsx";
 import Home from "./Home.jsx";
 import ATP from "./ATP.jsx";
-import Modeling from "./Modeling.jsx";
+import Modeling from "./Modeling/index.jsx";
 
 export default class App extends Component {
 
