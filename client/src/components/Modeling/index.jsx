@@ -73,15 +73,19 @@ export default class Modeling extends Component {
      * @param context
      */
     advanceFlow(...context) {
+        let nextPage = -1;
         switch (this.state.currentPage) {
             case 0:
                 console.log("Workflow Manager sent this:", ...context);
-                const nextPage = 1;
+                nextPage = 1;
                 this.state.currentPage = nextPage;
                 this.state.pages[nextPage].component = <TrainAndRun next={this.advanceFlow} models={context}/>;
                 break;
             case 1:
                 console.log("Train and Run sent this:", ...context);
+                nextPage = 2;
+                this.state.currentPage = nextPage;
+                this.state.pages[nextPage].component = <JobStatus next={this.advanceFlow} last={context}/>;
                 break;
             case 2:
                 console.log("Job Status sent this:", ...context);

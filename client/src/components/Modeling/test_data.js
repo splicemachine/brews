@@ -12,6 +12,79 @@ export const sample_datasets = [
         name: "Tuffy"
     }
 ];
+export const job_status = [
+    {
+        "first_name": "Brandee",
+        "last_name": "Svoboda",
+        "company_name": "Cath Lea For Relig & Cvl Rgts",
+        "address": "7 10th St W",
+        "state": "WA",
+        "post": 6460,
+        "status": "COMPLETED",
+        "city": "Walyormouring",
+        "phone1": "08-3614-5966",
+        "phone2": "0419-644-936",
+        "email": "brandee_svoboda@svoboda.net.au",
+        "web": "http://www.cathleaforreligcvlrgts.com.au"
+    },
+    {
+        "first_name": "Lisbeth",
+        "last_name": "Agney",
+        "company_name": "Dynetics",
+        "address": "1 El Camino Real #603",
+        "state": "WA",
+        "post": 6462,
+        "status": "RUNNING",
+        "city": "Hindmarsh",
+        "phone1": "08-1184-4145",
+        "phone2": "0449-675-754",
+        "email": "lisbeth.agney@agney.net.au",
+        "web": "http://www.dynetics.com.au"
+    },
+    {
+        "first_name": "Delfina",
+        "last_name": "Binnie",
+        "company_name": "Motel 6",
+        "address": "8 Austin Bluffs Pky",
+        "state": "WA",
+        "post": 6472,
+        "status": "RUNNING",
+        "city": "Bimbijy",
+        "phone1": "08-3692-5784",
+        "phone2": "0460-951-322",
+        "email": "delfina_binnie@binnie.net.au",
+        "web": "http://www.motel.com.au"
+    },
+    {
+        "first_name": "Yuriko",
+        "last_name": "Kazarian",
+        "company_name": "Doane Products Company",
+        "address": "3 Davis Blvd",
+        "state": "WA",
+        "post": 6472,
+        "status": "RUNNING",
+        "city": "Mouroubra",
+        "phone1": "08-1109-5346",
+        "phone2": "0476-877-991",
+        "email": "yuriko_kazarian@gmail.com",
+        "web": "http://www.doaneproductscompany.com.au"
+    },
+    {
+        "first_name": "Kizzy",
+        "last_name": "Stangle",
+        "company_name": "Rogers, Clay M Esq",
+        "address": "8 W Lake St #1",
+        "state": "WA",
+        "post": 6477,
+        "status": "RUNNING",
+        "city": "Welbungin",
+        "phone1": "08-1937-3980",
+        "phone2": "0474-218-755",
+        "email": "kizzy.stangle@yahoo.com",
+        "web": "http://www.rogersclaymesq.com.au"
+    }
+];
+
 export const table_data = [
     {
         "first_name": "Soledad",
