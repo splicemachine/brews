@@ -11,6 +11,7 @@ import Hamburger from "./Hamburger.jsx";
 import Services from "./Services.jsx";
 import Home from "./Home.jsx";
 import ATP from "./ATP.jsx";
+import Modeling from "./Modeling.jsx";
 
 export default class App extends Component {
 
@@ -31,6 +32,11 @@ export default class App extends Component {
                 {
                     title: "ATP",
                     component: <ATP/>,
+                    active: false
+                },
+                {
+                    title: "Modeling",
+                    component: <Modeling/>,
                     active: true
                 }
             ],
@@ -38,7 +44,11 @@ export default class App extends Component {
             sideBarActive: false,
         };
 
-        this.state.currentPage = this.state.sideBar[2];
+        /**
+         * It is up to you to make sure the active ones make sense.
+         * @type {number | * | T | {}}
+         */
+        this.state.currentPage = this.state.sideBar.find(item => item.active);
 
         this.render = this.render.bind(this);
         this.navigate = this.navigate.bind(this);
