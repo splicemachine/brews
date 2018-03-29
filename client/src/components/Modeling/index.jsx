@@ -15,9 +15,18 @@ function server() {
 export default class Modeling extends Component {
 
     constructor(props) {
+
         super(props);
         this.props = props;
         this.advanceFlow = this.advanceFlow.bind(this);
+
+        const selectedModel = {};
+
+        /**
+         * Default to empty components with the advancing function because ideally you
+         * would be able to get to the next stage from any page.
+         * @type {{currentPage: number, pages: *[]}}
+         */
         this.state = {
             currentPage: 0,
             pages: [
@@ -59,10 +68,17 @@ export default class Modeling extends Component {
         this.exceptionHandler = this.exceptionHandler.bind(this);
     }
 
+    /**
+     * Try to target a state machine for orchestrating the flow of the application. 🙏
+     * @param context
+     */
     advanceFlow(...context) {
         switch (this.state.currentPage) {
             case 0:
                 console.log("Workflow Manager sent this:", ...context);
+                const nextPage = 1;
+                this.state.currentPage = nextPage;
+                this.state.pages[nextPage].component = <TrainAndRun next={this.advanceFlow} models={context}/>;
                 break;
             case 1:
                 console.log("Train and Run sent this:", ...context);
@@ -76,9 +92,8 @@ export default class Modeling extends Component {
             default:
                 console.log("YOU SHOULD HANDLE ALL THE FLOW CASES FOOL.")
         }
-
+        this.setState(this.state);
     }
-
 
     // noinspection JSMethodCanBeStatic
     /**
@@ -93,7 +108,6 @@ export default class Modeling extends Component {
 
         console.error(exception);
     }
-
 
     render() {
         // noinspection HtmlUnknownAttribute

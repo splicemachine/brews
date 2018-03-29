@@ -1,4 +1,18 @@
-export default [
+export const sample_datasets = [
+    {
+        name: "Stuffy"
+    },
+    {
+        name: "Puffy"
+    },
+    {
+        name: "Fluffy"
+    },
+    {
+        name: "Tuffy"
+    }
+];
+export const table_data = [
     {
         "first_name": "Soledad",
         "last_name": "Mockus",

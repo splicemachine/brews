@@ -3,7 +3,7 @@ import React, {Component} from "react";
 import Chance from "chance";
 import ReactTable from "react-table";
 import checkboxHOC from 'react-table/lib/hoc/selectTable';
-import testData from "./test_data";
+import {table_data} from "./test_data";
 
 const CheckboxTable = checkboxHOC(ReactTable);
 const chance = new Chance();
@@ -21,7 +21,12 @@ export default class WorkflowManager extends Component {
     constructor(props) {
         super(props);
         this.props = props;
-        const data = this.getData(testData);
+        /**
+         * This is our state machine advancer.
+         * @type {*|any}
+         */
+        this.next = this.props.next.bind(this);
+        const data = this.getData(table_data);
         const columns = this.getColumns(data);
         this.state = {
             selection: [],
@@ -37,7 +42,6 @@ export default class WorkflowManager extends Component {
         this.toggleAll = this.toggleAll.bind(this);
         this.isSelected = this.isSelected.bind(this);
         // this.logSelection = this.logSelection.bind(this);
-        this.next = this.props.next.bind(this);
 
         /**
          * Private...
