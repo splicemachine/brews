@@ -83,9 +83,10 @@ export default class WorkflowManager extends Component {
           Other implementations could use object keys, a Javascript Set, or Redux... etc.
         */
         // start off with the existing state
-        let selection = [
-            ...this.state.selection
-        ];
+        // let selection = [
+        //     ...this.state.selection
+        // ];
+        let selection = [];
         const keyIndex = selection.indexOf(key);
         // check to see if the key exists
         if (keyIndex >= 0) {
