@@ -44,6 +44,8 @@ export default class TrainAndRun extends Component {
             .then(decorateWithIds)
             .then((data) => {
                 this.state.datasets = data;
+                this.state.selectedModel = this.state.models[0];
+                this.state.selectedDataset = this.state.datasets[0];
                 return Promise.resolve(this.state);
             })
             .then((state) => {

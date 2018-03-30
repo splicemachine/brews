@@ -7,7 +7,7 @@ import {server} from "../../utilities";
 /**
  * Should be a simple view table page.
  */
-export default class JobStatus extends Component {
+export default class Output extends Component {
 
     constructor(props) {
         super(props);
@@ -17,14 +17,31 @@ export default class JobStatus extends Component {
          * @type {*|any}
          */
         this.next = this.props.next.bind(this);
-        const lastActions = this.props.last;
+        const target = this.props.target;
         const data = [];
         const columns = [{Header: "Nothing."}];
         this.state = {
-            lastActions,
+            target,
             table: {
                 data,
                 columns
+            }
+        };
+
+        /**
+         * This is a helper function to format JSON for use with the Fetch API
+         * @param body
+         * @returns RequestInit
+         */
+        this.postInit = (body) => {
+            return {
+                method: "POST",
+                body: JSON.stringify(body),
+                headers: new Headers({
+                    'Content-Type': 'application/json'
+                }),
+                mode: "cors",
+                cache: "default"
             }
         };
     }
@@ -34,7 +51,8 @@ export default class JobStatus extends Component {
     }
 
     fetchData() {
-        return fetch(server() + "/api/v1/modeling/output")
+        const target = this.state.target;
+        return fetch(server() + "/api/v1/modeling/output", this.postInit(target))
             .then(response => response.json())
             .then(promiseData)
             .then((data) => {

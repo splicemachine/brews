@@ -10,6 +10,6 @@ router.get("/models", models);
 router.get("/datasets", datasets);
 router.post("/action", action);
 router.get("/jobs", jobs);
-router.get("/output", output);
+router.post("/output", output);
 
 export default router;

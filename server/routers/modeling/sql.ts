@@ -15,3 +15,7 @@ export const select_datasets = [
     `
 ];
 
+export const job_status = [
+  `select * from MLDEMO.ML_JOBS`
+];
+

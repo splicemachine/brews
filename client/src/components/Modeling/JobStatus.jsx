@@ -42,8 +42,8 @@ export default class JobStatus extends Component {
             .then(response => response.json())
             .then(data => promiseData(
                 data,
-                "COMPLETED",
-                {status: (context) => <CompletedStatus action={this.handleCompleted.bind(this, context)}/>})
+                "COMPLETE",
+                {STATUS: (context) => <CompletedStatus action={this.handleCompleted.bind(this, context)}/>})
             )
             .then((data) => {
                 this.state.table.data = data;

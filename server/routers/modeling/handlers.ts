@@ -1,8 +1,8 @@
 import express = require("express");
-import {sample_datasets, output_sample, job_status, table_data} from "./test_data";
+import {sample_datasets, output_sample, table_data} from "./test_data";
 import {modeling_db_config} from "../../environment";
 import Database from "../../db";
-import {select_models, select_datasets} from "./sql";
+import {select_models, select_datasets, job_status} from "./sql";
 
 let rejected = (reason) => Promise.reject(reason);
 
@@ -63,7 +63,16 @@ export function action(request: express.Request, response: express.Response, nex
  SELECT * FROM MLDEMO.ML_JOBS
  */
 export function jobs(request: express.Request, response: express.Response, next: express.NextFunction) {
-    response.send(job_status);
+    let db = new Database(modeling_db_config);
+    db.initialize()
+        .then(() => {
+            return db.preparedSelect(job_status, ()=>{}, {});
+        })
+        .then((result) => {
+            response.send(result);
+            response.end();
+        }, rejected)
+        .catch(errorHandler.bind(null, next));
 }
 
 /**
@@ -71,5 +80,6 @@ export function jobs(request: express.Request, response: express.Response, next:
  SELECT * FROM MLDEMO.ML_RUN_OUTPUT WHERE JOB_ID=?
  */
 export function output(request: express.Request, response: express.Response, next: express.NextFunction) {
+    console.log(request.body);
     response.send(output_sample);
 }
