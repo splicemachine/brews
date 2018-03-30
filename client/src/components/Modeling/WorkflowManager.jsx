@@ -2,10 +2,13 @@ import "react-table/react-table.css";
 import React, {Component} from "react";
 import ReactTable from "react-table";
 import checkboxHOC from 'react-table/lib/hoc/selectTable';
-import {table_data} from "./test_data";
-import {getData, getColumns} from "./DataTransformations";
+import {getData, getColumns, promiseColumns, promiseData} from "./DataTransformations";
 
 const CheckboxTable = checkboxHOC(ReactTable);
+
+function server() {
+    return process.env.NODE_ENV === "development" ? "http://localhost:3000" : "";
+}
 
 /**
  * Very useful Higher Order Component (HOC) Desctiption Page:
@@ -28,8 +31,8 @@ export default class WorkflowManager extends Component {
          * @type {*|any}
          */
         this.next = this.props.next.bind(this);
-        const data = getData(table_data);
-        const columns = getColumns(data);
+        const data = [];
+        const columns = [{Header: "Nothing."}];
         this.state = {
             selection: [],
             selectAll: false,
@@ -43,7 +46,30 @@ export default class WorkflowManager extends Component {
         this.toggleSelection = this.toggleSelection.bind(this);
         this.toggleAll = this.toggleAll.bind(this);
         this.isSelected = this.isSelected.bind(this);
+        this.fetchData = this.fetchData.bind(this);
 
+    }
+
+    componentWillMount() {
+        this.fetchData();
+    }
+
+    fetchData() {
+        return fetch(server() + "/api/v1/modeling/models")
+            .then(response => response.json())
+            .then(promiseData)
+            .then((data) => {
+                this.state.table.data = data;
+                return Promise.resolve(data);
+            })
+            .then(promiseColumns)
+            .then((cols) => {
+                this.state.table.columns = cols;
+                return Promise.resolve();
+            })
+            .then(() => {
+                this.setState(this.state);
+            })
     }
 
     /**
@@ -52,7 +78,7 @@ export default class WorkflowManager extends Component {
      * @param event
      */
     handleSubmit(event) {
-        let item = this.state.table.data.find((item)=>item._id === this.state.selection[0]);
+        let item = this.state.table.data.find((item) => item._id === this.state.selection[0]);
         this.next(item);
         event.preventDefault();
     }

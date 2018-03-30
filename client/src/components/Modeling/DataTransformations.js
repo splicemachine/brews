@@ -32,6 +32,25 @@ export function getData(raw, match, transform) {
     });
 }
 
+export function promiseData(raw, match, transform) {
+    return new Promise((resolve) => (
+        resolve(raw.map((item) => {
+            const _id = chance.hash({length: 6});
+            if(match && transform){
+                Object.keys(transform).map((key)=>{
+                    if(item[key] === match){
+                        item[key] = transform[key](item)
+                    }
+                });
+            }
+            return {
+                _id,
+                ...item,
+            }
+        }))
+    ))
+}
+
 /**
  * This on e is easier. React-Table needs a list of columns that have human readable names and accessors
  * so it can make the columns at the top of the rendered display.
@@ -53,4 +72,22 @@ export function getColumns(data) {
         }
     });
     return columns;
+}
+export function promiseColumns(data) {
+
+    const columns = [];
+    const sample = data[0];
+
+    Object.keys(sample).forEach((key) => {
+        if (key !== '_id') {
+            columns.push({
+                accessor: key,
+                Header: key,
+            })
+        }
+    });
+
+    return new Promise((resolve) => (
+            resolve(columns)
+    ))
 }
