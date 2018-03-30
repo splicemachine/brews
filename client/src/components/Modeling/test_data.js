@@ -12,6 +12,28 @@ export const sample_datasets = [
         name: "Tuffy"
     }
 ];
+
+export const output_sample = [
+    {
+        "Feature Vector": "3",
+        "Label": "2.0",
+        "Prediction": "2.0",
+        "Probability": "0.3334"
+    },
+    {
+        "Feature Vector": "3",
+        "Label": "2.0",
+        "Prediction": "2.0",
+        "Probability": "0.3334"
+    },
+    {
+        "Feature Vector": "3",
+        "Label": "2.0",
+        "Prediction": "2.0",
+        "Probability": "0.3334"
+    }
+];
+
 export const job_status = [
     {
         "first_name": "Brandee",

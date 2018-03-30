@@ -4,6 +4,7 @@ import Chance from "chance";
 import ReactTable from "react-table";
 import checkboxHOC from 'react-table/lib/hoc/selectTable';
 import {table_data} from "./test_data";
+import {getData, getColumns} from "./DataTransformations";
 
 const CheckboxTable = checkboxHOC(ReactTable);
 const chance = new Chance();
@@ -26,8 +27,8 @@ export default class WorkflowManager extends Component {
          * @type {*|any}
          */
         this.next = this.props.next.bind(this);
-        const data = this.getData(table_data);
-        const columns = this.getColumns(data);
+        const data = getData(table_data);
+        const columns = getColumns(data);
         this.state = {
             selection: [],
             selectAll: false,
@@ -48,30 +49,6 @@ export default class WorkflowManager extends Component {
          */
         // this.getData = this.getData.bind(this);
         // this.getColumns = this.getColumns.bind(this);
-    }
-
-    getData(raw) {
-        return raw.map((item) => {
-            const _id = chance.hash({length: 6});
-            return {
-                _id,
-                ...item,
-            }
-        });
-    }
-
-    getColumns(data) {
-        const columns = [];
-        const sample = data[0];
-        Object.keys(sample).forEach((key) => {
-            if (key !== '_id') {
-                columns.push({
-                    accessor: key,
-                    Header: key,
-                })
-            }
-        });
-        return columns;
     }
 
     /**

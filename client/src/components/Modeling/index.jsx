@@ -89,6 +89,9 @@ export default class Modeling extends Component {
                 break;
             case 2:
                 console.log("Job Status sent this:", ...context);
+                nextPage = 3;
+                this.state.currentPage = nextPage;
+                this.state.pages[nextPage].component = <Output next={this.advanceFlow} target={context}/>;
                 break;
             case 3:
                 console.log("Output sent this:", ...context);

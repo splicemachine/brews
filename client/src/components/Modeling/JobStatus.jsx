@@ -1,11 +1,9 @@
 import React, {Component} from "react";
-import Chance from "chance";
 import {job_status} from "./test_data";
 import "react-table/react-table.css";
 import ReactTable from "react-table";
 import CompletedStatus from "./CompletedStatus.jsx";
-
-const chance = new Chance();
+import {getData, getColumns} from "./DataTransformations";
 
 export default class JobStatus extends Component {
 
@@ -18,8 +16,11 @@ export default class JobStatus extends Component {
          */
         this.next = this.props.next.bind(this);
         const lastActions = this.props.last;
-        const data = this.getData(job_status);
-        const columns = this.getColumns(data);
+        const data = getData(
+            job_status,
+            "COMPLETED",
+            {status: (context) => <CompletedStatus action={this.handleCompleted.bind(this, context)}/>});
+        const columns = getColumns(data);
         this.state = {
             lastActions,
             data,
@@ -28,36 +29,9 @@ export default class JobStatus extends Component {
         this.handleCompleted = this.handleCompleted.bind(this);
     }
 
-    handleCompleted(item, event){
+    handleCompleted(item, event) {
         this.next(item);
         event.preventDefault();
-    }
-
-    getData(raw) {
-        return raw.map((item) => {
-            const _id = chance.hash({length: 6});
-            if (item.status.toLowerCase() === "completed"){
-                item.status = <CompletedStatus action={this.handleCompleted.bind(this, item)}/>
-            }
-            return {
-                _id,
-                ...item,
-            }
-        });
-    }
-
-    getColumns(data) {
-        const columns = [];
-        const sample = data[0];
-        Object.keys(sample).forEach((key) => {
-            if (key !== '_id') {
-                columns.push({
-                    accessor: key,
-                    Header: key,
-                })
-            }
-        });
-        return columns;
     }
 
     render() {
