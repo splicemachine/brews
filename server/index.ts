@@ -1,6 +1,5 @@
 import express = require('express');
 import path = require('path');
-import bodyParser = require("body-parser");
 
 const DIST_DIR = path.join(__dirname, "./client");
 const HTML_FILE = path.join(DIST_DIR, "index.html");
@@ -9,15 +8,25 @@ const DEFAULT_PORT = 3000;
 
 const app = express();
 
-const jsonParser = bodyParser.json();
-
 app.set("port", process.env.PORT || DEFAULT_PORT);
 app.set("json spaces", 2);
 
 app.use(function (req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    next();
+    // res.header("Access-Control-Allow-Origin", "*");
+    // res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    // next();
+
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
+
+    // intercept OPTIONS method
+    if ('OPTIONS' == req.method) {
+        res.send("POST");
+    }
+    else {
+        next();
+    }
 });
 
 /**
@@ -41,35 +50,12 @@ if (process.env.NODE_ENV === "development") {
     app.get("/favicon.ico", (req, res) => res.sendFile(FAVICON));
 }
 
-/**
- * Import all the functions you need to bind to endpoints.
- */
-import {
-    addLine,
-    runATP,
-    clearLines,
-    prepare,
-    generateSelectHandler
-} from "./database-operations/atp/atp"
 
 /**
- * Preparation handler that takes no parameters.
+ * Mount all the routes.
  */
-app.get("/api/v1/prepare", prepare);
-
-/**
- * Custom handlers.
- */
-app.post("/api/v1/add-line", jsonParser, addLine);
-app.post("/api/v1/run-atp", jsonParser, runATP);
-app.post("/api/v1/clear-lines", jsonParser, clearLines);
-
-/**
- * Generated functions for SELECT calls that do not take parameters.
- */
-app.post("/api/v1/proposed-order", jsonParser, generateSelectHandler("proposedOrder"));
-app.post("/api/v1/order-atp", jsonParser, generateSelectHandler("orderATP"));
-app.post("/api/v1/line-item-atp", jsonParser, generateSelectHandler("lineItemATP"));
+import apiRouter from "./routers";
+app.use("/api/v1", apiRouter);
 
 /**
  * This handler needs to be delared after all other app.use (and it would seem app.post et.al.)
