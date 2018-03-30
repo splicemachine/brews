@@ -2,13 +2,10 @@ import "react-table/react-table.css";
 import React, {Component} from "react";
 import ReactTable from "react-table";
 import checkboxHOC from 'react-table/lib/hoc/selectTable';
-import {getData, getColumns, promiseColumns, promiseData} from "./DataTransformations";
+import {promiseColumns, promiseData} from "./DataTransformations";
+import {server} from "../../utilities"
 
 const CheckboxTable = checkboxHOC(ReactTable);
-
-function server() {
-    return process.env.NODE_ENV === "development" ? "http://localhost:3000" : "";
-}
 
 /**
  * Very useful Higher Order Component (HOC) Desctiption Page:
@@ -21,7 +18,6 @@ function server() {
  * Main display. Show the models that you want to do things to.
  */
 export default class WorkflowManager extends Component {
-
 
     constructor(props) {
         super(props);

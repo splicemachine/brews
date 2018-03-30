@@ -15,30 +15,14 @@ const chance = new Chance();
  * @param transform:    key:value where key matches one of the keys in each item of raw.
  *                      value will be a function that returns the item we want to place at raw[item][key]
  */
-export function getData(raw, match, transform) {
-    return raw.map((item) => {
-        const _id = chance.hash({length: 6});
-        if(match && transform){
-            Object.keys(transform).map((key)=>{
-                if(item[key] === match){
-                    item[key] = transform[key](item)
-                }
-            });
-        }
-        return {
-            _id,
-            ...item,
-        }
-    });
-}
 
 export function promiseData(raw, match, transform) {
     return new Promise((resolve) => (
         resolve(raw.map((item) => {
             const _id = chance.hash({length: 6});
-            if(match && transform){
-                Object.keys(transform).map((key)=>{
-                    if(item[key] === match){
+            if (match && transform) {
+                Object.keys(transform).map((key) => {
+                    if (item[key] === match) {
                         item[key] = transform[key](item)
                     }
                 });
@@ -60,19 +44,6 @@ export function promiseData(raw, match, transform) {
  * @param data
  * @returns {Array}
  */
-export function getColumns(data) {
-    const columns = [];
-    const sample = data[0];
-    Object.keys(sample).forEach((key) => {
-        if (key !== '_id') {
-            columns.push({
-                accessor: key,
-                Header: key,
-            })
-        }
-    });
-    return columns;
-}
 export function promiseColumns(data) {
 
     const columns = [];
@@ -88,6 +59,15 @@ export function promiseColumns(data) {
     });
 
     return new Promise((resolve) => (
-            resolve(columns)
+        resolve(columns)
     ))
+}
+
+export function decorateWithIds(data) {
+    return new Promise((resolve) => {
+        resolve(data.map((item) => ({
+            _id: chance.hash({length: 6}),
+            ...item
+        })))
+    });
 }

@@ -1,8 +1,7 @@
 import React, {Component} from "react";
-import Chance from "chance";
+import {decorateWithIds, promiseColumns, promiseData} from "./DataTransformations";
 import {sample_datasets} from "./test_data";
-
-const chance = new Chance();
+import {server} from "../../utilities";
 
 /**
  * Get the list of models. I think this list should just be one because that's what you picked on the previous screen.
@@ -20,7 +19,7 @@ export default class TrainAndRun extends Component {
          */
         this.next = this.props.next.bind(this);
         const models = this.props.models;
-        const datasets = this.getDatasets(sample_datasets);
+        const datasets = [{}];
         this.state = {
             selectedModel: models[0],
             selectedDataset: datasets[0],
@@ -28,17 +27,28 @@ export default class TrainAndRun extends Component {
             datasets
         };
 
+        this.fetchData = this.fetchData.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.handleButton = this.handleButton.bind(this);
         this.disable = this.disable.bind(this);
     }
 
-    getDatasets(raw) {
-        return raw.map((item) => ({
-            _id: chance.hash({length: 6}),
-            ...item
-        }))
+    componentWillMount() {
+        this.fetchData();
+    }
+
+    fetchData() {
+        return fetch(server() + "/api/v1/modeling/datasets")
+            .then(response => response.json())
+            .then(decorateWithIds)
+            .then((data) => {
+                this.state.datasets = data;
+                return Promise.resolve(this.state);
+            })
+            .then((state)=>{
+                this.setState(state);
+            })
     }
 
     /**

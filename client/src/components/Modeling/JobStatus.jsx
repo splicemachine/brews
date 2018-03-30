@@ -1,9 +1,9 @@
 import React, {Component} from "react";
-import {job_status} from "./test_data";
 import "react-table/react-table.css";
 import ReactTable from "react-table";
 import CompletedStatus from "./CompletedStatus.jsx";
-import {getData, getColumns} from "./DataTransformations";
+import {promiseData, promiseColumns} from "./DataTransformations";
+import {server} from "../../utilities";
 
 /**
  * This component will query the status of current jobs.
@@ -21,17 +21,42 @@ export default class JobStatus extends Component {
          */
         this.next = this.props.next.bind(this);
         const lastActions = this.props.last;
-        const data = getData(
-            job_status,
-            "COMPLETED",
-            {status: (context) => <CompletedStatus action={this.handleCompleted.bind(this, context)}/>});
-        const columns = getColumns(data);
+        const data = [];
+        const columns = [{Header: "Nothing."}];
         this.state = {
             lastActions,
-            data,
-            columns
+            table: {
+                data,
+                columns
+            }
         };
         this.handleCompleted = this.handleCompleted.bind(this);
+    }
+
+    componentWillMount() {
+        this.fetchData();
+    }
+
+    fetchData() {
+        return fetch(server() + "/api/v1/modeling/jobs")
+            .then(response => response.json())
+            .then(data => promiseData(
+                data,
+                "COMPLETED",
+                {status: (context) => <CompletedStatus action={this.handleCompleted.bind(this, context)}/>})
+            )
+            .then((data) => {
+                this.state.table.data = data;
+                return Promise.resolve(data);
+            })
+            .then(promiseColumns)
+            .then((cols) => {
+                this.state.table.columns = cols;
+                return Promise.resolve();
+            })
+            .then(() => {
+                this.setState(this.state);
+            })
     }
 
     handleCompleted(item, event) {
@@ -56,8 +81,8 @@ export default class JobStatus extends Component {
                     )
                 }
                 <ReactTable
-                    columns={this.state.columns}
-                    data={this.state.data}
+                    columns={this.state.table.columns}
+                    data={this.state.table.data}
                     noDataText="No Data Yet!"
                     defaultPageSize={5}/>
             </div>
