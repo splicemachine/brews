@@ -1,6 +1,5 @@
 import React, {Component} from "react";
-import {decorateWithIds, promiseColumns, promiseData} from "./DataTransformations";
-import {sample_datasets} from "./test_data";
+import {decorateWithIds} from "./DataTransformations";
 import {server} from "../../utilities";
 
 /**
@@ -46,7 +45,7 @@ export default class TrainAndRun extends Component {
                 this.state.datasets = data;
                 return Promise.resolve(this.state);
             })
-            .then((state)=>{
+            .then((state) => {
                 this.setState(state);
             })
     }

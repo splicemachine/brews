@@ -49,6 +49,7 @@ if (process.env.NODE_ENV === "development") {
  * Mount all the routes.
  */
 import apiRouter from "./routers";
+
 app.use("/api/v1", apiRouter);
 
 /**
