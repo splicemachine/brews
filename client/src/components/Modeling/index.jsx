@@ -1,16 +1,9 @@
-// noinspection NpmUsedModulesInstalled
-import ReactTable from "react-table";
 import "react-table/react-table.css";
 import React, {Component} from "react";
 import WorkflowManager from "./WorkflowManager.jsx";
 import TrainAndRun from "./TrainAndRun.jsx";
 import JobStatus from "./JobStatus.jsx";
 import Output from "./Output.jsx";
-
-
-function server() {
-    return process.env.NODE_ENV === "development" ? "http://localhost:3000" : "";
-}
 
 export default class Modeling extends Component {
 
@@ -19,8 +12,6 @@ export default class Modeling extends Component {
         super(props);
         this.props = props;
         this.advanceFlow = this.advanceFlow.bind(this);
-
-        const selectedModel = {};
 
         /**
          * Default to empty components with the advancing function because ideally you
@@ -61,11 +52,6 @@ export default class Modeling extends Component {
                 cache: "default"
             }
         };
-
-        /**
-         * Bind everything you need to the constructor context.
-         */
-        this.exceptionHandler = this.exceptionHandler.bind(this);
     }
 
     /**
@@ -102,22 +88,7 @@ export default class Modeling extends Component {
         this.setState(this.state);
     }
 
-    // noinspection JSMethodCanBeStatic
-    /**
-     * Catches exceptions.
-     * @param exception
-     */
-    exceptionHandler(exception) {
-        if (exception instanceof TypeError) {
-            console.log("I think the server isn't hooked up.");
-            return;
-        }
-
-        console.error(exception);
-    }
-
     render() {
-        // noinspection HtmlUnknownAttribute
         return (
             <div>
                 {this.state.pages[this.state.currentPage].component}

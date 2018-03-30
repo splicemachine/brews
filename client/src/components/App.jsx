@@ -1,4 +1,3 @@
-// import "../styles/main.css"
 import "../../node_modules/purecss/build/pure-min.css"
 import "../../node_modules/purecss/build/grids-responsive-min.css"
 import "../styles/side-menu-old-ie.scss"
@@ -8,9 +7,7 @@ import React, {Component} from "react";
 import SideMenu from "./SideMenu.jsx"
 import Header from "./Header.jsx";
 import Hamburger from "./Hamburger.jsx";
-import Services from "./Services.jsx";
-import Home from "./Home.jsx";
-import ATP from "./ATP.jsx";
+import ATP from "./ATP/ATP.jsx";
 import Modeling from "./Modeling/index.jsx";
 
 export default class App extends Component {
@@ -19,16 +16,6 @@ export default class App extends Component {
         super(props);
         this.state = {
             sideBar: [
-                {
-                    title: "Home",
-                    component: <Home/>,
-                    active: false,
-                },
-                {
-                    title: "Services",
-                    component: <Services/>,
-                    active: false
-                },
                 {
                     title: "ATP",
                     component: <ATP/>,

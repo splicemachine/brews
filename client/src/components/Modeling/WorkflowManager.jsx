@@ -1,13 +1,11 @@
 import "react-table/react-table.css";
 import React, {Component} from "react";
-import Chance from "chance";
 import ReactTable from "react-table";
 import checkboxHOC from 'react-table/lib/hoc/selectTable';
 import {table_data} from "./test_data";
 import {getData, getColumns} from "./DataTransformations";
 
 const CheckboxTable = checkboxHOC(ReactTable);
-const chance = new Chance();
 
 /**
  * Very useful Higher Order Component (HOC) Desctiption Page:
@@ -16,6 +14,9 @@ const chance = new Chance();
  * Andy and I wanted to write this! http://chancejs.com/
  */
 
+/**
+ * Main display. Show the models that you want to do things to.
+ */
 export default class WorkflowManager extends Component {
 
 
@@ -42,13 +43,7 @@ export default class WorkflowManager extends Component {
         this.toggleSelection = this.toggleSelection.bind(this);
         this.toggleAll = this.toggleAll.bind(this);
         this.isSelected = this.isSelected.bind(this);
-        // this.logSelection = this.logSelection.bind(this);
 
-        /**
-         * Private...
-         */
-        // this.getData = this.getData.bind(this);
-        // this.getColumns = this.getColumns.bind(this);
     }
 
     /**
@@ -57,7 +52,6 @@ export default class WorkflowManager extends Component {
      * @param event
      */
     handleSubmit(event) {
-        //console.log(this.state.selection);
         let item = this.state.table.data.find((item)=>item._id === this.state.selection[0]);
         this.next(item);
         event.preventDefault();
@@ -106,13 +100,8 @@ export default class WorkflowManager extends Component {
         return this.state.selection.includes(key);
     }
 
-    // logSelection() {
-    //     console.log('selection:', this.state.selection);
-    // }
-
     render() {
         const {toggleSelection, toggleAll, isSelected} = this;
-        // const {toggleSelection, toggleAll, isSelected, logSelection} = this;
         const {selectAll} = this.state;
 
         const checkboxProps = {
@@ -125,7 +114,6 @@ export default class WorkflowManager extends Component {
 
         return (
             <div>
-                {/*<button onClick={logSelection}>Log Selection</button>*/}
                 <h3>Models</h3>
 
                 <CheckboxTable

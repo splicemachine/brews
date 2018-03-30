@@ -4,6 +4,9 @@ import "react-table/react-table.css";
 import ReactTable from "react-table";
 import {getData, getColumns} from "./DataTransformations";
 
+/**
+ * Should be a simple view table page.
+ */
 export default class JobStatus extends Component {
 
     constructor(props) {

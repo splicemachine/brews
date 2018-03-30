@@ -1,5 +1,8 @@
 import React, {Component} from "react";
 
+/**
+ * Just a button component that does the action you give it.
+ */
 export default class CompletedStatus extends Component {
 
     constructor(props) {
@@ -7,7 +10,6 @@ export default class CompletedStatus extends Component {
         this.props = props;
         this.state = {};
     }
-
 
     render() {
         return (

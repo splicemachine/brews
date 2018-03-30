@@ -5,6 +5,11 @@ import ReactTable from "react-table";
 import CompletedStatus from "./CompletedStatus.jsx";
 import {getData, getColumns} from "./DataTransformations";
 
+/**
+ * This component will query the status of current jobs.
+ * If it finds a completed status, it will pass that information on to the Output component.
+ * It also shows an alert for the last thing you did that got you to this page. Train or Run something.
+ */
 export default class JobStatus extends Component {
 
     constructor(props) {

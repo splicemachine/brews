@@ -4,6 +4,11 @@ import {sample_datasets} from "./test_data";
 
 const chance = new Chance();
 
+/**
+ * Get the list of models. I think this list should just be one because that's what you picked on the previous screen.
+ * Get the list of datasets. This list will be kept server side and needs to be retrieved.
+ * Then either train or run. Fire a call to insert a row to a table.
+ */
 export default class TrainAndRun extends Component {
 
     constructor(props) {
