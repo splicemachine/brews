@@ -1,3 +1,7 @@
+/**
+ * This is our library candidate.
+ */
+
 import env from "./environment"
 
 let jdbc = require("jdbc");

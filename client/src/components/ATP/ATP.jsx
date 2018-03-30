@@ -22,21 +22,21 @@ export default class ATP extends Component {
                 {
                     key: `proposedOrder`,
                     title: `Proposed Order`,
-                    endpoint: `/api/v1/proposed-order`,
+                    endpoint: `/api/v1/atp/proposed-order`,
                     data: [],
                     columns: [{Header: "No Data"}],
                 },
                 {
                     key: `orderATP`,
                     title: `Order ATP`,
-                    endpoint: `/api/v1/order-atp`,
+                    endpoint: `/api/v1/atp/order-atp`,
                     data: [],
                     columns: [{Header: "No Data"}],
                 },
                 {
                     key: `lineItemATP`,
                     title: `Line Item ATP`,
-                    endpoint: `/api/v1/line-item-atp`,
+                    endpoint: `/api/v1/atp/line-item-atp`,
                     data: [],
                     columns: [{Header: "No Data"}],
                 },
@@ -112,9 +112,9 @@ export default class ATP extends Component {
         let payload = {};
 
         const endpoints = {
-            addLine: `/api/v1/add-line`,
-            runATP: `/api/v1/run-atp`,
-            clearLines: `/api/v1/clear-lines`,
+            addLine: `/api/v1/atp/add-line`,
+            runATP: `/api/v1/atp/run-atp`,
+            clearLines: `/api/v1/atp/clear-lines`,
         };
 
         /**
@@ -176,7 +176,7 @@ export default class ATP extends Component {
          */
         switch (form) {
             case "addLine":
-                fetch(server() + `/api/v1/proposed-order`, this.postInit({}))
+                fetch(server() + `/api/v1/atp/proposed-order`, this.postInit({}))
                     .then((response) => {
                         return response.json()
                     })
@@ -184,13 +184,13 @@ export default class ATP extends Component {
                     .catch(this.exceptionHandler);
                 break;
             case "runATP":
-                fetch(server() + `/api/v1/order-atp`, this.postInit({}))
+                fetch(server() + `/api/v1/atp/order-atp`, this.postInit({}))
                     .then((response) => {
                         return response.json()
                     })
                     .then(this.displayResults.bind(this, "orderATP"))
                     .catch(this.exceptionHandler);
-                fetch(server() + `/api/v1/line-item-atp`, this.postInit({}))
+                fetch(server() + `/api/v1/atp/line-item-atp`, this.postInit({}))
                     .then((response) => {
                         return response.json()
                     })
@@ -198,24 +198,24 @@ export default class ATP extends Component {
                     .catch(this.exceptionHandler);
                 break;
             case "clearLines":
-                fetch(server() + `/api/v1/clear-lines`, this.postInit({}))
+                fetch(server() + `/api/v1/atp/clear-lines`, this.postInit({}))
                     .then((response) => {
                         return response.json()
                     })
                     .catch(this.exceptionHandler);
-                fetch(server() + `/api/v1/order-atp`, this.postInit({}))
+                fetch(server() + `/api/v1/atp/order-atp`, this.postInit({}))
                     .then((response) => {
                         return response.json()
                     })
                     .then(this.displayResults.bind(this, "orderATP"))
                     .catch(this.exceptionHandler);
-                fetch(server() + `/api/v1/line-item-atp`, this.postInit({}))
+                fetch(server() + `/api/v1/atp/line-item-atp`, this.postInit({}))
                     .then((response) => {
                         return response.json()
                     })
                     .then(this.displayResults.bind(this, "lineItemATP"))
                     .catch(this.exceptionHandler);
-                fetch(server() + `/api/v1/proposed-order`, this.postInit({}))
+                fetch(server() + `/api/v1/atp/proposed-order`, this.postInit({}))
                     .then((response) => {
                         return response.json()
                     })

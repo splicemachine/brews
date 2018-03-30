@@ -7,7 +7,8 @@
   "license": "Affero General Public License v3",
   "scripts": {
     "build": "tsc",
-    "start": "export NODE_ENV=development && tsc && node index.js"
+    "dev":"export NODE_ENV=development && tsc && node index.js",
+    "start": "nodemon -e ts --exec npm run dev"
   },
   "dependencies": {},
   "devDependencies": {

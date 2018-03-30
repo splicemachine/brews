@@ -12,14 +12,9 @@ app.set("port", process.env.PORT || DEFAULT_PORT);
 app.set("json spaces", 2);
 
 app.use(function (req, res, next) {
-    // res.header("Access-Control-Allow-Origin", "*");
-    // res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    // next();
-
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
     res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
-
     // intercept OPTIONS method
     if ('OPTIONS' == req.method) {
         res.send("POST");
@@ -50,7 +45,6 @@ if (process.env.NODE_ENV === "development") {
     app.get("/favicon.ico", (req, res) => res.sendFile(FAVICON));
 }
 
-
 /**
  * Mount all the routes.
  */
@@ -58,6 +52,7 @@ import apiRouter from "./routers";
 app.use("/api/v1", apiRouter);
 
 /**
+ * Error handling.
  * This handler needs to be delared after all other app.use (and it would seem app.post et.al.)
  */
 app.use(function (err, req, res, next) {
@@ -65,6 +60,10 @@ app.use(function (err, req, res, next) {
     next();
 });
 
+/**
+ * Listen last.
+ * @type {"http".Server}
+ */
 const server = app.listen(app.get("port"), () => {
     console.log("Brews Server Started");
     server.keepAliveTimeout = 0;

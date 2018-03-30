@@ -20,7 +20,7 @@ import {
 } from "./atp"
 
 /**
- * Preparation handler that takes no parameters.
+ * Preparation handler that takes no parameters..
  */
 router.get("/prepare", prepare);
 
@@ -37,6 +37,5 @@ router.post("/clear-lines", jsonParser, clearLines);
 router.post("/proposed-order", jsonParser, generateSelectHandler("proposedOrder"));
 router.post("/order-atp", jsonParser, generateSelectHandler("orderATP"));
 router.post("/line-item-atp", jsonParser, generateSelectHandler("lineItemATP"));
-
 
 export default router;
