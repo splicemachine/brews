@@ -2,8 +2,6 @@
  * This is our library candidate.
  */
 
-import env from "./environment"
-
 let jdbc = require("jdbc");
 let jinst = require("jdbc/lib/jinst");
 
@@ -18,20 +16,18 @@ if (!jinst.isJvmCreated()) {
     ]);
 }
 
-const config = {
-    url: env.JDBC_URL,
-    user: "user",
-    password: "admin"
-};
-
 export default class {
 
     private database: any;
     private connection: any;
 
-    constructor() {
-        this.database = new jdbc(config);
-        this.connection = null;
+    constructor(config) {
+        if (config) {
+            this.database = new jdbc(config);
+            this.connection = null;
+        } else {
+            throw new Error("DB Construction requires configuration object.")
+        }
     }
 
     /**

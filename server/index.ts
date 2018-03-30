@@ -59,6 +59,25 @@ app.use("/api/v1", apiRouter);
 app.use(function (err, req, res, next) {
     res.status(500).json({message: err.message});
     next();
+    // /**
+    //  * This is where we're defining the errors we find.
+    //  * @param {e.Response} response
+    //  * @param {Error} e
+    //  */
+    // export function handle(response: express.Response, e: Error) {
+    //     console.log("Inside handle");
+    //     if (e.message.includes("ConnectException")) {
+    //         writeToStreams("I don't think the database is turned on.\n", console.log, response.write.bind(response));
+    //     } else if (e.message.includes("SQLNonTransientConnectionException")) {
+    //         writeToStreams("The database died while we were connected to it.\n", console.log, response.write.bind(response));
+    //     } else if (e.message.includes("INVALID ARGUMENTS")) {
+    //         writeToStreams(`I don't think you set the databases's environment variable. JDBC_URL is ... ${process.env.ATP_JDBC_URL ? "set" : "unset"}\n`, console.log, response.write.bind(response));
+    //     } else {
+    //         writeToStreams("I don't know what kind of error this is.\n", console.log, response.write.bind(response));
+    //     }
+    //     writeToStreams(`Error:\n ${e.message}`, console.log, response.write.bind(response));
+    //     response.end();
+    // }
 });
 
 /**

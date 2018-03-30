@@ -29,7 +29,7 @@
   "env": {
     "TERM": "xterm",
     "DOCKER_CONFIG": "/etc/mesosphere/docker_credentials",
-    "JDBC_URL": "jdbc:splice://nikhilsaccount-brews-0a3fea1587-proxy.marathon.mesos:1527/splicedb;password=admin;user=splice;"
+    "ATP_JDBC_URL": "jdbc:splice://nikhilsaccount-brews-0a3fea1587-proxy.marathon.mesos:1527/splicedb;password=admin;user=splice;"
   },
   "healthChecks": [
     {

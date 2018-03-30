@@ -8,7 +8,7 @@
   "scripts": {
     "build": "tsc",
     "dev": "export NODE_ENV=development && tsc && node index.js",
-    "start": "nodemon -e ts --exec npm run dev"
+    "start": "nodemon"
   },
   "dependencies": {},
   "devDependencies": {
@@ -29,5 +29,20 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/splicemachine/brews.git"
+  },
+  "nodemonConfig": {
+    "execMap": {
+      "ts": "npm run dev"
+    },
+    "delay": "1000",
+    "ignore": [
+      ".git",
+      "node_modules/**/node_modules"
+    ],
+    "verbose": true,
+    "env": {
+      "NODE_ENV": "development"
+    },
+    "ext": "ts"
   }
 }

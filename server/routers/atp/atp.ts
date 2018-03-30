@@ -1,19 +1,19 @@
 import * as statements from "./sql-statements";
 import express = require("express");
 import Database from "../../db";
-import {handle, writeToStreams} from "../../helpers";
+import {atp_db_config} from "../../environment";
 
 let rejected = (reason) => Promise.reject(reason);
 
 function errorHandler(next: express.NextFunction, message: string) {
-    console.log("catch handler for everybody");
+    console.log("ATP Error. Promoting to Express Error Handling.");
     next(new Error(message));
 }
 
 export function addLine(req: express.Request, res: express.Response, next: express.NextFunction) {
     /***** REPEATED CODE *****/
     let db = null;
-    db = new Database();
+    db = new Database(atp_db_config);
     /***** REPEATED CODE *****/
 
     db.initialize()
@@ -35,7 +35,7 @@ export function addLine(req: express.Request, res: express.Response, next: expre
 export function runATP(req: express.Request, res: express.Response, next: express.NextFunction) {
     /***** REPEATED CODE *****/
     let db = null;
-    db = new Database();
+    db = new Database(atp_db_config);
     /***** REPEATED CODE *****/
     let results = [];
     db.initialize()
@@ -63,7 +63,7 @@ export function runATP(req: express.Request, res: express.Response, next: expres
 export function clearLines(req: express.Request, res: express.Response, next: express.NextFunction) {
     /***** REPEATED CODE *****/
     let db = null;
-    db = new Database();
+    db = new Database(atp_db_config);
     /***** REPEATED CODE *****/
     db.initialize()
         .then(() => {
@@ -97,7 +97,7 @@ export function prepare(req: express.Request, res: express.Response, next: expre
     let writer = (text) => {
         writeToStreams(text, res.write.bind(res), console.log)
     };
-    db = new Database();
+    db = new Database(atp_db_config);
     /***** REPEATED CODE *****/
 
     db.initialize()
@@ -117,6 +117,17 @@ export function prepare(req: express.Request, res: express.Response, next: expre
 }
 
 /**
+ * writeToStreams will write a message to a variadic number of functions.
+ * @param {string} message: The string message to be written to the list of functions.
+ * @param {() => any} fns: It is assumed that all other parameters are functions to be called.
+ */
+function writeToStreams(message: string, ...fns: Array<() => any>) {
+    fns.forEach((fn) => {
+        fn.call(null, message)
+    })
+}
+
+/**
  * Generator for Select Handlers
  * This function is designed to return a handler for a request that will take parameters and return results.
  * The binding for the number of parameters is driven by the front end and needs to match the number of '?'
@@ -126,7 +137,7 @@ export function generateSelectHandler(group) {
     return function (req: express.Request, res: express.Response, next: express.NextFunction) {
         /***** REPEATED CODE *****/
         let db = null;
-        db = new Database();
+        db = new Database(atp_db_config);
         /***** REPEATED CODE *****/
         db.initialize()
             .then(() => {

@@ -1,5 +1,6 @@
 import express = require("express");
 import {sample_datasets, output_sample, job_status, table_data} from "./test_data";
+import {modeling_db_config} from "../../environment";
 
 export function models(request: express.Request, response: express.Response) {
     response.send(table_data);

@@ -1,4 +1,4 @@
-import env from "../../environment";
+import {atp_s3_config} from "../../environment";
 
 /**
  * These statements exist because Splice Machine does not have fully
@@ -113,9 +113,9 @@ export const createSchema = [
 ];
 
 export const dataImport = [
-    `call SYSCS_UTIL.IMPORT_DATA('TIMELINE','TRANSFERORDERS',null, 's3a://${env.ATP_S3_USER}:${env.ATP_S3_SECRET}@splice-demo/supplychain/data_0623/train_orders.csv', null, null, 'yyyy-MM-dd HH:mm:ss.S', null, null, -1, '/tmp', true, null)`,
-    `call SYSCS_UTIL.IMPORT_DATA('TIMELINE','TO_DELIVERY_CHG_EVENT', null, 's3a://${env.ATP_S3_USER}:${env.ATP_S3_SECRET}@splice-demo/supplychain/data_0623/train_events.csv', null, null, 'yyyy-MM-dd HH:mm:ss.S', null, null, -1, '/tmp', true, null)`,
-    `call SYSCS_UTIL.IMPORT_DATA('TIMELINE','TIMELINE_INT', null, 's3a://${env.ATP_S3_USER}:${env.ATP_S3_SECRET}@splice-demo/supplychain/data_0623/train_inv.csv', null, null, 'yyyy-MM-dd HH:mm:ss.S', null, null, -1, '/tmp', true, null)`,
+    `call SYSCS_UTIL.IMPORT_DATA('TIMELINE','TRANSFERORDERS',null, 's3a://${atp_s3_config.key}:${atp_s3_config.secret}@splice-demo/supplychain/data_0623/train_orders.csv', null, null, 'yyyy-MM-dd HH:mm:ss.S', null, null, -1, '/tmp', true, null)`,
+    `call SYSCS_UTIL.IMPORT_DATA('TIMELINE','TO_DELIVERY_CHG_EVENT', null, 's3a://${atp_s3_config.key}:${atp_s3_config.secret}@splice-demo/supplychain/data_0623/train_events.csv', null, null, 'yyyy-MM-dd HH:mm:ss.S', null, null, -1, '/tmp', true, null)`,
+    `call SYSCS_UTIL.IMPORT_DATA('TIMELINE','TIMELINE_INT', null, 's3a://${atp_s3_config.key}:${atp_s3_config.secret}@splice-demo/supplychain/data_0623/train_inv.csv', null, null, 'yyyy-MM-dd HH:mm:ss.S', null, null, -1, '/tmp', true, null)`,
 ];
 
 /**
