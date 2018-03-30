@@ -71,3 +71,29 @@ export function decorateWithIds(data) {
         })))
     });
 }
+
+export function transformModelPropertyCases(raw){
+    /**
+     [
+         {
+             "_id": "bc0d8f",
+             "NAME": "lateness",
+             "STATUS": "NEW",
+             "UPDATE_DATE": "2018-03-30 16:00:12.338"
+         }
+     ]
+     */
+    return raw.map((item)=>{
+        let lower = {};
+        for(let prop in item){
+            lower[prop.toLowerCase()] = item[prop];
+        }
+        return lower;
+    })
+}
+
+export function transformDatasetList(raw) {
+    return new Promise((resolve) => {
+        resolve(raw.map((item) => ({name: item["1"]})))
+    })
+}

@@ -1,4 +1,4 @@
-import * as statements from "./sql-statements";
+import * as statements from "./sql";
 import express = require("express");
 import Database from "../../db";
 import {atp_db_config} from "../../environment";
@@ -11,10 +11,10 @@ function errorHandler(next: express.NextFunction, message: string) {
 }
 
 export function addLine(req: express.Request, res: express.Response, next: express.NextFunction) {
-    /***** REPEATED CODE *****/
+
     let db = null;
     db = new Database(atp_db_config);
-    /***** REPEATED CODE *****/
+
 
     db.initialize()
         .then(() => {
@@ -33,10 +33,10 @@ export function addLine(req: express.Request, res: express.Response, next: expre
 }
 
 export function runATP(req: express.Request, res: express.Response, next: express.NextFunction) {
-    /***** REPEATED CODE *****/
+
     let db = null;
     db = new Database(atp_db_config);
-    /***** REPEATED CODE *****/
+
     let results = [];
     db.initialize()
         .then(() => {
@@ -61,10 +61,10 @@ export function runATP(req: express.Request, res: express.Response, next: expres
 }
 
 export function clearLines(req: express.Request, res: express.Response, next: express.NextFunction) {
-    /***** REPEATED CODE *****/
+
     let db = null;
     db = new Database(atp_db_config);
-    /***** REPEATED CODE *****/
+
     db.initialize()
         .then(() => {
             return db.transaction([...statements.deleteTimelineDates, ...statements.deleteQuickCheckLines], () => {
@@ -92,13 +92,13 @@ export function clearLines(req: express.Request, res: express.Response, next: ex
  */
 export function prepare(req: express.Request, res: express.Response, next: express.NextFunction) {
 
-    /***** REPEATED CODE *****/
+
     let db = null;
     let writer = (text) => {
         writeToStreams(text, res.write.bind(res), console.log)
     };
     db = new Database(atp_db_config);
-    /***** REPEATED CODE *****/
+
 
     db.initialize()
         .then(() => {
@@ -135,10 +135,10 @@ function writeToStreams(message: string, ...fns: Array<() => any>) {
  */
 export function generateSelectHandler(group) {
     return function (req: express.Request, res: express.Response, next: express.NextFunction) {
-        /***** REPEATED CODE *****/
+
         let db = null;
         db = new Database(atp_db_config);
-        /***** REPEATED CODE *****/
+
         db.initialize()
             .then(() => {
                 return db.preparedSelect(statements[group], () => {

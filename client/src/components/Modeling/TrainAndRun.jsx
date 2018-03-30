@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import {decorateWithIds} from "./DataTransformations";
+import {decorateWithIds,transformDatasetList, transformModelPropertyCases} from "./DataTransformations";
 import {server} from "../../utilities";
 
 /**
@@ -17,7 +17,7 @@ export default class TrainAndRun extends Component {
          * @type {*|any}
          */
         this.next = this.props.next.bind(this);
-        const models = this.props.models;
+        const models = transformModelPropertyCases(this.props.models);
         const datasets = [{}];
         this.state = {
             selectedModel: models[0],
@@ -40,6 +40,7 @@ export default class TrainAndRun extends Component {
     fetchData() {
         return fetch(server() + "/api/v1/modeling/datasets")
             .then(response => response.json())
+            .then(transformDatasetList)
             .then(decorateWithIds)
             .then((data) => {
                 this.state.datasets = data;
@@ -100,7 +101,7 @@ export default class TrainAndRun extends Component {
                             {
                                 this.state.models.map((item, index) =>
                                     <option key={index} value={index}>
-                                        {item.first_name}
+                                        {item.name}
                                     </option>)
                             }
                         </select>

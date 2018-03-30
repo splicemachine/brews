@@ -11,13 +11,7 @@ router.get("/", function (req, res) {
 /**
  * Import all the functions you need to bind to endpoints.
  */
-import {
-    addLine,
-    runATP,
-    clearLines,
-    prepare,
-    generateSelectHandler
-} from "./atp"
+import {addLine, runATP, clearLines, prepare, generateSelectHandler} from "./handlers";
 
 /**
  * Preparation handler that takes no parameters..
