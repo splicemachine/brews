@@ -2,7 +2,7 @@ import express = require("express");
 import {sample_datasets, output_sample, table_data} from "./test_data";
 import {modeling_db_config} from "../../environment";
 import Database from "../../db";
-import {select_models, select_datasets, job_status} from "./sql";
+import {select_models, select_datasets, job_status, job_output} from "./sql";
 
 let rejected = (reason) => Promise.reject(reason);
 
@@ -19,7 +19,8 @@ export function models(request: express.Request, response: express.Response, nex
     let db = new Database(modeling_db_config);
     db.initialize()
         .then(() => {
-            return db.preparedSelect(select_models, ()=>{}, {});
+            return db.preparedSelect(select_models, () => {
+            }, {});
         })
         .then((result) => {
             response.send(result);
@@ -39,7 +40,8 @@ export function datasets(request: express.Request, response: express.Response, n
     let db = new Database(modeling_db_config);
     db.initialize()
         .then(() => {
-            return db.preparedSelect(select_datasets, ()=>{}, {});
+            return db.preparedSelect(select_datasets, () => {
+            }, {});
         })
         .then((result) => {
             response.send(result);
@@ -66,7 +68,8 @@ export function jobs(request: express.Request, response: express.Response, next:
     let db = new Database(modeling_db_config);
     db.initialize()
         .then(() => {
-            return db.preparedSelect(job_status, ()=>{}, {});
+            return db.preparedSelect(job_status, () => {
+            }, {});
         })
         .then((result) => {
             response.send(result);
@@ -80,6 +83,33 @@ export function jobs(request: express.Request, response: express.Response, next:
  SELECT * FROM MLDEMO.ML_RUN_OUTPUT WHERE JOB_ID=?
  */
 export function output(request: express.Request, response: express.Response, next: express.NextFunction) {
-    console.log(request.body);
-    response.send(output_sample);
+    /**
+     [ { ID: '2',
+        NAME: 'lateness',
+        TYPE: 'TRAIN',
+        FEATURES_TABLE: 'MLDEMO.FEATURES',
+        STATUS: { key: null, ref: null, props: {}, _owner: null, _store: {} },
+        UPDATE_DATE: '2018-03-29 06:44:33.737' } ]
+     */
+    let job = {};
+    if (request.body && request.body.length > 0) {
+        job = request.body[0];
+    }
+    let db = new Database(modeling_db_config);
+    db.initialize()
+        .then(() => {
+            return db.preparedSelect(
+                job_output,
+                noop,
+                [job["ID"]]
+            );
+        })
+        .then((result) => {
+            response.send(result);
+            response.end();
+        }, rejected)
+        .catch(errorHandler.bind(null, next));
+}
+
+function noop() {
 }

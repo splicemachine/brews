@@ -19,3 +19,7 @@ export const job_status = [
   `select * from MLDEMO.ML_JOBS`
 ];
 
+export const job_output = [
+  `select * from MLDEMO.ML_RUN_OUTPUT where JOB_ID = ?`
+];
+
