@@ -11,8 +11,8 @@ export default class Header extends Component {
     render() {
         return (
             <div className="header">
-                <h1>Available to Promise</h1>
-                <h2>A Splice Machine Use-Case</h2>
+                <h1>{this.props.config.longTitle}</h1>
+                <h2>{this.props.config.subTitle}</h2>
             </div>
 
         )

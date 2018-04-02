@@ -1,10 +1,20 @@
 {
-  "name": "brews",
+  "name": "brews-server",
   "version": "1.0.0",
-  "description": "PoC Node Splice Machine Communication",
+  "description": "Brews Server",
   "author": "Nikhil Nygaard <nikhil.nygaard@gmail.com> (http://nygaard.site)",
   "main": "index.js",
   "license": "Affero General Public License v3",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/splicemachine/brews.git"
+  },
+  "keywords": [
+    "Splice Machine",
+    "splicemachine",
+    "demos",
+    "demo"
+  ],
   "scripts": {
     "build": "tsc",
     "dev": "export NODE_ENV=development && tsc && node index.js",
@@ -25,10 +35,6 @@
     "@types/node": "^9.3.0",
     "@types/undertaker": "^1.1.4",
     "del": "^3.0.0"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/splicemachine/brews.git"
   },
   "nodemonConfig": {
     "execMap": {

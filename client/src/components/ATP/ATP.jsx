@@ -1,6 +1,10 @@
 // noinspection NpmUsedModulesInstalled
 import ReactTable from "react-table";
 import "react-table/react-table.css";
+import "../../../node_modules/purecss/build/pure-min.css"
+import "../../../node_modules/purecss/build/grids-responsive-min.css"
+import "../../styles/side-menu-old-ie.scss"
+import "../../styles/side-menu.scss"
 import React, {Component} from "react";
 
 function server() {
@@ -266,7 +270,7 @@ export default class ATP extends Component {
             <div className="content">
                 <h2 className="content-subhead">ATP</h2>
                 <div className="pure-g">
-                    <div className={"pure-u-1 pure-u-md-1-3 pure-u-lg-1-3"}>
+                    <div className={"pure-u-sm-1-1 pure-u-md-1-3 pure-u-lg-1-3"}>
                         <form className="pure-form pure-form-aligned"
                               onSubmit={this.handleSubmit.bind(this, "addLine")}>
                             <fieldset>
@@ -300,7 +304,7 @@ export default class ATP extends Component {
                             </fieldset>
                         </form>
                     </div>
-                    <div className={"pure-u-1 pure-u-md-1-3 pure-u-lg-1-3"}>
+                    <div className={"pure-u-sm-1-1 pure-u-md-1-3 pure-u-lg-1-3"}>
                         <form className="pure-form pure-form-aligned"
                               onSubmit={this.handleSubmit.bind(this, "runATP")}>
                             <fieldset>
@@ -323,7 +327,7 @@ export default class ATP extends Component {
                             </fieldset>
                         </form>
                     </div>
-                    <div className={"pure-u-1 pure-u-md-1-3 pure-u-lg-1-3"}>
+                    <div className={"pure-u-sm-1-1 pure-u-md-1-3 pure-u-lg-1-3"}>
                         <form className="pure-form pure-form-aligned"
                               onSubmit={this.handleSubmit.bind(this, "clearLines")}>
                             <fieldset>
@@ -335,7 +339,7 @@ export default class ATP extends Component {
                             </fieldset>
                         </form>
                     </div>
-                    <div className={"pure-u-1 pure-u-md-1-1 pure-u-lg-1-1"}>
+                    <div className={"pure-u-sm-1-1 pure-u-md-1-1 pure-u-lg-1-1"}>
                         {
                             this.state.results.map((item, index) => {
                                 return (

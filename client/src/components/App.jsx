@@ -18,11 +18,15 @@ export default class App extends Component {
             sideBar: [
                 {
                     title: "ATP",
+                    longTitle: "Available to Promise",
+                    subTitle: "A Splice Machine Use Case",
                     component: <ATP/>,
                     active: false
                 },
                 {
                     title: "Modeling",
+                    longTitle: "Machine Learning Workflow",
+                    subTitle: "A Splice Machine Use Case",
                     component: <Modeling/>,
                     active: true
                 }
@@ -65,7 +69,7 @@ export default class App extends Component {
             <div id="layout" className={active}>
                 <Hamburger toggle={this.hamburgerToggle}/>
                 <div id="main">
-                    <Header/>
+                    <Header config={this.state.currentPage}/>
                     <SideMenu config={this.state.sideBar} callback={this.navigate}/>
                     {this.state.currentPage.component}
                 </div>

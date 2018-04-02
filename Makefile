@@ -5,7 +5,7 @@
 
 typescript_files := $(shell find server/ -name '*.ts')
 
-all: node_modules $(typescript_files)
+all: clean node_modules $(typescript_files)
 	cd client && npm run build && cp -a dist ../server/client
 	cd server && npm run build
 
