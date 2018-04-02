@@ -12,6 +12,7 @@ export default class Modeling extends Component {
         super(props);
         this.props = props;
         this.advanceFlow = this.advanceFlow.bind(this);
+        this.jump = this.jump.bind(this);
 
         /**
          * Default to empty components with the advancing function because ideally you
@@ -65,19 +66,30 @@ export default class Modeling extends Component {
                 console.log("Workflow Manager sent this:", ...context);
                 nextPage = 1;
                 this.state.currentPage = nextPage;
-                this.state.pages[nextPage].component = <TrainAndRun next={this.advanceFlow} models={context}/>;
+                this.state.pages[nextPage].component =
+                    <TrainAndRun next={this.advanceFlow}
+                                 models={context}
+                                 home={this.jump.bind(this, 2)}
+                                 start={this.jump.bind(this, 0)}/>;
                 break;
             case 1:
                 console.log("Train and Run sent this:", ...context);
                 nextPage = 2;
                 this.state.currentPage = nextPage;
-                this.state.pages[nextPage].component = <JobStatus next={this.advanceFlow} last={context}/>;
+                this.state.pages[nextPage].component =
+                    <JobStatus next={this.advanceFlow}
+                               last={context}
+                               start={this.jump.bind(this, 0)}/>;
                 break;
             case 2:
                 console.log("Job Status sent this:", ...context);
                 nextPage = 3;
                 this.state.currentPage = nextPage;
-                this.state.pages[nextPage].component = <Output next={this.advanceFlow} target={context}/>;
+                this.state.pages[nextPage].component =
+                    <Output next={this.advanceFlow}
+                            target={context}
+                            home={this.jump.bind(this, 2)}
+                            start={this.jump.bind(this, 0)}/>;
                 break;
             case 3:
                 console.log("Output sent this:", ...context);
@@ -88,9 +100,13 @@ export default class Modeling extends Component {
         this.setState(this.state);
     }
 
+    jump(target) {
+        this.setState({currentPage: target});
+    }
+
     render() {
         return (
-            <div>
+            <div className="content">
                 {this.state.pages[this.state.currentPage].component}
             </div>
         )

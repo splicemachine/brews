@@ -4,6 +4,7 @@ import ReactTable from "react-table";
 import CompletedStatus from "./CompletedStatus.jsx";
 import {promiseData, promiseColumns} from "./DataTransformations";
 import {server} from "../../utilities";
+import Navigator from "./Navigator.jsx";
 
 /**
  * This component will query the status of current jobs.
@@ -20,6 +21,7 @@ export default class JobStatus extends Component {
          * @type {*|any}
          */
         this.next = this.props.next.bind(this);
+        this.start = this.props.start.bind(this);
         const lastActions = this.props.last;
         const data = [];
         const columns = [{Header: "Nothing."}];
@@ -65,17 +67,26 @@ export default class JobStatus extends Component {
     }
 
     render() {
+
         const alertStyle = {
-            backgroundColor: "#cceeff"
+            backgroundColor: "#cceeff",
+            padding: "1em",
+            margin: "1em",
+            borderRadius: "1em"
 
         };
+
+        this.state.lastActions ? noop() : this.state.lastActions = [];
+
         return (
             <div>
+                <h3>Job Status</h3>
                 {
+
                     this.state.lastActions.map((item, index) =>
                         <div className={"pure-g"} key={index} style={alertStyle}>
                             <span className={"pure-u-1-3"}>Action: {item.action}</span>
-                            <span className={"pure-u-1-3"}>Model: {item.model.first_name}</span>
+                            <span className={"pure-u-1-3"}>Model: {item.model.name}</span>
                             <span className={"pure-u-1-3"}>Dataset: {item.dataset.name}</span>
                         </div>
                     )
@@ -85,7 +96,10 @@ export default class JobStatus extends Component {
                     data={this.state.table.data}
                     noDataText="No Data Yet!"
                     defaultPageSize={5}/>
+                <Navigator home={this.home} start={this.start}/>
             </div>
         )
     }
 }
+
+function noop(){}

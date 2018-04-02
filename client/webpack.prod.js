@@ -82,7 +82,7 @@ module.exports = {
         new CleanWebpackPlugin(buildPath),
         new FaviconsWebpackPlugin({
             // Your source logo
-            logo: "./src/assets/icon.png",
+            logo: "./src/assets/favicon.ico",
             // The prefix for all image files (might be a folder or a name)
             prefix: "icons-[hash]/",
             // Generate a cache file with control hashes and
@@ -93,7 +93,7 @@ module.exports = {
             // favicon background color (see https://github.com/haydenbleasel/favicons#usage)
             background: "#fff",
             // favicon app title (see https://github.com/haydenbleasel/favicons#usage)
-            title: "client",
+            title: "Brews: Splice Machine Demos",
 
             // which icons should be generated (see https://github.com/haydenbleasel/favicons#usage)
             icons: {

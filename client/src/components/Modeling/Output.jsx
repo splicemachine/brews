@@ -3,6 +3,7 @@ import "react-table/react-table.css";
 import ReactTable from "react-table";
 import {promiseData, promiseColumns} from "./DataTransformations";
 import {server} from "../../utilities";
+import Navigator from "./Navigator.jsx";
 
 /**
  * Should be a simple view table page.
@@ -17,6 +18,8 @@ export default class Output extends Component {
          * @type {*|any}
          */
         this.next = this.props.next.bind(this);
+        this.home = this.props.home.bind(this);
+        this.start = this.props.start.bind(this);
         const target = this.props.target;
         const data = [];
         const columns = [{Header: "Nothing."}];
@@ -78,6 +81,7 @@ export default class Output extends Component {
                     data={this.state.table.data}
                     noDataText="No Data Yet!"
                     defaultPageSize={5}/>
+                <Navigator home={this.home} start={this.start}/>
             </div>
         )
     }

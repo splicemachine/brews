@@ -134,6 +134,10 @@ export default class WorkflowManager extends Component {
             selectType: 'radio',
         };
 
+        const centerButtons = {
+            textAlign: "center"
+        };
+
         return (
             <div>
                 <h3>Models</h3>
@@ -147,18 +151,28 @@ export default class WorkflowManager extends Component {
                     {...checkboxProps}
                 />
 
+                <div className="pure-u-1-1"/>
+
                 <form className="pure-form pure-form-aligned"
                       onSubmit={this.handleSubmit}>
                     <fieldset>
-                        <button type="submit" className="pure-button pure-button-primary"
-                                disabled={this.disable()}>Train / Run
-                        </button>
-                        <button type="submit" className="pure-button pure-button-primary"
-                                disabled={true}>Deploy
-                        </button>
-                        <button type="submit" className="pure-button pure-button-primary"
-                                disabled={true}>Delete
-                        </button>
+                        <div className={"pure-g"} style={centerButtons}>
+                            <div className={"pure-u-sm-1-1 pure-u-md-1-3 pure-u-lg-1-3"}>
+                                <button type="submit" className="pure-button pure-button-primary"
+                                        disabled={this.disable()}>Train / Run
+                                </button>
+                            </div>
+                            <div className={"pure-u-sm-1-1 pure-u-md-1-3 pure-u-lg-1-3"}>
+                                <button type="submit" className="pure-button pure-button-primary"
+                                        disabled={true}>Deploy
+                                </button>
+                            </div>
+                            <div className={"pure-u-sm-1-1 pure-u-md-1-3 pure-u-lg-1-3"}>
+                                <button type="submit" className="pure-button pure-button-primary"
+                                        disabled={true}>Delete
+                                </button>
+                            </div>
+                        </div>
                     </fieldset>
                 </form>
             </div>

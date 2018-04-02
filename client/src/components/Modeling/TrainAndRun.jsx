@@ -1,6 +1,7 @@
 import React, {Component} from "react";
-import {decorateWithIds,transformDatasetList, transformModelPropertyCases} from "./DataTransformations";
+import {decorateWithIds, transformDatasetList, transformModelPropertyCases} from "./DataTransformations";
 import {server} from "../../utilities";
+import Navigator from "./Navigator.jsx";
 
 /**
  * Get the list of models. I think this list should just be one because that's what you picked on the previous screen.
@@ -17,6 +18,8 @@ export default class TrainAndRun extends Component {
          * @type {*|any}
          */
         this.next = this.props.next.bind(this);
+        this.home = this.props.home.bind(this);
+        this.start = this.props.start.bind(this);
         const models = transformModelPropertyCases(this.props.models);
         const datasets = [{}];
         this.state = {
@@ -94,39 +97,68 @@ export default class TrainAndRun extends Component {
     }
 
     render() {
+
+        const alignment = {
+            margin: "0.5em"
+        };
+
         return (
             <div>
+                <h3>Train and Run</h3>
                 <form className="pure-form pure-form-aligned"
                       onSubmit={this.handleSubmit}>
                     <fieldset>
-                        <select id="MODEL" onChange={this.handleChange.bind(this, "model")}>
-                            {
-                                this.state.models.map((item, index) =>
-                                    <option key={index} value={index}>
-                                        {item.name}
-                                    </option>)
-                            }
-                        </select>
-                        <select id="DATASET" onChange={this.handleChange.bind(this, "dataset")}>
-                            {
-                                this.state.datasets.map((item, index) =>
-                                    <option key={index} value={index}>
-                                        {item.name}
-                                    </option>)
-                            }
-                        </select>
-
-                        <button type="button" className="pure-button pure-button-primary"
-                                disabled={this.disable()}
-                                onClick={this.handleButton.bind(this, "train")}>
-                            Train
-                        </button>
-
-                        <button type="button" className="pure-button pure-button-primary"
-                                disabled={this.disable()}
-                                onClick={this.handleButton.bind(this, "run")}>
-                            Run
-                        </button>
+                        <div className={"pure-g"}>
+                            <div className={"pure-u-sm-1-1 pure-u-md-1-1 pure-u-lg-1-1"}>
+                                <div>
+                                    <label htmlFor="MODEL">
+                                        Selected Model:
+                                    </label>
+                                </div>
+                                <div style={alignment}>
+                                    <select id="MODEL" onChange={this.handleChange.bind(this, "model")}>
+                                        {
+                                            this.state.models.map((item, index) =>
+                                                <option key={index} value={index}>
+                                                    {item.name}
+                                                </option>)
+                                        }
+                                    </select>
+                                </div>
+                                <div>
+                                    <label htmlFor="DATASET">
+                                        Selected Dataset:
+                                    </label>
+                                </div>
+                                <div style={alignment}>
+                                    <select id="DATASET" onChange={this.handleChange.bind(this, "dataset")}>
+                                        {
+                                            this.state.datasets.map((item, index) =>
+                                                <option key={index} value={index}>
+                                                    {item.name}
+                                                </option>)
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                            <div className={"pure-u-sm-1-1 pure-u-md-1-1 pure-u-lg-1-1"}>
+                                <span>
+                                    <button style={alignment} type="button" className="pure-button pure-button-primary"
+                                            disabled={this.disable()}
+                                            onClick={this.handleButton.bind(this, "train")}>
+                                        Train
+                                    </button>
+                                </span>
+                                <span>
+                                    <button style={alignment} type="button" className="pure-button pure-button-primary"
+                                            disabled={this.disable()}
+                                            onClick={this.handleButton.bind(this, "run")}>
+                                        Run
+                                    </button>
+                                </span>
+                            </div>
+                            <Navigator home={this.home} start={this.start}/>
+                        </div>
                     </fieldset>
                 </form>
             </div>

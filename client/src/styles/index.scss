@@ -30,6 +30,12 @@ div.content > .pure-g label {
     margin: 1em;
 }
 
+@media all and (max-width: 600px) {
+    div.pure-g {
+        letter-spacing: 0;
+    }
+}
+
 //html, body {
 //    height: 100%;
 //    width: 100%;
@@ -225,4 +231,12 @@ div.content > .pure-g label {
 //}
 //@media all and (max-width: 500px) {
 //    .vid-info .acronym { display: none; }
+//}
+
+.job-status{
+    margin: 0 1em 1em;
+}
+
+//.job-status > button {
+//    margin: 1em;
 //}
