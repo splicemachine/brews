@@ -1,6 +1,6 @@
 import express = require('express');
 import bodyParser = require("body-parser");
-import {models, datasets, action, jobs, output} from "./handlers"
+import {models, deleteModel, datasets, action, jobs, output} from "./handlers"
 
 const jsonParser = bodyParser.json();
 
@@ -10,6 +10,7 @@ router.get("/", function (req, res) {
 });
 
 router.get("/models", models);
+router.delete("/models", jsonParser, deleteModel);
 router.get("/datasets", datasets);
 router.post("/action", jsonParser, action);
 router.get("/jobs", jobs);

@@ -35,21 +35,49 @@ export default class WorkflowManager extends Component {
             table: {
                 columns,
                 data
+            },
+            disabled: {
+                train: true,
+                deploy: true,
+                delete: true
             }
         };
 
-        this.handleSubmit = this.handleSubmit.bind(this);
+        /**
+         *
+         * @param method
+         * @param body
+         * @returns {{method: *, body: string, headers: Headers, mode: string, cache: string}}
+         */
+        this.fetchInit = (method, body) => {
+            return {
+                method,
+                body: JSON.stringify(body),
+                headers: new Headers({
+                    'Content-Type': 'application/json'
+                }),
+                mode: "cors",
+                cache: "default"
+            }
+        };
+
         this.toggleSelection = this.toggleSelection.bind(this);
         this.toggleAll = this.toggleAll.bind(this);
         this.isSelected = this.isSelected.bind(this);
         this.fetchData = this.fetchData.bind(this);
-
+        this.setButtonAvailability = this.setButtonAvailability.bind(this);
+        this.handleButton = this.handleButton.bind(this);
+        this.softDelete = this.softDelete.bind(this);
     }
 
     componentWillMount() {
-        this.fetchData();
+        this.fetchData().then(noop);
     }
 
+    /**
+     * Fetch the data and populate our table.
+     * @returns {Promise<any>}
+     */
     fetchData() {
         return fetch(server() + "/api/v1/modeling/models")
             .then(response => response.json())
@@ -68,26 +96,89 @@ export default class WorkflowManager extends Component {
             })
     }
 
+    softDelete(item){
+        return fetch(server() + "/api/v1/modeling/models", this.fetchInit("DELETE", item))
+            .then(response => response.json())
+            .then((deleteResult)=>{
+                console.log(deleteResult)
+            })
+            // .then(noop)
+    }
+
     /**
      * Triggered on button clicks.
-     * @param form
+     * @param value
      * @param event
      */
-    handleSubmit(event) {
-        let item = this.state.table.data.find((item) => item._id === this.state.selection[0]);
-        this.next(item);
+    handleButton(value, event) {
+        let item = this.getSelectedItem();
+        switch (value) {
+            case "train":
+                this.next(item);
+                break;
+            case "deploy":
+                break;
+            case "delete":
+                this.softDelete(item)
+                    .then(this.fetchData);
+                break;
+            default:
+                console.log("Default button case. Bad news bears.");
+        }
         event.preventDefault();
     }
 
     /**
-     * Validation helper.
-     * @returns {boolean}
+     * If called with state, it will find the item corresponding to that.
+     * If called without, it will default to react component state.
+     * Overloading is necessary because this.setState might not resolve by the time we need it.
+     * @param [state]
+     * @returns {number | * | T | {}}
      */
-    disable() {
-        return this.state.selection.length === 0;
+    getSelectedItem(state) {
+        let key = state ? state.selection[0] : this.state.selection[0];
+        return this.state.table.data.find((item) => item._id === key);
     }
 
     /**
+     * Return nothing, Mutates the component state to set the button availability.
+     * @param state
+     */
+    setButtonAvailability(state) {
+        let item = this.getSelectedItem(state);
+        switch (item["STATUS"]) {
+            case "TRAINIED":
+                this.setState(
+                    {
+                        disabled: {
+                            train: false,
+                            deploy: false,
+                            delete: false
+                        }
+                    }
+                );
+                break;
+            case "NEW":
+                this.setState(
+                    {
+                        disabled: {
+                            train: false,
+                            deploy: true,
+                            delete: false
+                        }
+                    }
+                );
+                break;
+            default:
+                /**
+                 * TODO: "TRAINIED" is not a valid state. Spelling Mistake.
+                 */
+                console.log("Really shouldn't encounter defaults man.", item["STATUS"])
+        }
+    }
+
+    /**
+     * React Table
      * From the docs: toggleSelection(key, shift, row)
      * @param key
      */
@@ -103,8 +194,12 @@ export default class WorkflowManager extends Component {
             selection.push(key);
         }
         this.setState({selection});
+        this.setButtonAvailability({selection});
     }
 
+    /**
+     * React Table
+     */
     toggleAll() {
         const selectAll = !this.state.selectAll;
         const selection = [];
@@ -118,6 +213,11 @@ export default class WorkflowManager extends Component {
         this.setState({selectAll, selection})
     }
 
+    /**
+     * React Table
+     * @param key
+     * @returns {boolean}
+     */
     isSelected(key) {
         return this.state.selection.includes(key);
     }
@@ -154,22 +254,26 @@ export default class WorkflowManager extends Component {
                 <div className="pure-u-1-1"/>
 
                 <form className="pure-form pure-form-aligned"
-                      onSubmit={this.handleSubmit}>
+                      onSubmit={noop}>
                     <fieldset>
                         <div className={"pure-g"} style={centerButtons}>
                             <div className={"pure-u-sm-1-1 pure-u-md-1-3 pure-u-lg-1-3"}>
-                                <button type="submit" className="pure-button pure-button-primary"
-                                        disabled={this.disable()}>Train / Run
+                                <button className="pure-button pure-button-primary"
+                                        onClick={this.handleButton.bind(this, "train")}
+                                        disabled={this.state.disabled.train}>
+                                    Train / Run
                                 </button>
                             </div>
                             <div className={"pure-u-sm-1-1 pure-u-md-1-3 pure-u-lg-1-3"}>
-                                <button type="submit" className="pure-button pure-button-primary"
-                                        disabled={true}>Deploy
+                                <button className="pure-button pure-button-primary"
+                                        onClick={this.handleButton.bind(this, "deploy")}
+                                        disabled={this.state.disabled.deploy}>Deploy
                                 </button>
                             </div>
                             <div className={"pure-u-sm-1-1 pure-u-md-1-3 pure-u-lg-1-3"}>
-                                <button type="submit" className="pure-button pure-button-primary"
-                                        disabled={true}>Delete
+                                <button className="pure-button pure-button-primary"
+                                        onClick={this.handleButton.bind(this, "delete")}
+                                        disabled={this.state.disabled.delete}>Delete
                                 </button>
                             </div>
                         </div>
@@ -179,3 +283,5 @@ export default class WorkflowManager extends Component {
         )
     }
 }
+
+function noop(){}

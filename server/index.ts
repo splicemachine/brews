@@ -88,3 +88,8 @@ const server = app.listen(app.get("port"), () => {
     console.log("Brews Server Started");
     server.keepAliveTimeout = 0;
 });
+
+process.on('SIGINT', () => {
+    console.log("Bye bye!");
+    process.exit();
+});
