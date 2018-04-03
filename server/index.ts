@@ -1,38 +1,27 @@
 import express = require('express');
 import path = require('path');
-import bodyParser = require("body-parser");
 
-const DIST_DIR = path.join(__dirname, "../dist");
+const DIST_DIR = path.join(__dirname, "./client");
 const HTML_FILE = path.join(DIST_DIR, "index.html");
 const FAVICON = path.join(__dirname, "..", "static", "img", "favicon.ico");
 const DEFAULT_PORT = 3000;
 
 const app = express();
 
-const jsonParser = bodyParser.json();
-
 app.set("port", process.env.PORT || DEFAULT_PORT);
 app.set("json spaces", 2);
 
-// console.log("WELL", process.env.NODE_ENV);
-// app.use(function (req, res, next) {
-//     console.log("why won't you set headers>");
-//     res.setHeader("Access-Control-Allow-Origin", "http://localhost:8080");
-//     res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, PATCH, DELETE");
-//     res.setHeader("Access-Control-Allow-Headers", "X-Requested-With,content-type");
-//     res.setHeader("Access-Control-Allow-Credentials", "true");
-//     next();
-// });
-
-app.use(function(req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    next();
-});
-
-const server = app.listen(app.get("port"), () => {
-    console.log("Server Started");
-    server.keepAliveTimeout = 0;
+app.use(function (req, res, next) {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
+    // intercept OPTIONS method
+    if ('OPTIONS' == req.method) {
+        res.send("POST");
+    }
+    else {
+        next();
+    }
 });
 
 /**
@@ -57,60 +46,45 @@ if (process.env.NODE_ENV === "development") {
 }
 
 /**
- * Import all the functions you need to bind to endpoints.
+ * Mount all the routes.
  */
-import {
-    addLine,
-    runATP,
-    clearLines,
-    prepare,
-    generateSelectHandler
-} from "./database-operations/atp/atp"
+import apiRouter from "./routers";
+
+app.use("/api/v1", apiRouter);
 
 /**
- * Preparation handler that takes no parameters.
+ * Error handling.
+ * This handler needs to be delared after all other app.use (and it would seem app.post et.al.)
  */
-app.get("/api/v1/prepare", prepare);
+app.use(function (err, req, res, next) {
+    res.status(500).json({message: err.message});
+    next();
+    // /**
+    //  * This is where we're defining the errors we find.
+    //  * @param {e.Response} response
+    //  * @param {Error} e
+    //  */
+    // export function handle(response: express.Response, e: Error) {
+    //     console.log("Inside handle");
+    //     if (e.message.includes("ConnectException")) {
+    //         writeToStreams("I don't think the database is turned on.\n", console.log, response.write.bind(response));
+    //     } else if (e.message.includes("SQLNonTransientConnectionException")) {
+    //         writeToStreams("The database died while we were connected to it.\n", console.log, response.write.bind(response));
+    //     } else if (e.message.includes("INVALID ARGUMENTS")) {
+    //         writeToStreams(`I don't think you set the databases's environment variable. JDBC_URL is ... ${process.env.ATP_JDBC_URL ? "set" : "unset"}\n`, console.log, response.write.bind(response));
+    //     } else {
+    //         writeToStreams("I don't know what kind of error this is.\n", console.log, response.write.bind(response));
+    //     }
+    //     writeToStreams(`Error:\n ${e.message}`, console.log, response.write.bind(response));
+    //     response.end();
+    // }
+});
 
 /**
- * Custom handlers.
+ * Listen last.
+ * @type {"http".Server}
  */
-app.post("/api/v1/add-line", jsonParser, addLine);
-app.post("/api/v1/run-atp", jsonParser, runATP);
-app.post("/api/v1/clear-lines", jsonParser, clearLines);
-
-/**
- * Generated functions for SELECT calls that do not take parameters.
- */
-app.post("/api/v1/proposed-order", jsonParser, generateSelectHandler("proposedOrder"));
-app.post("/api/v1/order-atp", jsonParser, generateSelectHandler("orderATP"));
-app.post("/api/v1/line-item-atp", jsonParser, generateSelectHandler("lineItemATP"));
-
-/**
- * Deprecated Handlers
- */
-// import {
-//     generateSelectHandler
-// } from "./database-operations/atp/atp";
-//
-// app.post("/api/v1/transfer-orders", jsonParser, generateSelectHandler("transferOrders"));
-// app.post("/api/v1/atp-on-date", jsonParser, generateSelectHandler("atpOnDate"));
-// app.post("/api/v1/tracking-inventory-as-timelines", jsonParser, generateSelectHandler("trackingInventoryAsTimelines"));
-// app.post("/api/v1/inventory-on-date", jsonParser, generateSelectHandler("inventoryOnDate"));
-// app.post("/api/v1/proposed-order", jsonParser, generateSelectHandler("proposedOrder"));
-// app.post("/api/v1/order-atp", jsonParser, generateSelectHandler("orderATP"));
-// app.post("/api/v1/line-item-atp", jsonParser, generateSelectHandler("lineItemATP"));
-//
-// import {
-//     addQuickCheckLine,
-//     deleteTimelineDates,
-//     addResultDate,
-//     addResultDates,
-// } from "./database-operations/atp/atp";
-//
-// app.post("/api/v1/add-quick-check-line", jsonParser, addQuickCheckLine);
-// app.post("/api/v1/delete-timeline-dates", jsonParser, deleteTimelineDates);
-//
-//
-// app.post("/api/v1/add-result-date", jsonParser, addResultDate);
-// app.post("/api/v1/add-result-dates", jsonParser, addResultDates);
+const server = app.listen(app.get("port"), () => {
+    console.log("Brews Server Started");
+    server.keepAliveTimeout = 0;
+});

@@ -12,7 +12,7 @@ You will need a Splice Machine JDBC URL to configure the application. If you cre
 
 Before running or installing, you must create the file `server/environment.ts`. There is an example of this file at `server/environment.example.ts`. 
 
-Please set `JDBC_URL` accordingly.
+Please set `ATP_JDBC_URL` accordingly.
 
 **Note** that to run the ATP demo, you will also need to configure S3 credentials. This example uses S3 to demonstrate Stored Procedure interoperability by loading sample data from S3.
 
@@ -50,14 +50,14 @@ Successfully built [image]
 ```
 Take that image tag and run with the following command:
 ```bash
-docker run -d -p 3000:3000 -e "JDBC_URL=[JDBC_URL]" [image]
+docker run -d -p 3000:3000 -e "ATP_JDBC_URL=[ATP_JDBC_URL]" [image]
 ```
 And navigate your browser to [`http://localhost:3000/`][6]
 
 ### Production Deployment Notes
 There is an example `marathon.json` in `/config`. Use that to start `brews` as a Marathon App.
 
-**Note:** Make sure you configure the proper `env.JDBC_URL`.
+**Note:** Make sure you configure the proper `env.ATP_JDBC_URL`.
 
 ## Acronym
 - **B**abel

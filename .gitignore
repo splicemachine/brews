@@ -1,5 +1,1 @@
-node_modules/
 .idea/
-dist/
-server/**/*.js
-server/environment.ts

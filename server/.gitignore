@@ -1,0 +1,5 @@
+environment.ts
+client/
+**/*.js
+**/*.map
+node_modules/

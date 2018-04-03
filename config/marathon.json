@@ -27,9 +27,10 @@
     }
   },
   "env": {
-    "TERM": "xterm",
     "DOCKER_CONFIG": "/etc/mesosphere/docker_credentials",
-    "JDBC_URL": "jdbc:splice://nikhilsaccount-brews-0a3fea1587-proxy.marathon.mesos:1527/splicedb;password=admin;user=splice;"
+    "TERM": "xterm",
+    "ATP_JDBC_URL": "jdbc:splice://erinsaccount-mojix2.splicemachine-qa.io:1527/splicedb;ssl=basic;user=splice;password=admin;",
+    "MODELING_JDBC_URL": "jdbc:splice://erinsaccount-mojix2.splicemachine-qa.io:1527/splicedb;ssl=basic;user=splice;password=admin;"
   },
   "healthChecks": [
     {

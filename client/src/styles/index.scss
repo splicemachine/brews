@@ -1,0 +1,41 @@
+body {
+    font-family: sans-serif;
+}
+
+.collapsed {
+    display: none;
+}
+
+.menu-header-image {
+    width: 80%;
+    padding: 10%;
+}
+
+/* I hate it when they get so specific. */
+#menu .menu-header-link {
+    border: none;
+    padding: 0;
+}
+
+div.content > .pure-g label {
+    letter-spacing: 0;
+}
+
+.table-container {
+
+}
+
+.table-container h3 {
+    display: inline-block;
+    margin: 1em;
+}
+
+@media all and (max-width: 600px) {
+    div.pure-g {
+        letter-spacing: 0;
+    }
+}
+
+.job-status {
+    margin: 0 0 1em 0;
+}

@@ -1,0 +1,53 @@
+{
+  "name": "brews-server",
+  "version": "1.0.0",
+  "description": "Brews Server",
+  "author": "Nikhil Nygaard <nikhil.nygaard@gmail.com> (http://nygaard.site)",
+  "main": "index.js",
+  "license": "Affero General Public License v3",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/splicemachine/brews.git"
+  },
+  "keywords": [
+    "Splice Machine",
+    "splicemachine",
+    "demos",
+    "demo"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "start": "nodemon"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "body-parser": "^1.18.2",
+    "chalk": "^2.3.0",
+    "express": "^4.16.2",
+    "gulp": "^4.0.0",
+    "gulp-typescript": "^4.0.0-alpha.1",
+    "jdbc": "^0.6.1",
+    "pm2": "^2.9.1",
+    "typescript": "^2.6.2",
+    "@types/express": "^4.11.0",
+    "@types/gulp": "^4.0.5",
+    "@types/node": "^9.3.0",
+    "@types/undertaker": "^1.1.4",
+    "del": "^3.0.0"
+  },
+  "nodemonConfig": {
+    "exec": "npm run build && node index.js",
+    "delay": "1000",
+    "ignore": [
+      ".git",
+      "node_modules/**/node_modules",
+      "**/*.js",
+      "**/*.js.map"
+    ],
+    "verbose": true,
+    "env": {
+      "NODE_ENV": "development"
+    },
+    "ext": "ts"
+  }
+}
