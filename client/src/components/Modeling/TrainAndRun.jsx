@@ -1,5 +1,8 @@
 import React, {Component} from "react";
-import {decorateWithIds, transformDatasetList, transformModelPropertyCases} from "./DataTransformations";
+import {
+    decorateWithIds, transformDatasetList,
+    transformModelPropertyCases
+} from "./DataTransformations";
 import {server} from "../../utilities";
 import Navigator from "./Navigator.jsx";
 
@@ -27,6 +30,23 @@ export default class TrainAndRun extends Component {
             selectedDataset: datasets[0],
             models,
             datasets
+        };
+
+        /**
+         * This is a helper function to format JSON for use with the Fetch API
+         * @param body
+         * @returns RequestInit
+         */
+        this.postInit = (body) => {
+            return {
+                method: "POST",
+                body: JSON.stringify(body),
+                headers: new Headers({
+                    'Content-Type': 'application/json'
+                }),
+                mode: "cors",
+                cache: "default"
+            }
         };
 
         this.fetchData = this.fetchData.bind(this);
@@ -80,11 +100,19 @@ export default class TrainAndRun extends Component {
     handleButton(action, event) {
         const model = this.state.selectedModel;
         const dataset = this.state.selectedDataset;
-        this.next({
-            model,
-            dataset,
-            action
-        });
+
+
+        fetch(server() + "/api/v1/modeling/action", this.postInit({model, dataset, action}))
+            .then(response => response.json())
+            .then((response) => {
+                console.log("Action sent", response);
+                this.next({
+                    model,
+                    dataset,
+                    action
+                });
+            });
+
         event.preventDefault();
     }
 
@@ -99,60 +127,59 @@ export default class TrainAndRun extends Component {
     render() {
 
         const alignment = {
-            margin: "0.5em"
+            margin: "1em 0 1em 0"
+        };
+
+        const label = {
+            margin: "0 1em 0 0"
         };
 
         return (
             <div>
-                <h3>Train and Run</h3>
+                <h3>Train or Run</h3>
                 <form className="pure-form pure-form-aligned"
                       onSubmit={this.handleSubmit}>
                     <fieldset>
                         <div className={"pure-g"}>
                             <div className={"pure-u-sm-1-1 pure-u-md-1-1 pure-u-lg-1-1"}>
-                                <div>
-                                    <label htmlFor="MODEL">
+                                <div style={alignment}>
+                                    <span style={label}>
                                         Selected Model:
-                                    </label>
+                                    </span>
+                                    <span>
+                                        {this.state.selectedModel.name}
+                                    </span>
                                 </div>
                                 <div style={alignment}>
-                                    <select id="MODEL" onChange={this.handleChange.bind(this, "model")}>
-                                        {
-                                            this.state.models.map((item, index) =>
-                                                <option key={index} value={index}>
-                                                    {item.name}
-                                                </option>)
-                                        }
-                                    </select>
-                                </div>
-                                <div>
-                                    <label htmlFor="DATASET">
-                                        Selected Dataset:
-                                    </label>
-                                </div>
-                                <div style={alignment}>
-                                    <select id="DATASET" onChange={this.handleChange.bind(this, "dataset")}>
-                                        {
-                                            this.state.datasets.map((item, index) =>
-                                                <option key={index} value={index}>
-                                                    {item.name}
-                                                </option>)
-                                        }
-                                    </select>
+                                    <span style={label}>
+                                        <label htmlFor="DATASET">
+                                            Selected Dataset:
+                                        </label>
+                                    </span>
+                                    <span>
+                                        <select id="DATASET" onChange={this.handleChange.bind(this, "dataset")}>
+                                            {
+                                                this.state.datasets.map((item, index) =>
+                                                    <option key={index} value={index}>
+                                                        {item.name}
+                                                    </option>)
+                                            }
+                                        </select>
+                                    </span>
                                 </div>
                             </div>
                             <div className={"pure-u-sm-1-1 pure-u-md-1-1 pure-u-lg-1-1"}>
                                 <span>
-                                    <button style={alignment} type="button" className="pure-button pure-button-primary"
+                                    <button style={label} type="button" className="pure-button pure-button-primary"
                                             disabled={this.disable()}
-                                            onClick={this.handleButton.bind(this, "train")}>
+                                            onClick={this.handleButton.bind(this, "TRAIN")}>
                                         Train
                                     </button>
                                 </span>
                                 <span>
-                                    <button style={alignment} type="button" className="pure-button pure-button-primary"
+                                    <button style={label} type="button" className="pure-button pure-button-primary"
                                             disabled={this.disable()}
-                                            onClick={this.handleButton.bind(this, "run")}>
+                                            onClick={this.handleButton.bind(this, "RUN")}>
                                         Run
                                     </button>
                                 </span>

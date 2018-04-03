@@ -75,7 +75,7 @@ export default class Output extends Component {
     render() {
         return (
             <div>
-                <h3>Output</h3>
+                <h3>Results</h3>
                 <ReactTable
                     columns={this.state.table.columns}
                     data={this.state.table.data}

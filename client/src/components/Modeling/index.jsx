@@ -23,16 +23,16 @@ export default class Modeling extends Component {
             currentPage: 0,
             pages: [
                 {
-                    component: <WorkflowManager next={this.advanceFlow}/>
+                    component: <WorkflowManager next={this.advanceFlow} start={this.jump.bind(this, 0)}/>
                 },
                 {
-                    component: <TrainAndRun next={this.advanceFlow}/>
+                    component: <TrainAndRun next={this.advanceFlow} start={this.jump.bind(this, 0)}/>
                 },
                 {
-                    component: <JobStatus next={this.advanceFlow}/>
+                    component: <JobStatus next={this.advanceFlow} start={this.jump.bind(this, 0)}/>
                 },
                 {
-                    component: <Output next={this.advanceFlow}/>
+                    component: <Output next={this.advanceFlow} start={this.jump.bind(this, 0)}/>
                 },
             ]
         };

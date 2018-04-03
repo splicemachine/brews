@@ -140,7 +140,7 @@ export default class WorkflowManager extends Component {
 
         return (
             <div>
-                <h3>Models</h3>
+                <h3>Models List</h3>
 
                 <CheckboxTable
                     ref={(r) => this.checkboxTable = r}

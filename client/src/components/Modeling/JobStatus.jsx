@@ -80,17 +80,12 @@ export default class JobStatus extends Component {
 
         return (
             <div>
-                <h3>Job Status</h3>
-                {
-
-                    this.state.lastActions.map((item, index) =>
-                        <div className={"pure-g"} key={index} style={alertStyle}>
-                            <span className={"pure-u-1-3"}>Action: {item.action}</span>
-                            <span className={"pure-u-1-3"}>Model: {item.model.name}</span>
-                            <span className={"pure-u-1-3"}>Dataset: {item.dataset.name}</span>
-                        </div>
-                    )
-                }
+                <h3>Jobs List</h3>
+                <button type="button"
+                        className="pure-button pure-button-primary job-status"
+                        onClick={this.fetchData.bind(this)}>
+                    Refresh Jobs List
+                </button>
                 <ReactTable
                     columns={this.state.table.columns}
                     data={this.state.table.data}
@@ -102,4 +97,5 @@ export default class JobStatus extends Component {
     }
 }
 
-function noop(){}
+function noop() {
+}
