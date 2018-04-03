@@ -17,7 +17,6 @@
   ],
   "scripts": {
     "build": "tsc",
-    "dev": "export NODE_ENV=development && tsc && node index.js",
     "start": "nodemon"
   },
   "dependencies": {},
@@ -37,13 +36,13 @@
     "del": "^3.0.0"
   },
   "nodemonConfig": {
-    "execMap": {
-      "ts": "npm run dev"
-    },
+    "exec": "npm run build && node index.js",
     "delay": "1000",
     "ignore": [
       ".git",
-      "node_modules/**/node_modules"
+      "node_modules/**/node_modules",
+      "**/*.js",
+      "**/*.js.map"
     ],
     "verbose": true,
     "env": {

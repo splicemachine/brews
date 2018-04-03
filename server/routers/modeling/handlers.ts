@@ -1,8 +1,7 @@
 import express = require("express");
-import {sample_datasets, output_sample, table_data} from "./test_data";
 import {modeling_db_config} from "../../environment";
 import Database from "../../db";
-import {select_models, select_datasets, job_status, job_output} from "./sql";
+import {select_models, select_datasets, job_status, job_output, insert_job} from "./sql";
 
 let rejected = (reason) => Promise.reject(reason);
 
@@ -57,7 +56,33 @@ export function datasets(request: express.Request, response: express.Response, n
  Values (?,?, ?, 'NEW', CURRENT_TIMESTAMP)
  */
 export function action(request: express.Request, response: express.Response, next: express.NextFunction) {
-    response.send("OK");
+    /**
+     {
+        {
+          "model": {
+            "_id": "822fe8",
+            "name": "lateness",
+            "status": "NEW",
+            "update_date": "2018-03-30 16:00:12.338"
+          },
+          "dataset": {
+            "_id": "4f97ae",
+            "name": "MLDEMO.FEATURES"
+          },
+          "action": "run"
+        }
+     */
+    let db = new Database(modeling_db_config);
+    db.initialize()
+        .then(() => {
+            return db.preparedTransaction(insert_job, () => {
+            }, [request.body.model.name, request.body.action, request.body.dataset.name]);
+        })
+        .then((result) => {
+            response.send(result);
+            response.end();
+        }, rejected)
+        .catch(errorHandler.bind(null, next));
 }
 
 /**

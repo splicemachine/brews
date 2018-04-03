@@ -11,7 +11,7 @@ router.get("/", function (req, res) {
 
 router.get("/models", models);
 router.get("/datasets", datasets);
-router.post("/action", action);
+router.post("/action", jsonParser, action);
 router.get("/jobs", jobs);
 router.post("/output", jsonParser, output);
 
