@@ -47,3 +47,11 @@ export const soft_delete = [
      WHERE NAME = ?
     `
 ];
+
+export const deploy_model = [
+    `
+     UPDATE MLDEMO.ML_MODEL_MANAGER
+     SET STATUS = 'DEPLOYED'
+     WHERE NAME = ?
+    `
+];

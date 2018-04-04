@@ -37,6 +37,7 @@ export default class WorkflowManager extends Component {
                 data
             },
             disabled: {
+                run: true,
                 train: true,
                 deploy: true,
                 delete: true
@@ -68,6 +69,7 @@ export default class WorkflowManager extends Component {
         this.setButtonAvailability = this.setButtonAvailability.bind(this);
         this.handleButton = this.handleButton.bind(this);
         this.softDelete = this.softDelete.bind(this);
+        this.deploy = this.deploy.bind(this);
     }
 
     componentWillMount() {
@@ -98,11 +100,12 @@ export default class WorkflowManager extends Component {
 
     softDelete(item){
         return fetch(server() + "/api/v1/modeling/models", this.fetchInit("DELETE", item))
-            .then(response => response.json())
-            .then((deleteResult)=>{
-                console.log(deleteResult)
-            })
-            // .then(noop)
+            .then(noop)
+    }
+
+    deploy(item){
+        return fetch(server() + "/api/v1/modeling/deploy", this.fetchInit("POST", item))
+            .then(noop)
     }
 
     /**
@@ -116,7 +119,12 @@ export default class WorkflowManager extends Component {
             case "train":
                 this.next(item);
                 break;
+            case "run":
+                this.next(item);
+                break;
             case "deploy":
+                this.deploy(item)
+                    .then(this.fetchData);
                 break;
             case "delete":
                 this.softDelete(item)
@@ -147,10 +155,35 @@ export default class WorkflowManager extends Component {
     setButtonAvailability(state) {
         let item = this.getSelectedItem(state);
         switch (item["STATUS"]) {
+            case "DEPLOYED":
+                this.setState(
+                    {
+                        disabled: {
+                            run: false,
+                            train: false,
+                            deploy: true,
+                            delete: false
+                        }
+                    }
+                );
+                break;
+            case "DELETED":
+                this.setState(
+                    {
+                        disabled: {
+                            run: true,
+                            train: true,
+                            deploy: true,
+                            delete: true
+                        }
+                    }
+                );
+                break;
             case "TRAINIED":
                 this.setState(
                     {
                         disabled: {
+                            run: false,
                             train: false,
                             deploy: false,
                             delete: false
@@ -162,6 +195,7 @@ export default class WorkflowManager extends Component {
                 this.setState(
                     {
                         disabled: {
+                            run: true,
                             train: false,
                             deploy: true,
                             delete: false
@@ -170,6 +204,17 @@ export default class WorkflowManager extends Component {
                 );
                 break;
             default:
+                // TODO: Debug only
+                this.setState(
+                    {
+                        disabled: {
+                            run: false,
+                            train: false,
+                            deploy: false,
+                            delete: false
+                        }
+                    }
+                );
                 /**
                  * TODO: "TRAINIED" is not a valid state. Spelling Mistake.
                  */
@@ -264,6 +309,15 @@ export default class WorkflowManager extends Component {
                                     Train / Run
                                 </button>
                             </div>
+
+                            {/*<div className={"pure-u-sm-1-1 pure-u-md-1-4 pure-u-lg-1-4"}>*/}
+                                {/*<button className="pure-button pure-button-primary"*/}
+                                        {/*onClick={this.handleButton.bind(this, "run")}*/}
+                                        {/*disabled={this.state.disabled.run}>*/}
+                                    {/*Run*/}
+                                {/*</button>*/}
+                            {/*</div>*/}
+
                             <div className={"pure-u-sm-1-1 pure-u-md-1-3 pure-u-lg-1-3"}>
                                 <button className="pure-button pure-button-primary"
                                         onClick={this.handleButton.bind(this, "deploy")}

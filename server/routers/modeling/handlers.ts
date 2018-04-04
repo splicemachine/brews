@@ -7,7 +7,8 @@ import {
     job_status,
     job_output,
     insert_job,
-    soft_delete
+    soft_delete,
+    deploy_model
 } from "./sql";
 
 let rejected = (reason) => Promise.reject(reason);
@@ -36,6 +37,20 @@ export function deleteModel(request: express.Request, response: express.Response
     db.initialize()
         .then(() => {
             return db.preparedTransaction(soft_delete, () => {
+            }, [request.body["NAME"]]);
+        })
+        .then((result) => {
+            response.send(result);
+            response.end();
+        }, rejected)
+        .catch(errorHandler.bind(null, next));
+}
+
+export function deploy(request: express.Request, response: express.Response, next: express.NextFunction) {
+    let db = new Database(modeling_db_config);
+    db.initialize()
+        .then(() => {
+            return db.preparedTransaction(deploy_model, () => {
             }, [request.body["NAME"]]);
         })
         .then((result) => {
