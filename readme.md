@@ -4,26 +4,29 @@ This repository contains an example Splice Machine use-case using a React Fronte
 
 ## Installation
 
-This repository was developed on MacOS v10.12.6 (16G1114). The development workflow has been tested only for this environment.
+Please complete the [Prerequisites](#prerequisites) first.
 
-The production deployment is a docker container.
+There are three deployment strategies:
+- [Local Development](#local-development)
+- [Local Docker Deployment](#local-docker-deployment)
+- [Production Docker Deployment](#production-docker-deployment)
 
 You will need a Splice Machine JDBC URL to configure the application. If you created a Splice Machine database with the Cloud UI, your JDBC URL will be in your Cluster Ready email, or can be found on that Cluster's page in the Cloud Manager. For other environments, see our documentation at doc.splicemachine.com for JDBC URL information.
 
 Before running or installing, you must create the file `server/environment.ts`. There is an example of this file at `server/environment.example.ts`. 
 
-### Local Development
+# Prerequisites
+This repository was developed on MacOS v10.12.6 (16G1114). The development workflow has been tested only for this environment.
+
 Make sure you have [Node.js installed][4].
 
 This was developed with `node@v8.9.3` and `npm@5.6.0`.
 
-**Note**: For now, I have removed the preparation step from the ATP Demo workflow. If you are running against a cluster that does not have the ATP schema or data, please navigate to [http://localhost:3000/api/v1/prepare][7] in your browser.
-
-#### Prerequisites
 ```bash
 npm install -g nodemon
 ```
 
+### Local Development
 #### Server
 In one terminal:
 ```bash
@@ -42,6 +45,8 @@ npm start
 
 Navigate to: http://localhost:8080
 
+**Note**: For now, I have removed the preparation step from the ATP Demo workflow. If you are running against a cluster that does not have the ATP schema or data, please navigate to [http://localhost:3000/api/v1/prepare][7] in your browser.
+
 ### Local Docker Deployment
 [Install Docker][5].
 
@@ -49,10 +54,12 @@ Navigate to: http://localhost:8080
 make
 docker build .
 ```
+
 You should see something like:
 ```
 Successfully built [image]
 ```
+
 Take that image tag and run with the following command:
 ```bash
 docker run -d \
@@ -61,9 +68,12 @@ docker run -d \
     -e "MODELING_JDBC_URL=[MODELING_JDBC_URL]" \
     [image]
 ```
+
 And navigate your browser to [`http://localhost:3000/`][6]
 
-### Production Deployment Notes
+### Production Docker Deployment
+You will need to produce the [local docker artifact](#local-docker-deployment) to push it to production.
+
 There is an example `marathon.json` in `/config`. Use that to start `brews` as a Marathon App.
 
 **Note:** Make sure you configure the proper `env.ATP_JDBC_URL` and `env.MODELING_JDBC_URL`.
@@ -76,27 +86,7 @@ There is an example `marathon.json` in `/config`. Use that to start `brews` as a
 - **S**plice Machine
 
 ## Example Test Case
-<!-- 
-### ATP on Date
-Run "Inventory on Date" and "ATP on Date" to see how they differ. You can use the following inputs to test.
-
-For example:
-- Inventory on Date
-    + Parameters
-        * `Inv` : `600`
-        * `Time` : `2016-10-15 00:00:00.0`
-    + Output
-        * `INVENTORY` : `1900`
-- ATP on Date
-    + Parameters
-        * `Inv` : `600`
-        * `TimeATP` : `2016-10-15 00:00:00.0`
-        * `TimeHorizon` : `2017-05-01 00:00:00.0`
-    + Output
-        * `AVAILABLE` : `1190`
--->
 ### Multi-Line ATP
-
 We can add the following parameters to get a view of when a multi-line order will be available to promise. First, we add the lines of inventory that represent the proposed order we would like to 'promise'. Then we can set the target date by which the order must be ready. The output represent when each of the items will be 'Available to Promise' and the maximum of those values is the earliest we can promise the proposed order.
 
 For example:
@@ -123,9 +113,6 @@ For example:
 |`600`|`0`|`2016-12-20`|
 |`200`|`0`|`2016-11-19`|
 |`100`|`0`|`2016-11-23`|
-
-
-
 
 [1]: https://github.com/scotch-io/hello-world-react
 [2]: https://scotch.io/tutorials/setup-a-react-environment-using-webpack-and-babel
