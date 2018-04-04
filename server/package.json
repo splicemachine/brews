@@ -4,7 +4,7 @@
   "description": "Brews Server",
   "author": "Nikhil Nygaard <nikhil.nygaard@gmail.com> (http://nygaard.site)",
   "main": "index.js",
-  "license": "Affero General Public License v3",
+  "license": "(AGPL-3.0-or-later)",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/splicemachine/brews.git"
