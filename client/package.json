@@ -4,7 +4,7 @@
     "description": "Brews Client",
     "author": "Nikhil Nygaard <nikhil.nygaard@gmail.com> (http://nygaard.site)",
     "main": "src/index.js",
-    "license": "(AGPL-3.0-or-later)",
+    "license": "SEE LICENSE IN LICENSE",
     "repository": {
         "type": "git",
         "url": "git+https://github.com/splicemachine/brews.git"
@@ -47,6 +47,7 @@
         "react-redux": "^5.0.7",
         "react-table": "^6.8.0",
         "redux": "^4.0.0-beta.2",
+        "redux-devtools": "^3.4.1",
         "sass-loader": "^6.0.7",
         "source-map-loader": "^0.2.3",
         "style-loader": "^0.20.3",
