@@ -5,10 +5,7 @@ import "../../../node_modules/purecss/build/pure-min.css"
 import "../../../node_modules/purecss/build/grids-responsive-min.css"
 import "../../styles/side-menu.scss"
 import React, {Component} from "react";
-
-function server() {
-    return process.env.NODE_ENV === "development" ? "http://localhost:3000" : "";
-}
+import {server} from "../../utilities";
 
 export default class ATP extends Component {
 
@@ -71,10 +68,16 @@ export default class ATP extends Component {
         this.displayResults = this.displayResults.bind(this);
         this.getResults = this.getResults.bind(this);
         this.exceptionHandler = this.exceptionHandler.bind(this);
+        this.prepare = this.prepare.bind(this);
     }
 
     componentWillMount() {
         this.getResults("clearLines");
+    }
+
+    prepare() {
+        fetch(server() + "/api/v1/atp/prepare")
+            .then(console.log);
     }
 
     /**
@@ -264,6 +267,10 @@ export default class ATP extends Component {
     }
 
     render() {
+        const prepareButton = {
+            textAlign: "center",
+            marginTop: "1em"
+        };
         // noinspection HtmlUnknownAttribute
         return (
             <div className="content">
@@ -354,6 +361,13 @@ export default class ATP extends Component {
                             })
                         }
                     </div>
+                    {/*<div style={prepareButton} className={"pure-u-sm-1-1 pure-u-md-1-1 pure-u-lg-1-1"}>*/}
+                        {/*<button className="pure-button pure-button-primary"*/}
+                                {/*onClick={this.prepare}*/}
+                                {/*disabled={false}>*/}
+                            {/*Prepare*/}
+                        {/*</button>*/}
+                    {/*</div>*/}
                 </div>
             </div>
         )
