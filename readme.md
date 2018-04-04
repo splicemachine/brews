@@ -19,7 +19,13 @@ This was developed with `node@v8.9.3` and `npm@5.6.0`.
 
 **Note**: For now, I have removed the preparation step from the ATP Demo workflow. If you are running against a cluster that does not have the ATP schema or data, please navigate to [http://localhost:3000/api/v1/prepare][7] in your browser.
 
+#### Prerequisites
+```bash
+npm install -g nodemon
+```
+
 #### Server
+In one terminal:
 ```bash
 cd server
 npm install
@@ -27,11 +33,14 @@ npm start
 ```
 
 #### Client
+In another terminal:
 ```bash
 cd client
 npm install
 npm start
 ```
+
+Navigate to: http://localhost:8080
 
 ### Local Docker Deployment
 [Install Docker][5].

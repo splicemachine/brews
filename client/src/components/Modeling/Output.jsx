@@ -73,9 +73,36 @@ export default class Output extends Component {
     }
 
     render() {
+        const model = this.state.target[0];
+        const tableMargin = {
+                margin: "0 0 1em 0",
+                width: "100%"
+            }
+        ;
         return (
             <div>
                 <h3>Results</h3>
+                <div className={"pure-g"}>
+                    <div className={"pure-u-sm-1-1 pure-u-md-1-1 pure-u-lg-1-1"}>
+                        <table className="pure-table" style={tableMargin}>
+                            <thead>
+                            <tr>
+                                <th>Job ID</th>
+                                <th>Model</th>
+                                <th>Job Type</th>
+                            </tr>
+                            </thead>
+
+                            <tbody>
+                            <tr>
+                                <td>{model["ID"]}</td>
+                                <td>{model["NAME"]}</td>
+                                <td>{model["TYPE"]}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
                 <ReactTable
                     columns={this.state.table.columns}
                     data={this.state.table.data}

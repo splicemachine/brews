@@ -11,10 +11,9 @@ export const select_models = [
 
 export const select_datasets = [
     `
-     SELECT S.SCHEMANAME ||'.' || T.TABLENAME FROM SYS.SYSSCHEMAS S JOIN SYS.SYSTABLES T ON S.SCHEMAID = T.SCHEMAID
-         WHERE T.TABLETYPE <> 'S'
-         AND S.SCHEMANAME <> 'SYS'
-         ORDER BY S.SCHEMANAME, T.TABLENAME
+    SELECT S.SCHEMANAME ||'.' || T.TABLENAME FROM SYS.SYSSCHEMAS S JOIN SYS.SYSTABLES T ON S.SCHEMAID = T.SCHEMAID
+        WHERE S.SCHEMANAME = 'MLDEMO2'
+        ORDER BY S.SCHEMANAME, T.TABLENAME
     `
 ];
 
@@ -27,7 +26,7 @@ export const job_status = [
 
 export const job_output = [
     `
-    SELECT * FROM MLDEMO.ML_RUN_OUTPUT
+    SELECT FEATURE_VECTOR, LABEL, PREDICTION, PROBABILITY FROM MLDEMO.ML_RUN_OUTPUT
         WHERE JOB_ID = ?
     `
 ];

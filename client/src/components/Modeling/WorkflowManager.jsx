@@ -162,7 +162,7 @@ export default class WorkflowManager extends Component {
                             run: false,
                             train: false,
                             deploy: true,
-                            delete: false
+                            delete: true
                         }
                     }
                 );
