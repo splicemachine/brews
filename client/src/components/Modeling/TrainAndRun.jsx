@@ -120,8 +120,15 @@ export default class TrainAndRun extends Component {
      * Validation helper.
      * @returns {boolean}
      */
-    disable() {
-        return false;
+    disable(verb) {
+        switch (verb){
+            case "train":
+                return false;
+            case "run":
+                return this.state.selectedModel.status === "NEW";
+            default:
+                return false;
+        }
     }
 
     render() {
@@ -171,14 +178,14 @@ export default class TrainAndRun extends Component {
                             <div className={"pure-u-sm-1-1 pure-u-md-1-1 pure-u-lg-1-1"}>
                                 <span>
                                     <button style={label} type="button" className="pure-button pure-button-primary"
-                                            disabled={this.disable()}
+                                            disabled={this.disable.call(this, "train")}
                                             onClick={this.handleButton.bind(this, "TRAIN")}>
                                         Train
                                     </button>
                                 </span>
                                 <span>
                                     <button style={label} type="button" className="pure-button pure-button-primary"
-                                            disabled={this.disable()}
+                                            disabled={this.disable.call(this, "run")}
                                             onClick={this.handleButton.bind(this, "RUN")}>
                                         Run
                                     </button>

@@ -12,36 +12,32 @@ You will need a Splice Machine JDBC URL to configure the application. If you cre
 
 Before running or installing, you must create the file `server/environment.ts`. There is an example of this file at `server/environment.example.ts`. 
 
-Please set `ATP_JDBC_URL` accordingly.
-
-**Note** that to run the ATP demo, you will also need to configure S3 credentials. This example uses S3 to demonstrate Stored Procedure interoperability by loading sample data from S3.
-
-- `ATP_S3_USER`
-- `ATP_S3_SECRET`
-
 ### Local Development
 Make sure you have [Node.js installed][4].
 
 This was developed with `node@v8.9.3` and `npm@5.6.0`.
 
-Install our global dependencies `gulp` (task runner) and `webpack-dev-server` (hot reload server).
+**Note**: For now, I have removed the preparation step from the ATP Demo workflow. If you are running against a cluster that does not have the ATP schema or data, please navigate to [http://localhost:3000/api/v1/prepare][7] in your browser.
+
+#### Server
 ```bash
-npm install -g gulp-cli webpack-dev-server && npm install
+cd server
+npm install
+npm start
 ```
 
-|Command|Description|
-|-|-|
-|`gulp`|Start the development server.|
-|`^c`|End terminal output (server is still running).|
-|`pm2 ls`|Inspect the running servers.|
-|`gulp kill`|Stop the development server.|
-
-**Note**: For now, I have removed the preparation step from the ATP Demo workflow. If you are running against a cluster that does not have the ATP schema or data, please navigate to [http://localhost:3000/api/v1/prepare][7] in your browser.
+#### Client
+```bash
+cd client
+npm install
+npm start
+```
 
 ### Local Docker Deployment
 [Install Docker][5].
 
 ```bash
+make
 docker build .
 ```
 You should see something like:
@@ -50,14 +46,18 @@ Successfully built [image]
 ```
 Take that image tag and run with the following command:
 ```bash
-docker run -d -p 3000:3000 -e "ATP_JDBC_URL=[ATP_JDBC_URL]" [image]
+docker run -d \
+    -p 3000:3000 \
+    -e "ATP_JDBC_URL=[ATP_JDBC_URL]" \
+    -e "MODELING_JDBC_URL=[MODELING_JDBC_URL]" \
+    [image]
 ```
 And navigate your browser to [`http://localhost:3000/`][6]
 
 ### Production Deployment Notes
 There is an example `marathon.json` in `/config`. Use that to start `brews` as a Marathon App.
 
-**Note:** Make sure you configure the proper `env.ATP_JDBC_URL`.
+**Note:** Make sure you configure the proper `env.ATP_JDBC_URL` and `env.MODELING_JDBC_URL`.
 
 ## Acronym
 - **B**abel

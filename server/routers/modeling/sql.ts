@@ -40,3 +40,18 @@ export const insert_job = [
     `
 ];
 
+export const soft_delete = [
+    `
+     UPDATE MLDEMO.ML_MODEL_MANAGER
+     SET STATUS = 'DELETED'
+     WHERE NAME = ?
+    `
+];
+
+export const deploy_model = [
+    `
+     UPDATE MLDEMO.ML_MODEL_MANAGER
+     SET STATUS = 'DEPLOYED'
+     WHERE NAME = ?
+    `
+];
