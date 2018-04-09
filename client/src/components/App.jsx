@@ -20,14 +20,14 @@ export default class App extends Component {
                     longTitle: "Available to Promise",
                     subTitle: "A Splice Machine Use Case",
                     component: <ATP/>,
-                    active: false
+                    active: true
                 },
                 {
                     title: "Modeling",
                     longTitle: "Machine Learning Workflow",
                     subTitle: "A Splice Machine Use Case",
                     component: <Modeling/>,
-                    active: true
+                    active: false
                 }
             ],
             currentPage: {},
